@@ -33,11 +33,59 @@ export default function SignupPage() {
       if (error) throw error
 
       if (data.user) {
-        // Profile will be automatically created by the database trigger
-        router.push('/dashboard')
+        // Try to ensure profile is created (trigger should handle this, but we'll check)
+        // Wait a bit for trigger to fire, then verify profile exists
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
+        // Check if profile exists
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('user_id', data.user.id)
+          .single()
+
+        if (profileError || !profileData) {
+          // Trigger might not have fired, try to create profile manually
+          console.log('Profile not found, attempting manual creation...')
+          
+          // Re-authenticate to ensure session is available for RLS
+          const { data: sessionData } = await supabase.auth.getSession()
+          
+          if (sessionData?.session) {
+            const { error: insertError } = await supabase
+              .from('profiles')
+              .insert({
+                id: data.user.id,
+                user_id: data.user.id,
+                email: data.user.email || email,
+                full_name: fullName || data.user.email || email,
+              })
+
+            if (insertError) {
+              console.error('Error creating profile:', {
+                message: insertError.message,
+                code: insertError.code,
+                details: insertError.details,
+                hint: insertError.hint,
+                fullError: insertError
+              })
+              // Profile will be created by trigger or can be fixed with SQL script
+              console.warn('⚠️ Profile will need to be created manually via SQL or trigger')
+            } else {
+              console.log('✅ Profile created manually')
+            }
+          } else {
+            console.warn('⚠️ No session available for profile creation. Profile may be created by trigger or needs manual SQL fix.')
+          }
+        } else {
+          console.log('✅ Profile exists (created by trigger)')
+        }
+
+        router.push('/')
         router.refresh()
       }
     } catch (error: any) {
+      console.error('Signup error:', error)
       setError(error.message || 'An error occurred during signup')
     } finally {
       setLoading(false)

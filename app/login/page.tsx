@@ -20,9 +20,14 @@ function LoginForm() {
     const errorDetails = searchParams.get('details')
     
     if (oauthError === 'oauth_error') {
-      const errorMessage = errorDetails 
-        ? `Google sign-in failed: ${errorDetails}`
-        : 'Google sign-in failed. Please try again or use email/password to sign in.'
+      let errorMessage = 'Google sign-in failed. Please try again or use email/password to sign in.'
+      
+      if (errorDetails === 'google_redirect_misconfigured') {
+        errorMessage = 'Google OAuth is misconfigured. The redirect URI in Google Cloud Console must point to Supabase, not your app. See OAUTH_FIX.md for instructions.'
+      } else if (errorDetails) {
+        errorMessage = `Google sign-in failed: ${errorDetails}`
+      }
+      
       setError(errorMessage)
       // Clean up the URL by removing the error parameters
       router.replace('/login', { scroll: false })
@@ -43,8 +48,27 @@ function LoginForm() {
       if (error) throw error
 
       if (data.user) {
-        router.push('/dashboard')
-        router.refresh()
+        console.log('✅ Login successful, user:', data.user.id)
+        console.log('Session data:', data.session)
+        
+        // Verify session is available before redirecting
+        if (data.session) {
+          // Wait for cookies to be set in browser
+          await new Promise(resolve => setTimeout(resolve, 200))
+          // Force a hard redirect to ensure server sees the cookies
+          window.location.href = '/'
+        } else {
+          // Session might not be immediately available, wait and check again
+          await new Promise(resolve => setTimeout(resolve, 500))
+          const { data: { session: retrySession } } = await supabase.auth.getSession()
+          if (retrySession) {
+            console.log('Session available on retry, redirecting...')
+            window.location.href = '/'
+          } else {
+            console.error('Session still not available after retry')
+            setError('Session not available. Please try logging in again.')
+          }
+        }
       }
     } catch (error: any) {
       setError(error.message || 'An error occurred during login')
@@ -69,13 +93,21 @@ function LoginForm() {
         },
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('OAuth error:', error)
+        throw error
+      }
       
       // Log the redirect URL for debugging
       if (data?.url) {
-        console.log('OAuth redirect URL:', data.url)
+        console.log('✅ OAuth redirect URL generated:', data.url)
+        // Supabase should redirect to this URL which goes to Google
+        // The URL should be: https://rwqlxbduoovtwohkoxwg.supabase.co/auth/v1/authorize?provider=google&redirect_to=http://localhost:3000/auth/callback
+      } else {
+        console.error('❌ No redirect URL returned from Supabase')
       }
     } catch (error: any) {
+      console.error('Google login error:', error)
       setError(error.message || 'An error occurred during Google sign-in')
     }
   }

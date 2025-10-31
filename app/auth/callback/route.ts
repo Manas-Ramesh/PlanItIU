@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code')
   const error = requestUrl.searchParams.get('error')
   const errorDescription = requestUrl.searchParams.get('error_description')
-  const next = requestUrl.searchParams.get('next') || '/dashboard'
+  const next = requestUrl.searchParams.get('next') || '/'
 
   console.log('OAuth callback received:', {
     hasCode: !!code,
@@ -28,41 +28,76 @@ export async function GET(request: Request) {
   // If no code, check if we already have a session (Supabase might have already set cookies)
   if (!code) {
     const supabase = await createClient()
+    
+    // Try to get user directly which might work even if getSession doesn't
+    const { data: { user: directUser }, error: userError } = await supabase.auth.getUser()
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     
-    console.log('No code in callback - checking session:', {
+    console.log('No code in callback - checking session and user:', {
       hasSession: !!session,
+      hasUser: !!directUser,
       sessionError: sessionError?.message,
-      userId: session?.user?.id,
+      userError: userError?.message,
+      userId: session?.user?.id || directUser?.id,
     })
     
-    if (sessionError) {
-      console.error('Error getting session:', sessionError)
-    }
-    
-    if (session) {
-      // User is already authenticated (Supabase set session cookies), redirect to dashboard
-      console.log('✅ Session found without code - OAuth successful, redirecting to dashboard')
+    // If we have either a session or a user, authentication worked
+    if (session || directUser) {
+      const userId = session?.user?.id || directUser?.id
+      
+      // Ensure profile exists for OAuth users
+      if (userId) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('user_id', userId)
+          .single()
+
+        if (profileError || !profileData) {
+          console.log('Profile not found, creating manually for OAuth user...')
+          const user = session?.user || directUser
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: userId,
+              user_id: userId,
+              email: user?.email || '',
+              full_name: user?.user_metadata?.full_name || user?.email || '',
+            })
+
+          if (insertError) {
+            console.error('Error creating profile:', insertError)
+          } else {
+            console.log('✅ Profile created for OAuth user')
+          }
+        }
+      }
+      
+      console.log('✅ Authentication successful (session or user found) - redirecting to home')
       return NextResponse.redirect(new URL(next, requestUrl.origin))
     }
     
-    // No code and no session - check if this is a direct navigation
+    // No code and no session/user - this is a configuration issue
     const referer = request.headers.get('referer')
-    console.error('❌ OAuth callback called without code and no session exists')
+    console.error('❌ OAuth callback called without code and no session/user exists')
     console.log('Request details:', {
       url: requestUrl.toString(),
       referer,
       allParams: Object.fromEntries(requestUrl.searchParams.entries()),
-      cookies: request.headers.get('cookie') ? 'present' : 'missing'
+      cookies: request.headers.get('cookie') ? 'present' : 'missing',
+      cookieNames: request.headers.get('cookie')?.split(';').map(c => c.split('=')[0].trim()) || []
     })
     
-    // If no referer, this might be a direct navigation - redirect to login
-    if (!referer || !referer.includes('supabase')) {
-      console.warn('⚠️  Possible direct navigation to callback - redirecting to login')
+    // Check if referer is Google - this means Google Cloud Console is misconfigured
+    if (referer?.includes('accounts.google.com')) {
+      console.error('⚠️  Google is redirecting directly to callback - Google Cloud Console redirect URI is wrong!')
+      console.error('   Expected: Supabase redirects to callback')
+      console.error('   Actual: Google redirects directly to callback')
+      console.error('   Fix: Update Google Cloud Console Authorized redirect URIs to ONLY include Supabase callback URL')
     }
     
     // No code and no session - redirect to login
-    return NextResponse.redirect(new URL('/login?error=oauth_error&details=no_code_no_session', requestUrl.origin))
+    return NextResponse.redirect(new URL('/login?error=oauth_error&details=google_redirect_misconfigured', requestUrl.origin))
   }
 
   // Exchange code for session
@@ -78,6 +113,35 @@ export async function GET(request: Request) {
     }
     
     if (data.session) {
+      // Ensure profile exists (trigger should create it, but verify)
+      const userId = data.session.user.id
+      if (userId) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('user_id', userId)
+          .single()
+
+        if (profileError || !profileData) {
+          // Profile doesn't exist, create it manually
+          console.log('Profile not found for OAuth user, creating manually...')
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: userId,
+              user_id: userId,
+              email: data.session.user.email || '',
+              full_name: data.session.user.user_metadata?.full_name || data.session.user.email || '',
+            })
+
+          if (insertError) {
+            console.error('Error creating profile for OAuth user:', insertError)
+          } else {
+            console.log('✅ Profile created for OAuth user')
+          }
+        }
+      }
+      
       // Success - redirect to dashboard
       return NextResponse.redirect(new URL(next, requestUrl.origin))
     }

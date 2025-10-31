@@ -44,8 +44,14 @@ BEGIN
         NEW.id,
         NEW.email,
         COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email)
-    );
+    )
+    ON CONFLICT (id) DO NOTHING;
     RETURN NEW;
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Log error but don't fail the user creation
+        RAISE WARNING 'Error creating profile for user %: %', NEW.id, SQLERRM;
+        RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
