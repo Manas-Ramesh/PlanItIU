@@ -2,7 +2,7 @@
 
 If profiles aren't being created automatically when users sign up, follow these steps:
 
-## Step 1: Run the Fix Script
+## Step 1: Run the Fix Scriptasd
 
 Go to Supabase Dashboard → SQL Editor and run:
 

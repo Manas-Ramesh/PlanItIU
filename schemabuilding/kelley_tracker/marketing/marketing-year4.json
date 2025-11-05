@@ -1,0 +1,487 @@
+{
+  "major": "Marketing BSB",
+  "school": "Kelley School of Business",
+  "year": 4,
+  "total_credits": 28,
+  "terms": {
+    "fall": {
+      "required_completion": "Year 4, Fall",
+      "total_credits": 15,
+      "courses": [
+        {
+          "requirement_name": "Marketing Elective",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-M 295",
+              "course_name": "MARKETING IN OUR WORLD TODAY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 310",
+              "course_name": "BRAND MANAGEMENT PRACTICUM",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 330",
+              "course_name": "CONSULTATIVE SELLING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 339",
+              "course_name": "RETAIL MARKETING ANALYTICS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 344",
+              "course_name": "CREATIVITY AND COMMUNICATION",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 390",
+              "course_name": "MARKETING TOPICS ABROAD",
+              "credits": "1-5",
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 401",
+              "course_name": "INTERNATIONAL MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 407",
+              "course_name": "BUSINESS-TO-BUSINESS MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 415",
+              "course_name": "ADVERTISING AND INTEGRATED MARKETING COMMUNICATIONS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 419",
+              "course_name": "RETAIL STRATEGY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 422",
+              "course_name": "NEW PRODUCT MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 426",
+              "course_name": "SALES MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 429",
+              "course_name": "LEGAL ASPECTS OF MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 431",
+              "course_name": "BRAND MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 432",
+              "course_name": "DIGITAL MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "PRICING (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "CONSUMER RESEARCH PRACTICUM (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "KELLEY OUTFITTERS (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "INFLUENCER MARKETING (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 470",
+              "course_name": "CONTENT MARKETING PRACTICUM",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ],
+          "note": "Choose one 3-credit course from the list"
+        },
+        {
+          "requirement_name": "Marketing Elective",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-M 295",
+              "course_name": "MARKETING IN OUR WORLD TODAY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 310",
+              "course_name": "BRAND MANAGEMENT PRACTICUM",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 330",
+              "course_name": "CONSULTATIVE SELLING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 339",
+              "course_name": "RETAIL MARKETING ANALYTICS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 344",
+              "course_name": "CREATIVITY AND COMMUNICATION",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 390",
+              "course_name": "MARKETING TOPICS ABROAD",
+              "credits": "1-5",
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 401",
+              "course_name": "INTERNATIONAL MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 407",
+              "course_name": "BUSINESS-TO-BUSINESS MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 415",
+              "course_name": "ADVERTISING AND INTEGRATED MARKETING COMMUNICATIONS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 419",
+              "course_name": "RETAIL STRATEGY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 422",
+              "course_name": "NEW PRODUCT MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 426",
+              "course_name": "SALES MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 429",
+              "course_name": "LEGAL ASPECTS OF MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 431",
+              "course_name": "BRAND MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 432",
+              "course_name": "DIGITAL MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "PRICING (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "CONSUMER RESEARCH PRACTICUM (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "KELLEY OUTFITTERS (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "INFLUENCER MARKETING (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 470",
+              "course_name": "CONTENT MARKETING PRACTICUM",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ],
+          "note": "Choose one 3-credit course from the list"
+        },
+        {
+          "requirement_name": "Strategic Management",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-J 375",
+              "course_name": "STRATEGIC MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-Z 304",
+              "course_name": "MANAGING AND BEHAVING IN ORGANIZATIONS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Placeholder for general credit requirements"
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Placeholder for general credit requirements"
+        }
+      ]
+    },
+    "spring": {
+      "required_completion": "Year 4, Spring",
+      "total_credits": 13,
+      "courses": [
+        {
+          "requirement_name": "Marketing Elective",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-M 295",
+              "course_name": "MARKETING IN OUR WORLD TODAY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 310",
+              "course_name": "BRAND MANAGEMENT PRACTICUM",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 330",
+              "course_name": "CONSULTATIVE SELLING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 339",
+              "course_name": "RETAIL MARKETING ANALYTICS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 344",
+              "course_name": "CREATIVITY AND COMMUNICATION",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 390",
+              "course_name": "MARKETING TOPICS ABROAD",
+              "credits": "1-5",
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 401",
+              "course_name": "INTERNATIONAL MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 407",
+              "course_name": "BUSINESS-TO-BUSINESS MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 415",
+              "course_name": "ADVERTISING AND INTEGRATED MARKETING COMMUNICATIONS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 419",
+              "course_name": "RETAIL STRATEGY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 422",
+              "course_name": "NEW PRODUCT MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 426",
+              "course_name": "SALES MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 429",
+              "course_name": "LEGAL ASPECTS OF MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 431",
+              "course_name": "BRAND MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 432",
+              "course_name": "DIGITAL MARKETING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "PRICING (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "CONSUMER RESEARCH PRACTICUM (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "KELLEY OUTFITTERS (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 455",
+              "course_name": "INFLUENCER MARKETING (TOPICS IN MARKETING)",
+              "credits": "1-5",
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-M 470",
+              "course_name": "CONTENT MARKETING PRACTICUM",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ],
+          "note": "Choose one 3-credit course from the list"
+        },
+        {
+          "requirement_name": "Marketing Strategy",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-M 450",
+              "course_name": "MARKETING STRATEGY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Compass 3",
+          "critical": false,
+          "credits": 1,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-T 375",
+              "course_name": "KELLEY COMPASS 3",
+              "credits": 1,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Fundamentals of Econ for Bus II",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "ECON-B 252",
+              "course_name": "FUNDAMENTALS OF ECONOMICS FOR BUSINESS II",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Placeholder for general credit requirements"
+        }
+      ],
+      "notes": [
+        "Remember to report your job (or graduate school) offer and acceptance to Kelley UCS."
+      ]
+    }
+  }
+}
+

@@ -1,0 +1,247 @@
+{
+  "major": "Supply Chain Management BSB",
+  "school": "Kelley School of Business",
+  "year": 2,
+  "total_credits": 31.5,
+  "terms": {
+    "fall": {
+      "required_completion": "Year 2, Fall",
+      "total_credits": 16.5,
+      "courses": [
+        {
+          "requirement_name": "Business Writing",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-C 204",
+              "course_name": "BUSINESS WRITING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-C 205",
+              "course_name": "BUSINESS WRITING: HONORS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Management Accounting and Analysis",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-A 306",
+              "course_name": "MANAGEMENT ACCOUNTING AND ANALYSIS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-A 309",
+              "course_name": "MANAGEMENT ACCOUNTING & ANALYSIS: HONORS",
+              "credits": 3,
+              "scheduled_terms": ["Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Statistics",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "ECON-E 370",
+              "course_name": "STATISTICAL ANALYSIS FOR BUSINESS AND ECONOMICS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "ECON-S 370",
+              "course_name": "STATISTICAL ANALYSIS FOR BUSINESS AND ECONOMICS: HONORS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025"]
+            },
+            {
+              "course_code": "MATH-M 365",
+              "course_name": "INTRODUCTION TO PROBABILITY AND STATISTICS",
+              "credits": "3-4",
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "STAT-S 301",
+              "course_name": "APPLIED STATISTICAL METHODS FOR BUSINESS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "STAT-S 350",
+              "course_name": "INTRODUCTION TO STATISTICAL INFERENCE",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Global Business Environments",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 1.5,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-D 270",
+              "course_name": "THE GLOBAL BUSINESS ENVIRONMENTS",
+              "credits": 1.5,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Business, Government, & Society",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-G 202",
+              "course_name": "BUSINESS, GOVERNMENT, AND SOCIETY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "IUB GenEd Arts & Humanities",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Many courses available - to be populated later"
+        }
+      ]
+    },
+    "spring": {
+      "required_completion": "Year 2, Spring",
+      "total_credits": 15,
+      "courses": [
+        {
+          "requirement_name": "Compass 2",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 1.5,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-T 275",
+              "course_name": "KELLEY COMPASS 2",
+              "credits": 1.5,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-T 276",
+              "course_name": "COMPASS 2 HONORS",
+              "credits": 1.5,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Technology and Business Analysis",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-K 303",
+              "course_name": "TECHNOLOGY AND BUSINESS ANALYSIS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-K 304",
+              "course_name": "TECHNOLOGY AND BUSINESS ANALYSIS - HONORS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Legal Environment of Business",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-L 201",
+              "course_name": "LEGAL ENVIRONMENT OF BUSINESS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-L 293",
+              "course_name": "HONORS - LEGAL ENVIRONMENT OF BUSINESS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Financial Reporting and Analysis",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-A 304",
+              "course_name": "FINANCIAL REPORTING AND ANALYSIS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-A 307",
+              "course_name": "FINANCIAL REPORTING AND ANALYSIS: HONORS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Global Business Analysis or Global Business Immersion",
+          "critical": true,
+          "minimum_grade": "C",
+          "credits": 1.5,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-D 271",
+              "course_name": "GLOBAL BUSINESS ANALYSIS-INTERNATIONAL BUSINESS MANAGEMENT",
+              "credits": 1.5,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-T 271",
+              "course_name": "GLOBAL BUSINESS ANALYSIS - PROFESSIONAL SKILLS",
+              "credits": 1.5,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-W 271",
+              "course_name": "GLOBAL BUSINESS ANALYSIS - ENTREPRENEURSHIP & CORPORATE INNOVATION",
+              "credits": 1.5,
+              "scheduled_terms": ["None"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "IUB GenEd Natural & Mathematical Sciences",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Many courses available - to be populated later"
+        }
+      ]
+    }
+  }
+}
+

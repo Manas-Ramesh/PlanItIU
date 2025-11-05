@@ -1,0 +1,146 @@
+{
+  "major": "BEPP: Econ Consulting BSB",
+  "school": "Kelley School of Business",
+  "year": 4,
+  "total_credits": 29,
+  "terms": {
+    "fall": {
+      "required_completion": "Year 4, Fall",
+      "total_credits": 14,
+      "courses": [
+        {
+          "requirement_name": "Game Theory for Business Strategy",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-G 303",
+              "course_name": "GAME THEORY FOR BUSINESS STRATEGY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Strategy Beyond Markets",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-G 456",
+              "course_name": "STRATEGY BEYOND MARKETS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Money, Banking, and Capital Markets",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-G 345",
+              "course_name": "MONEY, BANKING AND CAPITAL MARKETS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Compass 3",
+          "critical": false,
+          "credits": 1,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-T 375",
+              "course_name": "KELLEY COMPASS 3",
+              "credits": 1,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "IUB GenEd World Languages or World Cultures",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Many courses available - to be populated later"
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 1,
+          "fulfilling_courses": [],
+          "note": "Additional credits needed for graduation can be used to explore interests, including a minor or co-major/second major"
+        }
+      ]
+    },
+    "spring": {
+      "required_completion": "Year 4, Spring",
+      "total_credits": 15,
+      "courses": [
+        {
+          "requirement_name": "Capstone in Economic Consulting",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-G 400",
+              "course_name": "CAPSTONE IN ECONOMIC CONSULTING",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Predictive Analytics for Business Strategy",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-G 492",
+              "course_name": "PREDICTIVE ANALYTICS FOR BUSINESS STRATEGY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Strategic Management",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-J 375",
+              "course_name": "STRATEGIC MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-Z 304",
+              "course_name": "LEADERSHIP-HONORS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Additional credits needed for graduation can be used to explore interests, including a minor or co-major/second major"
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Additional credits needed for graduation can be used to explore interests, including a minor or co-major/second major"
+        }
+      ]
+    }
+  }
+}
+

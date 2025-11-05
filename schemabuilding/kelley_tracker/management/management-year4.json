@@ -1,0 +1,252 @@
+{
+  "major": "Management BSB",
+  "school": "Kelley School of Business",
+  "year": 4,
+  "total_credits": 28,
+  "terms": {
+    "fall": {
+      "required_completion": "Year 4, Fall",
+      "total_credits": 13,
+      "courses": [
+        {
+          "requirement_name": "Leadership, Teamwork, and Diversity",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-Z 447",
+              "course_name": "LEADERSHIP, TEAMWORK AND DIVERSITY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Management Elective",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-D 311",
+              "course_name": "GLOBAL MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-D 312",
+              "course_name": "BUILDING MANAGERIAL CROSS CULTURAL COMPETENCIES",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-J 355",
+              "course_name": "STRUCTURED PROBLEM SOLVING FOR MANAGERS (TOPICS IN STRATEGIC MANAGEMENT)",
+              "credits": "1-5",
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-L 406",
+              "course_name": "LAW & ETHICS AT WORK",
+              "credits": 3,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-W 212",
+              "course_name": "EXPLORE ENTREPRENEURSHIP",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-W 235",
+              "course_name": "IDEA VALIDATION & BUSINESS MODEL DEVELOPMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-W 326",
+              "course_name": "SOCIAL ENTREPRENEURSHIP",
+              "credits": 3,
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-W 355",
+              "course_name": "WOMEN AND THE ENTREPRENEURIAL CHALLENGE (TOPICS IN ENTREPRENEURSHIP & CORPORATE INNOVATION)",
+              "credits": "1-5",
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-W 430",
+              "course_name": "ORGANIZATIONS AND ORGANIZATIONAL DESIGN",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-Z 404",
+              "course_name": "EFFECTIVE NEGOTIATIONS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ],
+          "note": "Choose one 3-credit course from the list"
+        },
+        {
+          "requirement_name": "Compass 3",
+          "critical": false,
+          "credits": 1,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-T 375",
+              "course_name": "KELLEY COMPASS 3",
+              "credits": 1,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Strategic Management",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-J 375",
+              "course_name": "STRATEGIC MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            },
+            {
+              "course_code": "BUS-Z 304",
+              "course_name": "MANAGING AND BEHAVING IN ORGANIZATIONS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Placeholder for general credit requirements"
+        }
+      ]
+    },
+    "spring": {
+      "required_completion": "Year 4, Spring",
+      "total_credits": 15,
+      "courses": [
+        {
+          "requirement_name": "International Competitive Strategy",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-D 411",
+              "course_name": "INTERNATIONAL COMPETITIVE STRATEGY",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Management Elective",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "BUS-D 311",
+              "course_name": "GLOBAL MANAGEMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-D 312",
+              "course_name": "BUILDING MANAGERIAL CROSS CULTURAL COMPETENCIES",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-J 355",
+              "course_name": "STRUCTURED PROBLEM SOLVING FOR MANAGERS (TOPICS IN STRATEGIC MANAGEMENT)",
+              "credits": "1-5",
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-L 406",
+              "course_name": "LAW & ETHICS AT WORK",
+              "credits": 3,
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-W 212",
+              "course_name": "EXPLORE ENTREPRENEURSHIP",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-W 235",
+              "course_name": "IDEA VALIDATION & BUSINESS MODEL DEVELOPMENT",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-W 326",
+              "course_name": "SOCIAL ENTREPRENEURSHIP",
+              "credits": 3,
+              "scheduled_terms": ["Spring 2026"]
+            },
+            {
+              "course_code": "BUS-W 355",
+              "course_name": "WOMEN AND THE ENTREPRENEURIAL CHALLENGE (TOPICS IN ENTREPRENEURSHIP & CORPORATE INNOVATION)",
+              "credits": "1-5",
+              "scheduled_terms": ["None"]
+            },
+            {
+              "course_code": "BUS-W 430",
+              "course_name": "ORGANIZATIONS AND ORGANIZATIONAL DESIGN",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            },
+            {
+              "course_code": "BUS-Z 404",
+              "course_name": "EFFECTIVE NEGOTIATIONS",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026"]
+            }
+          ],
+          "note": "Choose one 3-credit course from the list"
+        },
+        {
+          "requirement_name": "Fundamentals of Econ for Bus II",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [
+            {
+              "course_code": "ECON-B 252",
+              "course_name": "FUNDAMENTALS OF ECONOMICS FOR BUSINESS II",
+              "credits": 3,
+              "scheduled_terms": ["Fall 2025", "Spring 2026", "Summer 2026"]
+            }
+          ]
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Placeholder for general credit requirements"
+        },
+        {
+          "requirement_name": "Supplemental Credits for Graduation",
+          "critical": false,
+          "credits": 3,
+          "fulfilling_courses": [],
+          "note": "Placeholder for general credit requirements"
+        }
+      ],
+      "notes": [
+        "Remember to report your job (or graduate school) offer and acceptance to Kelley UCS."
+      ]
+    }
+  }
+}
+
