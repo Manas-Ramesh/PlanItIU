@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import CourseProgress from './CourseProgress'
+import Schedule from './Schedule'
+import Calendar from './Calendar'
+import Chatbot from './Chatbot'
+import Swipe from './Swipe'
+import WelcomeModal from './WelcomeModal'
 
 interface UserPreferences {
   id: string
@@ -14,11 +20,14 @@ interface UserPreferences {
   onboarding_completed: boolean
 }
 
+type TabType = 'progress' | 'schedule' | 'calendar' | 'chatbot' | 'swipe'
+
 export default function UserHomePage({ userId }: { userId: string }) {
   const router = useRouter()
   const { signOut } = useAuth()
   const [preferences, setPreferences] = useState<UserPreferences | null>(null)
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<TabType>('swipe') // Start with Swipe tab
 
   useEffect(() => {
     fetchPreferences()
@@ -74,56 +83,149 @@ export default function UserHomePage({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#dc2626' }}>
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-extrabold text-gray-900">Welcome to PlanItIU!</h1>
+      <div className="min-h-screen pb-20 bg-white">
+      {/* Main Content */}
+      {activeTab === 'schedule' && <Schedule userId={userId} />}
+      {activeTab === 'progress' && <CourseProgress userId={userId} />}
+      {activeTab === 'calendar' && <Calendar userId={userId} />}
+      {activeTab === 'chatbot' && <Chatbot userId={userId} />}
+      {activeTab === 'swipe' && <Swipe userId={userId} />}
+
+      {/* Bottom Tab Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex justify-around items-center h-16">
+            {/* Swipe tab */}
             <button
-              onClick={handleSignOut}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              onClick={() => setActiveTab('swipe')}
+              className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'swipe'
+                  ? 'text-red-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
             >
-              Sign Out
+              <svg
+                className="w-6 h-6 mb-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+              <span className="text-xs font-medium">Swipe</span>
             </button>
-          </div>
-
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Information</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Major</label>
-                  <p className="mt-1 text-lg text-gray-900">{preferences.major || 'Not set'}</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Expected Graduation Year</label>
-                  <p className="mt-1 text-lg text-gray-900">{preferences.expected_graduation_year || 'Not set'}</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Courses Taken</label>
-                  {preferences.courses_taken && preferences.courses_taken.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {preferences.courses_taken.map((course, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm"
-                        >
-                          {course}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-600">No courses added yet</p>
-                  )}
-                </div>
-              </div>
-            </div>
+            {/* Schedules tab */}
+            <button
+              onClick={() => setActiveTab('schedule')}
+              className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'schedule'
+                  ? 'text-red-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <svg
+                className="w-6 h-6 mb-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span className="text-xs font-medium">Schedules</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('progress')}
+              className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'progress'
+                  ? 'text-red-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <svg
+                className="w-6 h-6 mb-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+              <span className="text-xs font-medium">Progress</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('calendar')}
+              className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'calendar'
+                  ? 'text-red-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <svg
+                className="w-6 h-6 mb-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span className="text-xs font-medium">Calendar</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('chatbot')}
+              className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'chatbot'
+                  ? 'text-red-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <svg
+                className="w-6 h-6 mb-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
+              <span className="text-xs font-medium">Chat</span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Sign Out Button - Fixed Top Right */}
+      <button
+        onClick={handleSignOut}
+        className="fixed top-4 right-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 shadow-lg z-50"
+      >
+        Sign Out
+      </button>
+
+      {/* Welcome Modal */}
+      <WelcomeModal userId={userId} onClose={() => {}} />
     </div>
   )
 }

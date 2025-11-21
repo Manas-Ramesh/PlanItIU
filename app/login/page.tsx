@@ -3,8 +3,14 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
+import Logo from '@/components/Logo'
+import TermsAndPrivacy from '@/components/TermsAndPrivacy'
 import TypingAnimation from '@/components/TypingAnimation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 function LoginForm() {
   const router = useRouter()
@@ -13,6 +19,7 @@ function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [showTerms, setShowTerms] = useState(false)
 
   useEffect(() => {
     // Check for OAuth error in URL query params
@@ -113,78 +120,114 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#dc2626' }}>
-      <div className="mb-8">
-        <TypingAnimation text="PlanItUni" className="text-center" />
-      </div>
-      <div className="max-w-md w-full space-y-8 bg-white rounded-lg shadow-xl p-8">
-        <div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-800">{error}</div>
+    <div className="min-h-screen bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="w-full max-w-md"
+      >
+        <div className="text-center mb-8">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+            className="mx-auto mb-6 flex justify-center items-center"
+          >
+            <div className="bg-white rounded-full shadow-lg" style={{ width: '120px', height: '120px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Logo size="lg" variant="icon" />
             </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mb-4"
+          >
+            <TypingAnimation text="PlanItIU" className="text-white text-3xl font-bold" />
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="text-red-100 text-lg"
+          >
+            Find Your Perfect Classes
+          </motion.p>
+        </div>
+
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="bg-white rounded-2xl p-6 shadow-xl"
+        >
+          <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+            Sign in with IU Credentials
+          </h2>
+          
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-md bg-red-50 p-4 mb-4"
+            >
+              <div className="text-sm text-red-800">{error}</div>
+            </motion.div>
           )}
-          <div className="rounded-md shadow-sm -space-y-px">
+
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
+              <Label htmlFor="email" className="text-gray-700">Email</Label>
+              <Input
                 id="email"
-                name="email"
                 type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder="Your IU email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="mt-1"
+                required
+                autoComplete="email"
               />
             </div>
+            
             <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
+              <Label htmlFor="password" className="text-gray-700">Password</Label>
+              <Input
                 id="password"
-                name="password"
                 type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder="Your IU password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="mt-1"
+                required
+                autoComplete="current-password"
               />
             </div>
-          </div>
-
-          <div>
-            <button
+            
+            <Button
               type="submit"
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              style={{ 
-                backgroundColor: '#dc2626',
-              }}
-              onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#b91c1c')}
-              onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#dc2626')}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
+              {loading ? (
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mx-auto"
+                />
+              ) : (
+                'Sign In'
+              )}
+            </Button>
+          </form>
 
-          <div className="relative">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">or</span>
+              <span className="px-2 bg-white text-gray-500">or</span>
             </div>
           </div>
 
@@ -192,7 +235,7 @@ function LoginForm() {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full inline-flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-full inline-flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -216,16 +259,46 @@ function LoginForm() {
             </button>
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-4">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link href="/signup" className="font-medium text-gray-900 hover:text-gray-700 underline">
+              <Link href="/signup" className="font-medium text-red-600 hover:text-red-700 underline">
                 Sign up
               </Link>
             </p>
           </div>
-        </form>
-      </div>
+          
+          <p className="text-xs text-gray-500 text-center mt-6">
+            By signing in, you agree to our{' '}
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                setShowTerms(true)
+              }}
+              className="text-red-600 hover:text-red-700 underline"
+            >
+              Terms of Service
+            </button>
+            {' '}and{' '}
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                setShowTerms(true)
+              }}
+              className="text-red-600 hover:text-red-700 underline"
+            >
+              Privacy Policy
+            </button>
+          </p>
+        </motion.div>
+      </motion.div>
+
+      {/* Terms and Privacy Modal */}
+      <AnimatePresence>
+        {showTerms && (
+          <TermsAndPrivacy onClose={() => setShowTerms(false)} />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
