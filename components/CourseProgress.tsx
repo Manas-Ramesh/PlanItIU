@@ -75,7 +75,7 @@ export default function CourseProgress({ userId }: { userId: string }) {
       }
 
       const degreeId = degreeData.id
-      const coursesTaken = (prefsData.courses_taken || []).map(c => c.trim().toUpperCase())
+      const coursesTaken = (prefsData.courses_taken || []).map((c: string) => c.trim().toUpperCase())
 
       // Fetch all requirements for all semesters
       const { data: requirementsData, error: reqError } = await supabase
@@ -93,16 +93,16 @@ export default function CourseProgress({ userId }: { userId: string }) {
 
       // For each requirement, get fulfilling courses
       const requirementsWithFulfillments: Requirement[] = await Promise.all(
-        requirementsData.map(async (req) => {
+        requirementsData.map(async (req: any) => {
           const { data: fulfillmentsData } = await supabase
             .from('requirement_fulfillments')
             .select('course_code')
             .eq('requirement_id', req.id)
 
-          const fulfillingCourses = (fulfillmentsData || []).map(f => f.course_code)
+          const fulfillingCourses = (fulfillmentsData || []).map((f: any) => f.course_code)
           
           // Check if requirement is fulfilled by any taken course
-          const fulfilledBy = fulfillingCourses.filter(courseCode => {
+          const fulfilledBy = fulfillingCourses.filter((courseCode: string) => {
             const normalized = courseCode.trim().toUpperCase()
             return coursesTaken.includes(normalized)
           })
@@ -124,7 +124,7 @@ export default function CourseProgress({ userId }: { userId: string }) {
       // Group by semester
       const semesterMap = new Map<string, SemesterData>()
       
-      requirementsWithFulfillments.forEach(req => {
+      requirementsWithFulfillments.forEach((req: any) => {
         const key = `${req.year}-${req.term}`
         if (!semesterMap.has(key)) {
           semesterMap.set(key, {

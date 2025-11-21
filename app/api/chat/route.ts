@@ -2,14 +2,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createClient } from '@supabase/supabase-js'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy initialization to avoid build-time errors
+const getOpenAI = () => {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('Missing OPENAI_API_KEY environment variable')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// Lazy initialization to avoid build-time errors
+const getSupabase = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 // Calculate current semester based on graduation year
 function calculateCurrentSemester(graduationYear: number): { year: number; term: string; semester: number } {
@@ -58,6 +69,7 @@ export async function POST(request: NextRequest) {
     let userContext = ''
     if (userId) {
       try {
+        const supabase = getSupabase()
         // Get user preferences
         const { data: preferences } = await supabase
           .from('user_preferences')
@@ -87,14 +99,14 @@ export async function POST(request: NextRequest) {
 
           // Get degree requirements for current semester
           if (preferences.major) {
-            const { data: degree } = await supabase
+            const { data: degree } = await getSupabase()
               .from('degrees')
               .select('id, major_name')
               .eq('major_name', preferences.major)
               .single()
 
             if (degree) {
-              const { data: requirements } = await supabase
+              const { data: requirements } = await getSupabase()
                 .from('degree_requirements')
                 .select('requirement_name, credits, critical, year, term')
                 .eq('degree_id', degree.id)
@@ -109,7 +121,7 @@ export async function POST(request: NextRequest) {
               }
 
               // Get all requirements for the degree
-              const { data: allRequirements } = await supabase
+              const { data: allRequirements } = await getSupabase()
                 .from('degree_requirements')
                 .select('requirement_name, credits, critical, year, term')
                 .eq('degree_id', degree.id)
@@ -171,6 +183,7 @@ Keep responses conversational and detailed. Provide complete information without
       })),
     ]
 
+    const openai = getOpenAI()
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: openaiMessages as any,

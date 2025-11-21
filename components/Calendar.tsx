@@ -249,7 +249,7 @@ export default function Calendar({ userId }: { userId: string }) {
         .select('requirement_id')
         .in('course_code', courseCodes)
       
-      const fulfilledReqIds = fulfillments ? Array.from(new Set(fulfillments.map(f => f.requirement_id))) : []
+      const fulfilledReqIds = fulfillments ? Array.from(new Set(fulfillments.map((f: any) => f.requirement_id))) : []
       localStorage.setItem(fulfilledReqsKey, JSON.stringify(fulfilledReqIds))
       
       window.dispatchEvent(new CustomEvent('scheduleUpdated', { detail: { userId } }))
@@ -288,7 +288,7 @@ export default function Calendar({ userId }: { userId: string }) {
           .select('requirement_id')
           .eq('course_code', courseToDelete.course_code)
         
-        const fulfilledReqIds = fulfillments ? fulfillments.map(f => f.requirement_id) : []
+        const fulfilledReqIds = fulfillments ? fulfillments.map((f: any) => f.requirement_id) : []
         
         // Remove from swiped courses
         const swipedKey = `swipedCourses_${userId}`

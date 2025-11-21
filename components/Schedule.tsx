@@ -352,12 +352,12 @@ export default function Schedule({ userId }: { userId: string }) {
       if (error || !data || data.length === 0) return 0
 
       const grades = data
-        .map(d => parseFloat(d.avg_class_grade))
-        .filter(g => !isNaN(g))
+        .map((d: any) => parseFloat(d.avg_class_grade))
+        .filter((g: number) => !isNaN(g))
 
       if (grades.length === 0) return 0
 
-      return grades.reduce((sum, g) => sum + g, 0) / grades.length
+      return grades.reduce((sum: number, g: number) => sum + g, 0) / grades.length
     } catch (error) {
       return 0
     }

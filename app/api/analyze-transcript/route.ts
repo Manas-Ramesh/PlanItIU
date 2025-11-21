@@ -2,13 +2,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createClient } from '@supabase/supabase-js'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy initialization to avoid build-time errors
+const getOpenAI = () => {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('Missing OPENAI_API_KEY environment variable')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// Lazy initialization to avoid build-time errors
+const getSupabase = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,6 +40,7 @@ export async function POST(request: NextRequest) {
     const mimeType = file.type || 'image/jpeg'
 
     // Use OpenAI Vision API to analyze the image
+    const openai = getOpenAI()
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
@@ -154,6 +167,7 @@ Return your response as a JSON object with this structure:
 
     // Check which courses exist in the database (case-insensitive)
     // Fetch all unique course codes from database (one-time query)
+    const supabase = getSupabase()
     const { data: allCourses, error: dbError } = await supabase
       .from('courses')
       .select('course_code')
@@ -200,15 +214,16 @@ Return your response as a JSON object with this structure:
     const addedCodes = new Set<string>()
 
     uniqueCourses.forEach(extractedCode => {
-      const dbCourseCode = courseCodeMap.get(extractedCode)
+      const codeStr = extractedCode as string
+      const dbCourseCode = courseCodeMap.get(codeStr)
       if (dbCourseCode && !addedCodes.has(dbCourseCode)) {
         // Use the actual database format and avoid duplicates
         validCourseCodes.push(dbCourseCode)
         addedCodes.add(dbCourseCode)
-        console.log(`✅ Matched: ${extractedCode} -> ${dbCourseCode}`)
+        console.log(`✅ Matched: ${codeStr} -> ${dbCourseCode}`)
       } else if (!dbCourseCode) {
-        invalidCourses.push(extractedCode)
-        console.log(`❌ No match found for: ${extractedCode}`)
+        invalidCourses.push(codeStr)
+        console.log(`❌ No match found for: ${codeStr}`)
       }
     })
 

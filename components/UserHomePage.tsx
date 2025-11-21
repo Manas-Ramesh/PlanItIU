@@ -119,8 +119,8 @@ export default function UserHomePage({ userId }: { userId: string }) {
               </svg>
               <span className="text-xs font-medium">Swipe</span>
             </button>
-            {/* Schedules tab */}
-            <button
+            {/* Schedules tab - Hidden for now */}
+            {/* <button
               onClick={() => setActiveTab('schedule')}
               className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
                 activeTab === 'schedule'
@@ -142,7 +142,7 @@ export default function UserHomePage({ userId }: { userId: string }) {
                 />
               </svg>
               <span className="text-xs font-medium">Schedules</span>
-            </button>
+            </button> */}
             <button
               onClick={() => setActiveTab('progress')}
               className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${

@@ -2,13 +2,24 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
+// Lazy initialization to avoid build-time errors
+const getAnthropic = () => {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error('Missing ANTHROPIC_API_KEY environment variable')
+  }
+  return new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  })
+}
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const getSupabase = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 // Tool definitions for Claude (Anthropic format)
 const tools = [
@@ -358,6 +369,7 @@ export async function POST(request: NextRequest) {
     let userContext = ''
     if (userId) {
       try {
+        const supabase = getSupabase()
         const { data: preferences } = await supabase
           .from('user_preferences')
           .select('major, expected_graduation_year, courses_taken')
@@ -438,6 +450,7 @@ Current schedule context: ${currentSchedule ? JSON.stringify(currentSchedule, nu
       lastUserMessage.includes('build')
     )
     
+    const anthropic = getAnthropic()
     const completion = await anthropic.messages.create({
       model: 'claude-4-sonnet-20250514', // Claude Sonnet 4
       max_tokens: 4096,
@@ -466,6 +479,7 @@ Current schedule context: ${currentSchedule ? JSON.stringify(currentSchedule, nu
             console.log('🔧 generate_schedule tool called with preferences:', functionArgs.preferences)
             
             // Get user preferences
+            const supabase = getSupabase()
             const { data: userPrefs } = await supabase
               .from('user_preferences')
               .select('major, expected_graduation_year, courses_taken')
@@ -650,6 +664,7 @@ Current schedule context: ${currentSchedule ? JSON.stringify(currentSchedule, nu
         case 'query_courses':
           try {
             // Get user preferences for context
+            const supabase = getSupabase()
             const { data: userPrefs } = await supabase
               .from('user_preferences')
               .select('major, expected_graduation_year, courses_taken')
@@ -665,14 +680,14 @@ Current schedule context: ${currentSchedule ? JSON.stringify(currentSchedule, nu
 
             // Filter by requirement if provided
             if (functionArgs.requirementName) {
-              const { data: degree } = await supabase
+              const { data: degree } = await getSupabase()
                 .from('degrees')
                 .select('id')
                 .eq('major_name', userPrefs?.major)
                 .single()
 
               if (degree) {
-                const { data: req } = await supabase
+                const { data: req } = await getSupabase()
                   .from('degree_requirements')
                   .select('id')
                   .eq('degree_id', degree.id)
@@ -680,7 +695,7 @@ Current schedule context: ${currentSchedule ? JSON.stringify(currentSchedule, nu
                   .single()
 
                 if (req) {
-                  const { data: fulfillments } = await supabase
+                  const { data: fulfillments } = await getSupabase()
                     .from('requirement_fulfillments')
                     .select('course_code')
                     .eq('requirement_id', req.id)
@@ -785,7 +800,7 @@ Current schedule context: ${currentSchedule ? JSON.stringify(currentSchedule, nu
             // Get GPAs and filter by minGPA
             const coursesWithGPA = await Promise.all(
               filteredCourses.map(async (course: any) => {
-                const { data: grades } = await supabase
+                const { data: grades } = await getSupabase()
                   .from('grade_distributions')
                   .select('avg_class_grade')
                   .eq('course_code', course.course_code)
@@ -961,6 +976,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
 
         case 'get_degree_requirements':
           try {
+            const supabase = getSupabase()
             const { data: userPrefs } = await supabase
               .from('user_preferences')
               .select('major, expected_graduation_year')
@@ -993,7 +1009,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
               break
             }
 
-            const { data: requirements } = await supabase
+            const { data: requirements } = await getSupabase()
               .from('degree_requirements')
               .select('*')
               .eq('degree_id', degree.id)
@@ -1014,7 +1030,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
 
         case 'check_prerequisites':
           try {
-            const { data: course } = await supabase
+            const { data: course } = await getSupabase()
               .from('courses')
               .select('enrollment_requirements, course_code, course_name')
               .eq('course_code', functionArgs.courseCode)
@@ -1026,6 +1042,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
               break
             }
 
+            const supabase = getSupabase()
             const { data: userPrefs } = await supabase
               .from('user_preferences')
               .select('courses_taken')
@@ -1070,7 +1087,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
 
         case 'get_course_gpa':
           try {
-            const { data: grades } = await supabase
+            const { data: grades } = await getSupabase()
               .from('grade_distributions')
               .select('avg_class_grade')
               .eq('course_code', functionArgs.courseCode)
@@ -1144,6 +1161,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
             console.log(`🔍 Looking for course: ${courseCodeStr} section ${classNumberStr}`)
             
             // Get the course details - try exact match first
+            const supabase = getSupabase()
             let { data: course, error: courseError } = await supabase
               .from('courses')
               .select('*')
@@ -1174,7 +1192,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
             if (courseError || !course) {
               console.log(`❌ Course not found: ${courseCodeStr} section ${classNumberStr}. Error:`, courseError)
               // Try to find any section of this course to help debug
-              const { data: anySection } = await supabase
+              const { data: anySection } = await getSupabase()
                 .from('courses')
                 .select('class_number, meeting_time, gpa')
                 .eq('course_code', courseCodeStr)
@@ -1337,7 +1355,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
             // Get full course details for each course in builder
             const finalizedCourses = await Promise.all(
               currentBuilder.map(async (course: any) => {
-                const { data: fullCourse } = await supabase
+                const { data: fullCourse } = await getSupabase()
                   .from('courses')
                   .select('*')
                   .eq('course_code', course.course_code)
@@ -1381,6 +1399,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
           
           // Automatically get requirements to help agent get started
           try {
+            const supabase = getSupabase()
             const { data: userPrefs } = await supabase
               .from('user_preferences')
               .select('major, expected_graduation_year')
@@ -1401,7 +1420,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
                 .single()
 
               if (degree) {
-                const { data: requirements } = await supabase
+                const { data: requirements } = await getSupabase()
                   .from('degree_requirements')
                   .select('*')
                   .eq('degree_id', degree.id)
@@ -1759,7 +1778,8 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
           switch (nextFunctionName) {
             case 'query_courses':
               // Simplified query_courses - reuse full logic would be better
-              const { data: userPrefs } = await supabase
+              const supabase = getSupabase()
+            const { data: userPrefs } = await supabase
                 .from('user_preferences')
                 .select('major, expected_graduation_year, courses_taken')
                 .eq('user_id', userId)
@@ -1837,14 +1857,14 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
               break
               
             case 'check_prerequisites':
-              const { data: course } = await supabase
+              const { data: course } = await getSupabase()
                 .from('courses')
                 .select('enrollment_requirements, course_code')
                 .eq('course_code', nextFunctionArgs.courseCode)
                 .limit(1)
                 .single()
               
-              const { data: userPrefs2 } = await supabase
+              const { data: userPrefs2 } = await getSupabase()
                 .from('user_preferences')
                 .select('courses_taken')
                 .eq('user_id', userId)
@@ -1875,7 +1895,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
             case 'add_course_to_schedule':
               // Reuse the full add_course_to_schedule logic from the switch statement above
               // For now, simplified version - should extract into function
-              const { data: courseToAdd } = await supabase
+              const { data: courseToAdd } = await getSupabase()
                 .from('courses')
                 .select('*')
                 .eq('course_code', nextFunctionArgs.courseCode)
@@ -1941,7 +1961,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
                 break
               }
               
-              const { data: grades } = await supabase
+              const { data: grades } = await getSupabase()
                 .from('grade_distributions')
                 .select('avg_class_grade')
                 .eq('course_code', nextFunctionArgs.courseCode)
@@ -1977,7 +1997,7 @@ IMPORTANT: Use the EXACT courseCode and classNumber from the JSON map above. Do 
               const builder = scheduleBuilders.get(userId) || []
               const finalized = await Promise.all(
                 builder.map(async (c: any) => {
-                  const { data: fc } = await supabase
+                  const { data: fc } = await getSupabase()
                     .from('courses')
                     .select('*')
                     .eq('course_code', c.course_code)

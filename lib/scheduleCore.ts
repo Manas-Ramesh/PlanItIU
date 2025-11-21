@@ -183,15 +183,15 @@ export async function getCourseGPA(courseCode: string): Promise<number> {
     }
 
     const grades = data
-      .map(d => parseFloat(d.avg_class_grade))
-      .filter(g => !isNaN(g))
+      .map((d: any) => parseFloat(d.avg_class_grade))
+      .filter((g: number) => !isNaN(g))
 
     if (grades.length === 0) {
       gpaCache.set(courseCode, 0)
       return 0
     }
 
-    const avgGPA = grades.reduce((sum, g) => sum + g, 0) / grades.length
+    const avgGPA = grades.reduce((sum: number, g: number) => sum + g, 0) / grades.length
     gpaCache.set(courseCode, avgGPA)
     return avgGPA
   } catch (error) {
@@ -308,10 +308,10 @@ export async function collectRequirementOptions(userPrefs: any): Promise<Require
 
     if (!fulfillments || fulfillments.length === 0) continue
 
-    const fulfillingCourseCodes = fulfillments.map(f => f.course_code)
+    const fulfillingCourseCodes = fulfillments.map((f: any) => f.course_code)
     
     // Check if already fulfilled
-    const requirementFulfilled = fulfillingCourseCodes.some(code => {
+    const requirementFulfilled = fulfillingCourseCodes.some((code: string) => {
       const normalized = code.trim().toUpperCase()
       return coursesTaken.includes(normalized)
     })
@@ -319,7 +319,7 @@ export async function collectRequirementOptions(userPrefs: any): Promise<Require
     if (requirementFulfilled) continue
 
     // Filter out taken courses
-    const availableCourseCodes = fulfillingCourseCodes.filter(code => {
+    const availableCourseCodes = fulfillingCourseCodes.filter((code: string) => {
       const normalized = code.trim().toUpperCase()
       return !coursesTaken.includes(normalized)
     })
@@ -336,7 +336,7 @@ export async function collectRequirementOptions(userPrefs: any): Promise<Require
 
     // Filter valid sections
     // Allow "Open" and "Closed" status (Closed might have waitlist spots)
-    const validSections = allSections.filter(c => {
+    const validSections = allSections.filter((c: any) => {
       // Only exclude if status is explicitly "Cancelled" or "Full" - allow "Open" and "Closed"
       if (c.status && (c.status === 'Cancelled' || c.status === 'Full')) return false
       if (!c.meeting_time || c.meeting_time === '') return false
@@ -377,7 +377,7 @@ export async function collectRequirementOptions(userPrefs: any): Promise<Require
       const gpa = await getCourseGPA(courseCode)
       const courseName = sections[0].course_name
 
-      const sectionsWithTimeSlots = sections.map(section => {
+      const sectionsWithTimeSlots = sections.map((section: any) => {
         const timeSlots = parseMeetingTime(section.meeting_time)
         return {
           class_number: section.class_number,
@@ -389,7 +389,7 @@ export async function collectRequirementOptions(userPrefs: any): Promise<Require
           credits: section.credits,
           timeSlots: timeSlots
         }
-      }).filter(s => s.timeSlots.length > 0)
+      }).filter((s: any) => s.timeSlots.length > 0)
 
       if (sectionsWithTimeSlots.length > 0) {
         requirementOptions.push({

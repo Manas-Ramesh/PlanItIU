@@ -164,7 +164,7 @@ export default function Swipe({ userId }: { userId: string }) {
           .eq('requirement_id', req.id)
 
         if (fulfillments) {
-          fulfillments.forEach(f => {
+          fulfillments.forEach((f: any) => {
             if (!requirementMap.has(f.course_code)) {
               requirementMap.set(f.course_code, [])
             }
@@ -216,14 +216,14 @@ export default function Swipe({ userId }: { userId: string }) {
 
         if (fulfillments) {
           // Check if any fulfilling course is already taken or selected
-          const isFulfilled = fulfillments.some(f => {
+          const isFulfilled = fulfillments.some((f: any) => {
             const normalized = f.course_code.trim().toUpperCase()
             return coursesTakenSet.has(normalized)
           })
 
           // Only add courses if requirement is NOT fulfilled
           if (!isFulfilled) {
-            fulfillments.forEach(f => {
+            fulfillments.forEach((f: any) => {
               const normalized = f.course_code.trim().toUpperCase()
               // Only add if not already taken or selected
               if (!coursesTakenSet.has(normalized)) {
@@ -243,7 +243,7 @@ export default function Swipe({ userId }: { userId: string }) {
       
       if (allDegreeReqs) {
         // Find GenEd requirements (typically contain "GenEd" or "gened" in name)
-        const genedReqs = allDegreeReqs.filter(req => {
+        const genedReqs = allDegreeReqs.filter((req: any) => {
           const reqName = (req.requirement_name || '').toLowerCase()
           return reqName.includes('gened') || reqName.includes('gen ed') || 
                  reqName.includes('arts & humanities') || 
@@ -265,7 +265,7 @@ export default function Swipe({ userId }: { userId: string }) {
               .eq('requirement_id', req.id)
 
             if (fulfillments) {
-              fulfillments.forEach(f => {
+              fulfillments.forEach((f: any) => {
                 const normalized = f.course_code.trim().toUpperCase()
                 // Only add if not already taken or selected
                 if (!coursesTakenSet.has(normalized)) {
@@ -277,7 +277,7 @@ export default function Swipe({ userId }: { userId: string }) {
         }
 
         // Also add elective courses (requirements with "elective" in name)
-        const electiveReqs = allDegreeReqs.filter(req => {
+        const electiveReqs = allDegreeReqs.filter((req: any) => {
           const reqName = (req.requirement_name || '').toLowerCase()
           return reqName.includes('elective')
         })
@@ -292,7 +292,7 @@ export default function Swipe({ userId }: { userId: string }) {
               .eq('requirement_id', req.id)
 
             if (fulfillments) {
-              fulfillments.forEach(f => {
+              fulfillments.forEach((f: any) => {
                 const normalized = f.course_code.trim().toUpperCase()
                 if (!coursesTakenSet.has(normalized)) {
                   allFulfillingCourseCodes.add(f.course_code)
@@ -339,7 +339,7 @@ export default function Swipe({ userId }: { userId: string }) {
       }
 
       // Filter out courses already taken and honors courses
-      const availableSections = allSections.filter(c => {
+      const availableSections = allSections.filter((c: any) => {
         const normalized = c.course_code.trim().toUpperCase()
         // Skip if already taken
         if (coursesTakenSet.has(normalized)) return false
@@ -352,7 +352,7 @@ export default function Swipe({ userId }: { userId: string }) {
       // Get GPAs for all courses (cache by course_code to avoid duplicate queries)
       const gpaCache = new Map<string, number>()
       const coursesWithGPA = await Promise.all(
-        availableSections.map(async (section) => {
+        availableSections.map(async (section: any) => {
           let gpa = 0
           
           if (gpaCache.has(section.course_code)) {
@@ -504,8 +504,9 @@ export default function Swipe({ userId }: { userId: string }) {
     loadInitialData()
     
     // Listen for course deletion events
-    const handleCourseDeleted = async (event: CustomEvent) => {
-      if (event.detail.userId === userId) {
+    const handleCourseDeleted = async (event: Event) => {
+      const customEvent = event as CustomEvent
+      if (customEvent.detail?.userId === userId) {
         // Reload data to refresh the course list
         await loadInitialData()
         // Reset to first course
@@ -513,10 +514,10 @@ export default function Swipe({ userId }: { userId: string }) {
       }
     }
     
-    window.addEventListener('courseDeleted', handleCourseDeleted as EventListener)
+    window.addEventListener('courseDeleted', handleCourseDeleted)
     
     return () => {
-      window.removeEventListener('courseDeleted', handleCourseDeleted as EventListener)
+      window.removeEventListener('courseDeleted', handleCourseDeleted)
     }
   }, [userId])
 
@@ -531,7 +532,7 @@ export default function Swipe({ userId }: { userId: string }) {
         .in('course_code', courseCodes)
       
       if (fulfillments) {
-        return Array.from(new Set(fulfillments.map(f => f.requirement_id)))
+        return Array.from(new Set(fulfillments.map((f: any) => f.requirement_id)))
       }
     } catch (error) {
       console.error('Error getting fulfilled requirements:', error)
@@ -587,7 +588,7 @@ export default function Swipe({ userId }: { userId: string }) {
 
       if (sections && sections.length > 0) {
         // Parse enrollment info from status if available
-        const sectionsWithEnrollment: CourseSection[] = sections.map(s => ({
+        const sectionsWithEnrollment: CourseSection[] = sections.map((s: any) => ({
           class_number: s.class_number,
           meeting_time: s.meeting_time || '',
           instructor: s.instructor,
@@ -754,7 +755,7 @@ export default function Swipe({ userId }: { userId: string }) {
         .select('requirement_id')
         .eq('course_code', courseToDelete.course_code)
       
-      const fulfilledReqIds = fulfillments ? fulfillments.map(f => f.requirement_id) : []
+      const fulfilledReqIds = fulfillments ? fulfillments.map((f: any) => f.requirement_id) : []
       
       // Remove from swiped courses
       const swipedKey = `swipedCourses_${userId}`
@@ -794,7 +795,7 @@ export default function Swipe({ userId }: { userId: string }) {
       .select('requirement_id')
       .eq('course_code', scheduledCourse.course_code)
 
-    const newFulfilledReqIds = fulfillments ? fulfillments.map(f => f.requirement_id) : []
+    const newFulfilledReqIds = fulfillments ? fulfillments.map((f: any) => f.requirement_id) : []
     
     // Add to selected courses
     const updatedSchedule = [...selectedCourses, scheduledCourse]
@@ -813,7 +814,7 @@ export default function Swipe({ userId }: { userId: string }) {
     
     // Update fulfilled requirements
     const newFulfilledReqs = new Set(fulfilledRequirements)
-    newFulfilledReqIds.forEach(reqId => newFulfilledReqs.add(reqId))
+    newFulfilledReqIds.forEach((reqId: any) => newFulfilledReqs.add(reqId))
     setFulfilledRequirements(newFulfilledReqs)
     
     // Save fulfilled requirements to localStorage
@@ -832,7 +833,7 @@ export default function Swipe({ userId }: { userId: string }) {
         .neq('course_code', scheduledCourse.course_code)
       
       if (otherFulfillments) {
-        otherFulfillments.forEach(f => {
+        otherFulfillments.forEach((f: any) => {
           coursesToRemove.add(f.course_code)
         })
       }
