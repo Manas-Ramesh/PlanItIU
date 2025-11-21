@@ -9,6 +9,8 @@ import Schedule from './Schedule'
 import Calendar from './Calendar'
 import Chatbot from './Chatbot'
 import Swipe from './Swipe'
+import Bank from './Bank'
+import GPACalculator from './GPACalculator'
 import WelcomeModal from './WelcomeModal'
 
 interface UserPreferences {
@@ -20,7 +22,7 @@ interface UserPreferences {
   onboarding_completed: boolean
 }
 
-type TabType = 'progress' | 'schedule' | 'calendar' | 'chatbot' | 'swipe'
+type TabType = 'progress' | 'schedule' | 'calendar' | 'chatbot' | 'swipe' | 'bank' | 'gpa'
 
 export default function UserHomePage({ userId }: { userId: string }) {
   const router = useRouter()
@@ -90,6 +92,8 @@ export default function UserHomePage({ userId }: { userId: string }) {
       {activeTab === 'calendar' && <Calendar userId={userId} />}
       {activeTab === 'chatbot' && <Chatbot userId={userId} />}
       {activeTab === 'swipe' && <Swipe userId={userId} />}
+      {activeTab === 'bank' && <Bank userId={userId} />}
+      {activeTab === 'gpa' && <GPACalculator userId={userId} />}
 
       {/* Bottom Tab Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
@@ -211,6 +215,52 @@ export default function UserHomePage({ userId }: { userId: string }) {
                 />
               </svg>
               <span className="text-xs font-medium">Chat</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('bank')}
+              className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'bank'
+                  ? 'text-red-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <svg
+                className="w-6 h-6 mb-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
+              <span className="text-xs font-medium">Bank</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('gpa')}
+              className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'gpa'
+                  ? 'text-red-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <svg
+                className="w-6 h-6 mb-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                />
+              </svg>
+              <span className="text-xs font-medium">GPA</span>
             </button>
           </div>
         </div>

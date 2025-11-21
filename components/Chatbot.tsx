@@ -186,8 +186,29 @@ export default function Chatbot({ userId }: { userId: string }) {
       <div className="max-w-4xl mx-auto w-full flex flex-col h-[calc(100vh-5rem)]">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 p-4">
-          <h1 className="text-2xl font-bold text-gray-900">Chat Assistant</h1>
-          <p className="text-sm text-gray-600">Ask me anything about your courses and schedule</p>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg
+                className="w-7 h-7 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                {/* Robot head with antenna */}
+                <rect x="8" y="10" width="8" height="8" rx="1" stroke="white" fill="none" />
+                {/* Square eyes */}
+                <rect x="9.5" y="12" width="2" height="2" fill="white" />
+                <rect x="12.5" y="12" width="2" height="2" fill="white" />
+                {/* Antenna */}
+                <path d="M11 10 L11 8 M11 8 L10 7 M11 8 L12 7" stroke="white" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Hoosier AI</h1>
+              <p className="text-sm text-gray-600">Your AI academic advisor.</p>
+            </div>
+          </div>
         </div>
 
         {/* Messages */}

@@ -23,9 +23,9 @@ export default function Logo({ size = 'md', variant = 'icon', className = '' }: 
 
   if (variant === 'icon') {
     return (
-      <div className={`${sizeClasses[size]} ${className} flex items-center justify-center`}>
+      <div className={`${sizeClasses[size]} ${className} flex items-center justify-center bg-black rounded-lg p-2`}>
         <img
-          src="/planitlogo.jpeg"
+          src="/planitlogo-removebg-preview.png"
           alt="PlanItIU Logo"
           className="w-full h-full object-contain"
           style={{ display: 'block' }}
@@ -36,17 +36,14 @@ export default function Logo({ size = 'md', variant = 'icon', className = '' }: 
 
   return (
     <div className={`flex flex-col items-center gap-3 ${className}`}>
-      <div className={sizeClasses[size]}>
+      <div className={`${sizeClasses[size]} bg-black rounded-lg p-2`}>
         <img
-          src="/planitlogo.jpeg"
+          src="/planitlogo-removebg-preview.png"
           alt="PlanItIU Logo"
           className="w-full h-full object-contain"
           style={{ display: 'block' }}
         />
       </div>
-      <span className={`font-bold text-gray-800 ${textSizes[size]}`} style={{ color: '#1e293b' }}>
-        PlanItIU
-      </span>
     </div>
   )
 }
