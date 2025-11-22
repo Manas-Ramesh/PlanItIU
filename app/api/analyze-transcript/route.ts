@@ -20,10 +20,20 @@ const getOpenAI = () => {
 // Lazy initialization to avoid build-time errors
 const getSupabase = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  // CRITICAL: Use service role key to bypass RLS, otherwise we only get a subset of rows
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error('Missing Supabase environment variables')
   }
+  
+  // Log which key is being used (for debugging RLS issues)
+  const usingServiceRole = !!process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!usingServiceRole) {
+    console.warn('⚠️ WARNING: Using anon key instead of service role key. RLS may restrict results!')
+    console.warn('   Set SUPABASE_SERVICE_ROLE_KEY in Vercel to bypass RLS and get all courses.')
+  }
+  
   return createClient(supabaseUrl, supabaseServiceKey)
 }
 
@@ -281,8 +291,18 @@ Return your response as a JSON object with this structure:
       error: countError,
       hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
       hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'set' : 'missing'
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'set' : 'missing',
+      usingServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      warning: !process.env.SUPABASE_SERVICE_ROLE_KEY ? '⚠️ Using anon key - RLS may restrict results!' : '✅ Using service role key - RLS bypassed'
     })
+    
+    // If count is much lower than expected, warn about RLS
+    if (totalCount && totalCount < 1000) {
+      console.warn(`⚠️ WARNING: Only ${totalCount} courses found. Expected ~12,302.`)
+      console.warn('   This suggests RLS is restricting access. Check:')
+      console.warn('   1. SUPABASE_SERVICE_ROLE_KEY is set in Vercel production')
+      console.warn('   2. RLS policies on courses table allow reading all rows')
+    }
     
     // First, try direct case-insensitive matching for the extracted courses
     // This is more efficient than loading all courses
@@ -303,9 +323,24 @@ Return your response as a JSON object with this structure:
     
     if (fetchError) {
       console.error('❌ Error fetching courses:', fetchError)
+      console.error('   Error details:', {
+        message: fetchError.message,
+        details: fetchError.details,
+        hint: fetchError.hint,
+        code: fetchError.code
+      })
       // Fallback to individual queries
     } else {
       console.log(`📚 Loaded ${allCourses?.length || 0} course rows from database`)
+      
+      // CRITICAL: Warn if we're getting too few rows (RLS issue)
+      if (allCourses && allCourses.length < 1000) {
+        console.error('❌ RLS ISSUE DETECTED: Only loaded', allCourses.length, 'rows instead of expected ~12,302')
+        console.error('   This means RLS is restricting access. Solutions:')
+        console.error('   1. Set SUPABASE_SERVICE_ROLE_KEY in Vercel production environment variables')
+        console.error('   2. Or add RLS policy: CREATE POLICY "Allow read all courses" ON courses FOR SELECT USING (true);')
+        console.error('   Current key type:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Service Role ✅' : 'Anon Key ⚠️')
+      }
       
       // Get unique course codes (deduplicate)
       const uniqueDbCourses = Array.from(new Set(allCourses?.map(c => c.course_code).filter(Boolean) || []))
