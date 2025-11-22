@@ -79,12 +79,12 @@ export default function GPACalculator({ userId }: { userId: string }) {
 
         const coursesMap = new Map<string, string>()
         if (coursesData) {
-          coursesData.forEach(c => {
+          coursesData.forEach((c: { course_code: string; course_name: string }) => {
             coursesMap.set(c.course_code, c.course_name)
           })
         }
 
-        const coursesWithGradesData: CourseWithGrade[] = coursesTaken.map(code => ({
+        const coursesWithGradesData: CourseWithGrade[] = coursesTaken.map((code: string) => ({
           course_code: code,
           course_name: coursesMap.get(code) || code,
           grade: gradesMap[code] || null

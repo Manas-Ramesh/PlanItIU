@@ -278,7 +278,7 @@ Return your response as a JSON object with this structure:
       })
       .filter((code: string) => code.length > 0)
     
-    const uniqueCourses = Array.from(new Set(normalizedCourses))
+    const uniqueCourses: string[] = Array.from(new Set(normalizedCourses)) as string[]
     console.log('🔍 Normalized unique courses:', uniqueCourses)
 
     if (uniqueCourses.length === 0) {
@@ -388,12 +388,13 @@ Return your response as a JSON object with this structure:
       // Debug: Check if specific courses exist in the map
       console.log('🔍 Debug: Checking lookup map for extracted courses...')
       for (const extractedCode of uniqueCourses.slice(0, 3)) {
-        const normalized = extractedCode.trim().replace(/\s+/g, ' ').toUpperCase()
-        const noSpaces = extractedCode.trim().replace(/\s+/g, '').toUpperCase()
+        const codeStr = String(extractedCode)
+        const normalized = codeStr.trim().replace(/\s+/g, ' ').toUpperCase()
+        const noSpaces = codeStr.trim().replace(/\s+/g, '').toUpperCase()
         const foundInMap = courseCodeMap.has(normalized) || courseCodeMap.has(noSpaces)
         const mapValue = courseCodeMap.get(normalized) || courseCodeMap.get(noSpaces)
         
-        console.log(`   "${extractedCode}":`, {
+        console.log(`   "${codeStr}":`, {
           normalized: normalized,
           noSpaces: noSpaces,
           inMap: foundInMap,
@@ -406,10 +407,10 @@ Return your response as a JSON object with this structure:
           const { data: directQuery, error: directErr } = await supabase
             .from('courses')
             .select('course_code')
-            .ilike('course_code', `%${extractedCode.replace(/\s+/g, '%')}%`)
+            .ilike('course_code', `%${codeStr.replace(/\s+/g, '%')}%`)
             .limit(5)
           
-          console.log(`   Direct DB query for "${extractedCode}":`, {
+          console.log(`   Direct DB query for "${codeStr}":`, {
             found: directQuery?.length || 0,
             results: directQuery?.map(c => c.course_code) || [],
             error: directErr?.message || null

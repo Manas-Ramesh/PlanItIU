@@ -172,7 +172,11 @@ export async function GET(request: Request) {
       }
       
       // Success - redirect to dashboard
-      return NextResponse.redirect(new URL(next, requestUrl.origin))
+      const redirectUrl = new URL(next, requestUrl.origin)
+      console.log('✅ Authentication successful - redirecting to:', redirectUrl.toString())
+      console.log('   Using origin:', requestUrl.origin)
+      console.log('   Next path:', next)
+      return NextResponse.redirect(redirectUrl)
     }
     
     // No session after exchange (unlikely but possible)

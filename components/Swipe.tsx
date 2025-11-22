@@ -532,7 +532,7 @@ export default function Swipe({ userId }: { userId: string }) {
         
         // Priority 8: Earlier semesters first (catch up on missed requirements)
         if (a.earliestYear !== b.earliestYear) {
-          return a.earliestYear - b.earliestYear
+          return (a.earliestYear ?? 999) - (b.earliestYear ?? 999)
         }
         
         // Priority 9: GPA (highest first)
@@ -1171,12 +1171,12 @@ export default function Swipe({ userId }: { userId: string }) {
   }
 
   // Check time conflicts
-  const checkTimeConflicts = (timeSlot: TimeSlot, existingCourses: ScheduledCourse[]): ScheduledCourse[] => {
+  const checkTimeConflicts = (meetingTime: string | null, existingCourses: ScheduledCourse[]): ScheduledCourse[] => {
     const conflicts: ScheduledCourse[] = []
-    const newTimeSlots = parseMeetingTime(timeSlot.time)
+    const newTimeSlots = parseMeetingTime(meetingTime)
     
     for (const course of existingCourses) {
-      if (hasTimeSlotsConflict(newTimeSlots, course.timeSlots || [])) {
+      if (hasTimeSlotsConflict(newTimeSlots, [course])) {
         conflicts.push(course)
       }
     }
@@ -1685,7 +1685,7 @@ export default function Swipe({ userId }: { userId: string }) {
                 {currentCourseSections.map((section, index) => {
                   const sectionStatus = getEnrollmentStatus(section.status)
                   const SectionStatusIcon = sectionStatus.icon
-                  const sectionTimeSlot: TimeSlot = {
+                  const sectionTimeSlot = {
                     id: section.class_number,
                     time: section.meeting_time,
                     location: section.building && section.room ? `${section.building} ${section.room}` : 'TBA',
@@ -1695,7 +1695,7 @@ export default function Swipe({ userId }: { userId: string }) {
                     waitlist: section.waitlist || 0,
                     status: section.status?.toLowerCase() === 'open' ? 'open' : section.status?.toLowerCase() === 'waitlist' ? 'waitlist' : 'full'
                   }
-                  const conflicts = checkTimeConflicts(sectionTimeSlot, selectedCourses)
+                  const conflicts = checkTimeConflicts(section.meeting_time, selectedCourses)
 
                   return (
                     <motion.div
