@@ -44,8 +44,15 @@ Do NOT add your Vercel URL to Google Cloud Console. Supabase handles the redirec
 
 ## Environment Variables
 
-Make sure these are set in Vercel:
+Make sure these are set in Vercel (Settings → Environment Variables):
+
+### Required for Authentication:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY` (if needed for server-side operations)
+
+### Required for AI Features (Transcript Analysis):
+- `OPENAI_API_KEY` - **CRITICAL**: Required for the transcript upload feature to work. Get your API key from https://platform.openai.com/api-keys
+
+**Note**: If transcript analysis works on localhost but not in production, check that `OPENAI_API_KEY` is set in Vercel. The API will fail silently or return errors if this key is missing.
 

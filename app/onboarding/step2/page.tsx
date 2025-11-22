@@ -171,14 +171,40 @@ export default function OnboardingStep2() {
       const formData = new FormData()
       formData.append('image', file)
 
+      console.log('📤 Uploading image to analyze-transcript API...', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      })
+
       const response = await fetch('/api/analyze-transcript', {
         method: 'POST',
         body: formData,
       })
 
+      console.log('📥 Received response:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      })
+
       const data = await response.json()
+      
+      console.log('📦 Response data:', {
+        success: data.success,
+        coursesCount: data.courses?.length || 0,
+        invalidCoursesCount: data.invalidCourses?.length || 0,
+        error: data.error,
+        message: data.message,
+        debug: data.debug
+      })
 
       if (!response.ok) {
+        console.error('❌ API returned error status:', {
+          status: response.status,
+          error: data.error,
+          message: data.message
+        })
         throw new Error(data.message || data.error || 'Failed to analyze image')
       }
 

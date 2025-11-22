@@ -24,6 +24,19 @@ const getSupabase = () => {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check for OpenAI API key first
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('❌ OPENAI_API_KEY is missing in environment variables')
+      return NextResponse.json(
+        { 
+          error: 'AI service is not configured',
+          message: 'OpenAI API key is missing. Please configure OPENAI_API_KEY in your environment variables.',
+          success: false
+        },
+        { status: 500 }
+      )
+    }
+
     const formData = await request.formData()
     const file = formData.get('image') as File
 
@@ -38,10 +51,21 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const base64 = Buffer.from(bytes).toString('base64')
     const mimeType = file.type || 'image/jpeg'
+    
+    console.log('📸 Starting transcript analysis:', {
+      fileName: file.name,
+      fileSize: file.size,
+      mimeType,
+      hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+      timestamp: new Date().toISOString()
+    })
 
     // Use OpenAI Vision API to analyze the image
     const openai = getOpenAI()
-    const response = await openai.chat.completions.create({
+    let response
+    try {
+      console.log('🤖 Calling OpenAI Vision API...')
+      response = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {
@@ -99,15 +123,66 @@ Return your response as a JSON object with this structure:
         },
       ],
       max_tokens: 2000,
-    })
-
-    const content = response.choices[0]?.message?.content
-    if (!content) {
+      })
+      
+      console.log('✅ OpenAI API call successful:', {
+        model: 'gpt-4o',
+        hasResponse: !!response.choices[0]?.message?.content,
+        responseLength: response.choices[0]?.message?.content?.length || 0,
+        usage: response.usage ? {
+          promptTokens: response.usage.prompt_tokens,
+          completionTokens: response.usage.completion_tokens,
+          totalTokens: response.usage.total_tokens
+        } : null,
+        timestamp: new Date().toISOString()
+      })
+    } catch (openaiError: any) {
+      console.error('❌ OpenAI API call failed:', {
+        error: openaiError.message,
+        status: openaiError.status,
+        code: openaiError.code,
+        type: openaiError.type,
+        hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+        timestamp: new Date().toISOString()
+      })
       return NextResponse.json(
-        { error: 'No response from AI' },
+        {
+          error: 'Failed to analyze image with AI',
+          message: openaiError.message || 'OpenAI API error occurred',
+          success: false,
+          debug: process.env.NODE_ENV === 'development' ? {
+            status: openaiError.status,
+            code: openaiError.code,
+            type: openaiError.type
+          } : undefined
+        },
         { status: 500 }
       )
     }
+
+    const content = response.choices[0]?.message?.content
+    if (!content) {
+      console.error('❌ OpenAI returned empty response:', {
+        hasResponse: !!response,
+        choicesLength: response?.choices?.length || 0,
+        firstChoice: response?.choices?.[0] ? {
+          hasMessage: !!response.choices[0].message,
+          finishReason: response.choices[0].finish_reason,
+          index: response.choices[0].index
+        } : null,
+        timestamp: new Date().toISOString()
+      })
+      return NextResponse.json(
+        { 
+          error: 'No response from AI',
+          message: 'OpenAI API returned an empty response. Please try again.',
+          success: false
+        },
+        { status: 500 }
+      )
+    }
+    
+    console.log('📝 Received AI response (first 200 chars):', content.substring(0, 200))
 
     // Parse the JSON response
     let parsedResponse
@@ -349,11 +424,23 @@ Return your response as a JSON object with this structure:
       },
     })
   } catch (error: any) {
-    console.error('Error analyzing transcript:', error)
+    console.error('❌ Error analyzing transcript:', {
+      error: error.message,
+      stack: error.stack,
+      name: error.name,
+      hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      timestamp: new Date().toISOString()
+    })
     return NextResponse.json(
       {
         error: 'Failed to analyze image',
         message: error.message || 'An unexpected error occurred',
+        success: false,
+        debug: process.env.NODE_ENV === 'development' ? {
+          errorName: error.name,
+          errorStack: error.stack?.substring(0, 500)
+        } : undefined
       },
       { status: 500 }
     )
