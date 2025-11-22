@@ -243,6 +243,19 @@ Return your response as a JSON object with this structure:
     // Check which courses exist in the database
     const supabase = getSupabase()
     
+    // Verify database connection and check total course count
+    console.log('🔍 Verifying database connection...')
+    const { count: totalCount, error: countError } = await supabase
+      .from('courses')
+      .select('*', { count: 'exact', head: true })
+    console.log('📊 Database connection check:', {
+      totalCourses: totalCount,
+      error: countError,
+      hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'set' : 'missing'
+    })
+    
     // First, try direct case-insensitive matching for the extracted courses
     // This is more efficient than loading all courses
     console.log('🔍 Checking if extracted courses exist in database...')
@@ -277,6 +290,15 @@ Return your response as a JSON object with this structure:
           .ilike('course_code', pattern)
           .limit(1)
         
+        if (err1) {
+          console.error(`❌ Database error for "${extractedCode}" with pattern "${pattern}":`, {
+            message: err1.message,
+            details: err1.details,
+            hint: err1.hint,
+            code: err1.code
+          })
+        }
+        
         if (!err1 && match1 && match1.length > 0) {
           matchedDbCode = match1[0].course_code
           found = true
@@ -290,6 +312,15 @@ Return your response as a JSON object with this structure:
           .select('course_code')
           .eq('course_code', pattern)
           .limit(1)
+        
+        if (err2) {
+          console.error(`❌ Database error (exact match) for "${extractedCode}" with pattern "${pattern}":`, {
+            message: err2.message,
+            details: err2.details,
+            hint: err2.hint,
+            code: err2.code
+          })
+        }
         
         if (!err2 && match2 && match2.length > 0) {
           matchedDbCode = match2[0].course_code
@@ -347,15 +378,85 @@ Return your response as a JSON object with this structure:
     
     // Debug: Check a few specific courses to see what's in the database
     console.log('🔍 Debug: Checking if specific courses exist in database...')
-    const testCourses = ['BUS-C 104', 'PHIL-P 106', 'ECON-B 251', 'BUS-A 100']
+    const testCourses = ['BUS-C 104', 'PHIL-P 106', 'ECON-B 251', 'BUS-A 100', 'BUS-K 201', 'BUS-T 175', 'ENG-W 131']
     for (const testCourse of testCourses) {
-      const { data: testMatch } = await supabase
+      // Try multiple query methods
+      const { data: testMatch1, error: err1 } = await supabase
         .from('courses')
         .select('course_code')
         .ilike('course_code', testCourse)
-        .limit(3)
-      console.log(`   "${testCourse}": ${testMatch?.length || 0} matches`, testMatch?.map(c => c.course_code) || [])
+        .limit(5)
+      
+      const { data: testMatch2, error: err2 } = await supabase
+        .from('courses')
+        .select('course_code')
+        .eq('course_code', testCourse)
+        .limit(5)
+      
+      const { data: testMatch3, error: err3 } = await supabase
+        .from('courses')
+        .select('course_code')
+        .ilike('course_code', testCourse.replace(/\s+/g, ''))
+        .limit(5)
+      
+      const allMatches = [
+        ...(testMatch1 || []),
+        ...(testMatch2 || []),
+        ...(testMatch3 || [])
+      ]
+      const uniqueMatches = Array.from(new Set(allMatches.map(c => c.course_code)))
+      
+      console.log(`   "${testCourse}":`, {
+        ilike: testMatch1?.length || 0,
+        exact: testMatch2?.length || 0,
+        noSpaces: testMatch3?.length || 0,
+        matches: uniqueMatches,
+        errors: err1 || err2 || err3 || null
+      })
     }
+    
+    // Also check what course codes actually exist that are similar
+    console.log('🔍 Debug: Sample of actual course codes in database...')
+    const { data: sampleCourses, error: sampleErr } = await supabase
+      .from('courses')
+      .select('course_code')
+      .or('course_code.ilike.BUS-%,course_code.ilike.ECON-%,course_code.ilike.ENG-%,course_code.ilike.PHIL-%')
+      .limit(20)
+    console.log('   Sample courses:', {
+      count: sampleCourses?.length || 0,
+      courses: sampleCourses?.map(c => c.course_code) || [],
+      error: sampleErr
+    })
+    
+    // Try a direct query for BUS-C 104 to see what happens
+    console.log('🔍 Debug: Direct query test for BUS-C 104...')
+    const directTest = await supabase
+      .from('courses')
+      .select('course_code, course_name')
+      .ilike('course_code', 'BUS-C 104')
+      .limit(5)
+    console.log('   Direct test result:', {
+      data: directTest.data,
+      error: directTest.error ? {
+        message: directTest.error.message,
+        details: directTest.error.details,
+        hint: directTest.error.hint,
+        code: directTest.error.code
+      } : null,
+      count: directTest.data?.length || 0
+    })
+    
+    // Also try to get ANY BUS course to verify the table structure
+    const anyBusCourse = await supabase
+      .from('courses')
+      .select('course_code, course_name')
+      .ilike('course_code', 'BUS-%')
+      .limit(3)
+    console.log('   Any BUS course test:', {
+      found: anyBusCourse.data?.length || 0,
+      courses: anyBusCourse.data?.map(c => `${c.course_code}: ${c.course_name}`) || [],
+      error: anyBusCourse.error?.message || null
+    })
     
     console.log(`✅ Matching complete: ${validCourseCodes.length} valid, ${invalidCourses.length} invalid`)
 
