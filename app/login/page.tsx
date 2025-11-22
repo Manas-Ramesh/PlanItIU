@@ -60,12 +60,15 @@ function LoginForm() {
       if (data.user) {
         console.log('✅ Login successful, user:', data.user.id)
         console.log('Session data:', data.session)
+        console.log('📍 Current origin:', window.location.origin)
+        console.log('📍 Redirecting to:', window.location.origin + '/')
         
         // Verify session is available before redirecting
         if (data.session) {
           // Wait for cookies to be set in browser
           await new Promise(resolve => setTimeout(resolve, 200))
           // Force a hard redirect to ensure server sees the cookies
+          // Use relative URL to stay on current domain
           window.location.href = '/'
         } else {
           // Session might not be immediately available, wait and check again
