@@ -14,10 +14,17 @@ const getAnthropic = () => {
 
 const getSupabase = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  // Use service role key to bypass RLS for server-side operations
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error('Missing Supabase environment variables')
   }
+  
+  // Warn if using anon key (may be restricted by RLS)
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.warn('⚠️ Using anon key - RLS may restrict results. Consider using SUPABASE_SERVICE_ROLE_KEY for server-side operations.')
+  }
+  
   return createClient(supabaseUrl, supabaseServiceKey)
 }
 

@@ -20,19 +20,30 @@ const getOpenAI = () => {
 // Lazy initialization to avoid build-time errors
 const getSupabase = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  // CRITICAL: Use service role key to bypass RLS, otherwise we only get a subset of rows
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error('Missing Supabase environment variables')
+  // CRITICAL: MUST use service role key to bypass RLS
+  // DO NOT fall back to anon key - it will be restricted by RLS and only return 417 rows instead of 12,302
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  
+  if (!supabaseUrl) {
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
   }
   
-  // Log which key is being used (for debugging RLS issues)
-  const usingServiceRole = !!process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!usingServiceRole) {
-    console.warn('⚠️ WARNING: Using anon key instead of service role key. RLS may restrict results!')
-    console.warn('   Set SUPABASE_SERVICE_ROLE_KEY in Vercel to bypass RLS and get all courses.')
+  if (!supabaseServiceKey) {
+    console.error('❌ CRITICAL ERROR: SUPABASE_SERVICE_ROLE_KEY is not set!')
+    console.error('   This API route requires the service role key to bypass RLS.')
+    console.error('   Without it, you will only get 417 rows instead of 12,302.')
+    console.error('   Set SUPABASE_SERVICE_ROLE_KEY in Vercel production environment variables.')
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required. Set it in Vercel environment variables to bypass RLS.')
   }
+  
+  // Verify we're using service role key (starts with 'eyJ' and is much longer than anon key)
+  const isServiceRoleKey = supabaseServiceKey.length > 100 && supabaseServiceKey.startsWith('eyJ')
+  if (!isServiceRoleKey) {
+    console.warn('⚠️ WARNING: SUPABASE_SERVICE_ROLE_KEY may be invalid (too short or wrong format)')
+  }
+  
+  console.log('✅ Using service role key - RLS will be bypassed')
   
   return createClient(supabaseUrl, supabaseServiceKey)
 }
@@ -286,14 +297,20 @@ Return your response as a JSON object with this structure:
     const { count: totalCount, error: countError } = await supabase
       .from('courses')
       .select('*', { count: 'exact', head: true })
+    
+    const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    const keyType = hasServiceKey ? 'SERVICE ROLE KEY ✅' : 'ANON KEY ❌'
+    
     console.log('📊 Database connection check:', {
       totalCourses: totalCount,
       error: countError,
-      hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      keyType: keyType,
+      hasServiceKey: hasServiceKey,
       hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'set' : 'missing',
-      usingServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-      warning: !process.env.SUPABASE_SERVICE_ROLE_KEY ? '⚠️ Using anon key - RLS may restrict results!' : '✅ Using service role key - RLS bypassed'
+      status: hasServiceKey 
+        ? '✅ Using service role key - RLS bypassed, should see all 12,302 rows' 
+        : '❌ ERROR: Should be using service role key but it is not set!'
     })
     
     // If count is much lower than expected, warn about RLS
