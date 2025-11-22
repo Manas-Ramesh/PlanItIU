@@ -240,171 +240,124 @@ Return your response as a JSON object with this structure:
       })
     }
 
-    // Check which courses exist in the database (case-insensitive)
-    // Fetch all unique course codes from database (one-time query)
+    // Check which courses exist in the database
     const supabase = getSupabase()
-    const { data: allCourses, error: dbError } = await supabase
-      .from('courses')
-      .select('course_code')
-      .limit(50000) // Reasonable limit for course codes
-
-    if (dbError) {
-      console.error('Database error:', dbError)
-      // Fallback: try exact matches for the extracted courses
-      const { data: exactMatches } = await supabase
-        .from('courses')
-        .select('course_code')
-        .in('course_code', uniqueCourses)
-      
-      const validCourseCodes = exactMatches?.map(c => c.course_code) || []
-      const invalidCourses = uniqueCourses.filter(
-        code => !validCourseCodes.includes(code)
-      )
-
-      return NextResponse.json({
-        success: true,
-        courses: validCourseCodes,
-        invalidCourses: invalidCourses,
-        message: invalidCourses.length > 0
-          ? `Found ${validCourseCodes.length} valid courses. ${invalidCourses.length} courses not found in database: ${invalidCourses.join(', ')}`
-          : `Successfully extracted ${validCourseCodes.length} courses!`,
-      })
-    }
-
-    // Create a case-insensitive map: normalized -> actual database format
-    const courseCodeMap = new Map<string, string>()
-    allCourses?.forEach(course => {
-      // Normalize database course codes: trim, remove extra spaces, uppercase
-      const normalized = course.course_code.trim().replace(/\s+/g, ' ').toUpperCase()
-      if (!courseCodeMap.has(normalized)) {
-        courseCodeMap.set(normalized, course.course_code)
-      }
-      // Also create alternative normalizations (remove all spaces, different spacing patterns)
-      const noSpaces = course.course_code.trim().replace(/\s+/g, '').toUpperCase()
-      if (!courseCodeMap.has(noSpaces)) {
-        courseCodeMap.set(noSpaces, course.course_code)
-      }
-    })
-
-    console.log(`📚 Loaded ${courseCodeMap.size} unique courses from database`)
     
-    // Debug: Check if BUS-T 175 exists
-    const busT175Variations = ['BUS-T 175', 'BUS-T175', 'BUS T 175', 'bus-t 175']
-    busT175Variations.forEach(variant => {
-      const normalized = variant.trim().replace(/\s+/g, ' ').toUpperCase()
-      const noSpaces = variant.trim().replace(/\s+/g, '').toUpperCase()
-      if (courseCodeMap.has(normalized)) {
-        console.log(`🔍 Found BUS-T 175 variant "${variant}" (normalized: "${normalized}") -> ${courseCodeMap.get(normalized)}`)
-      } else if (courseCodeMap.has(noSpaces)) {
-        console.log(`🔍 Found BUS-T 175 variant "${variant}" (no spaces: "${noSpaces}") -> ${courseCodeMap.get(noSpaces)}`)
-      } else {
-        console.log(`❌ BUS-T 175 variant "${variant}" not found in map`)
-      }
-    })
-
-    // Match extracted courses (normalized) with database courses
+    // First, try direct case-insensitive matching for the extracted courses
+    // This is more efficient than loading all courses
+    console.log('🔍 Checking if extracted courses exist in database...')
+    
+    // Try multiple matching strategies for each course
     const validCourseCodes: string[] = []
     const invalidCourses: string[] = []
-    const addedCodes = new Set<string>()
-    const matchedExtractedCodes = new Set<string>()
-
-    // First pass: try exact matches with normalization
-    uniqueCourses.forEach(extractedCode => {
-      const codeStr = extractedCode as string
-      // Try multiple normalization strategies
-      const normalized = codeStr.trim().replace(/\s+/g, ' ').toUpperCase()
-      const noSpaces = codeStr.trim().replace(/\s+/g, '').toUpperCase()
+    const checkedCourses = new Set<string>()
+    
+    // Strategy 1: Direct case-insensitive match using ilike
+    for (const extractedCode of uniqueCourses) {
+      if (checkedCourses.has(extractedCode)) continue
       
-      let dbCourseCode = courseCodeMap.get(normalized) || courseCodeMap.get(noSpaces)
+      const normalized = extractedCode.trim().replace(/\s+/g, ' ').toUpperCase()
+      const noSpaces = extractedCode.trim().replace(/\s+/g, '').toUpperCase()
       
-      if (dbCourseCode && !addedCodes.has(dbCourseCode)) {
-        // Use the actual database format and avoid duplicates
-        validCourseCodes.push(dbCourseCode)
-        addedCodes.add(dbCourseCode)
-        matchedExtractedCodes.add(codeStr)
-        console.log(`✅ Matched: ${codeStr} -> ${dbCourseCode}`)
-      }
-    })
-
-    // Second pass: for unmatched courses, try direct database query with case-insensitive matching
-    const unmatchedCourses = uniqueCourses.filter(code => !matchedExtractedCodes.has(code))
-
-    if (unmatchedCourses.length > 0) {
-      console.log(`🔍 Trying direct database queries for ${unmatchedCourses.length} unmatched courses...`)
+      // Try multiple patterns
+      const patterns = [
+        normalized,           // "BUS-C 104"
+        noSpaces,             // "BUS-C104"
+        extractedCode.trim(), // Original trimmed
+      ]
       
-      // Try individual queries for each unmatched course with multiple normalization strategies
-      for (const unmatchedCode of unmatchedCourses) {
-        const normalized = unmatchedCode.trim().replace(/\s+/g, ' ').toUpperCase()
-        const noSpaces = unmatchedCode.trim().replace(/\s+/g, '').toUpperCase()
-        
-        let found = false
-        
-        // Try with normalized (with spaces)
-        const { data: match1 } = await supabase
+      let found = false
+      let matchedDbCode: string | null = null
+      
+      for (const pattern of patterns) {
+        // Try case-insensitive match
+        const { data: match1, error: err1 } = await supabase
           .from('courses')
           .select('course_code')
-          .ilike('course_code', normalized)
+          .ilike('course_code', pattern)
           .limit(1)
-
-        if (match1 && match1.length > 0) {
-          const dbCode = match1[0].course_code
-          if (!addedCodes.has(dbCode)) {
-            validCourseCodes.push(dbCode)
-            addedCodes.add(dbCode)
-            matchedExtractedCodes.add(unmatchedCode)
-            console.log(`✅ Found via direct query (normalized): ${unmatchedCode} -> ${dbCode}`)
+        
+        if (!err1 && match1 && match1.length > 0) {
+          matchedDbCode = match1[0].course_code
+          found = true
+          console.log(`✅ Found match: "${extractedCode}" -> "${matchedDbCode}" (pattern: "${pattern}")`)
+          break
+        }
+        
+        // Try exact match (case-sensitive)
+        const { data: match2, error: err2 } = await supabase
+          .from('courses')
+          .select('course_code')
+          .eq('course_code', pattern)
+          .limit(1)
+        
+        if (!err2 && match2 && match2.length > 0) {
+          matchedDbCode = match2[0].course_code
+          found = true
+          console.log(`✅ Found exact match: "${extractedCode}" -> "${matchedDbCode}" (pattern: "${pattern}")`)
+          break
+        }
+      }
+      
+      if (found && matchedDbCode) {
+        // Avoid duplicates
+        if (!validCourseCodes.includes(matchedDbCode)) {
+          validCourseCodes.push(matchedDbCode)
+        }
+        checkedCourses.add(extractedCode)
+      } else {
+        // Check if it exists with any variation by querying similar patterns
+        // Try a more flexible search - check if any course_code contains the pattern
+        const { data: similar1 } = await supabase
+          .from('courses')
+          .select('course_code')
+          .ilike('course_code', `%${normalized.replace(/\s+/g, '')}%`)
+          .limit(5)
+        
+        const { data: similar2 } = await supabase
+          .from('courses')
+          .select('course_code')
+          .ilike('course_code', `%${noSpaces}%`)
+          .limit(5)
+        
+        const similar = [...(similar1 || []), ...(similar2 || [])]
+        const similarErr = null
+        
+        if (!similarErr && similar && similar.length > 0) {
+          console.log(`💡 Found similar courses for "${extractedCode}":`, similar.map(c => c.course_code))
+          // Use the first similar match if it's close enough
+          const closeMatch = similar.find(c => {
+            const dbNormalized = c.course_code.trim().replace(/\s+/g, '').toUpperCase()
+            return dbNormalized === noSpaces || dbNormalized === normalized.replace(/\s+/g, '')
+          })
+          if (closeMatch && !validCourseCodes.includes(closeMatch.course_code)) {
+            validCourseCodes.push(closeMatch.course_code)
+            checkedCourses.add(extractedCode)
+            console.log(`✅ Using close match: "${extractedCode}" -> "${closeMatch.course_code}"`)
             found = true
           }
         }
         
-        // If not found, try without spaces
         if (!found) {
-          const { data: match2 } = await supabase
-            .from('courses')
-            .select('course_code')
-            .ilike('course_code', noSpaces)
-            .limit(1)
-
-          if (match2 && match2.length > 0) {
-            const dbCode = match2[0].course_code
-            if (!addedCodes.has(dbCode)) {
-              validCourseCodes.push(dbCode)
-              addedCodes.add(dbCode)
-              matchedExtractedCodes.add(unmatchedCode)
-              console.log(`✅ Found via direct query (no spaces): ${unmatchedCode} -> ${dbCode}`)
-              found = true
-            }
-          }
-        }
-        
-        // If still not found, try exact match (case-insensitive)
-        if (!found) {
-          const { data: match3 } = await supabase
-            .from('courses')
-            .select('course_code')
-            .eq('course_code', normalized)
-            .limit(1)
-
-          if (match3 && match3.length > 0) {
-            const dbCode = match3[0].course_code
-            if (!addedCodes.has(dbCode)) {
-              validCourseCodes.push(dbCode)
-              addedCodes.add(dbCode)
-              matchedExtractedCodes.add(unmatchedCode)
-              console.log(`✅ Found via exact match: ${unmatchedCode} -> ${dbCode}`)
-              found = true
-            }
-          }
-        }
-        
-        if (!found) {
-          invalidCourses.push(unmatchedCode)
-          console.log(`❌ No match found for: ${unmatchedCode} (tried: "${normalized}", "${noSpaces}")`)
+          invalidCourses.push(extractedCode)
+          console.log(`❌ No match found for: "${extractedCode}" (tried: "${normalized}", "${noSpaces}")`)
         }
       }
     }
-
-    console.log(`✅ Valid courses: ${validCourseCodes.length}, Invalid: ${invalidCourses.length}`)
+    
+    // Debug: Check a few specific courses to see what's in the database
+    console.log('🔍 Debug: Checking if specific courses exist in database...')
+    const testCourses = ['BUS-C 104', 'PHIL-P 106', 'ECON-B 251', 'BUS-A 100']
+    for (const testCourse of testCourses) {
+      const { data: testMatch } = await supabase
+        .from('courses')
+        .select('course_code')
+        .ilike('course_code', testCourse)
+        .limit(3)
+      console.log(`   "${testCourse}": ${testMatch?.length || 0} matches`, testMatch?.map(c => c.course_code) || [])
+    }
+    
+    console.log(`✅ Matching complete: ${validCourseCodes.length} valid, ${invalidCourses.length} invalid`)
 
     // If we have invalid courses, include them in the response for debugging
     const responseMessage = invalidCourses.length > 0
@@ -446,4 +399,5 @@ Return your response as a JSON object with this structure:
     )
   }
 }
+
 
