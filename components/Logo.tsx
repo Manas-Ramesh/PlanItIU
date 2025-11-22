@@ -25,7 +25,7 @@ export default function Logo({ size = 'md', variant = 'icon', className = '' }: 
     return (
       <div className={`${sizeClasses[size]} ${className} flex items-center justify-center`}>
         <img
-          src="/planitlogo.jpeg"
+          src="/newfinal.png"
           alt="PlanItIU Logo"
           className="w-full h-full object-contain"
           style={{ display: 'block' }}
@@ -38,7 +38,7 @@ export default function Logo({ size = 'md', variant = 'icon', className = '' }: 
     <div className={`flex flex-col items-center gap-3 ${className}`}>
       <div className={sizeClasses[size]}>
         <img
-          src="/planitlogo.jpeg"
+          src="/newfinal.png"
           alt="PlanItIU Logo"
           className="w-full h-full object-contain"
           style={{ display: 'block' }}
