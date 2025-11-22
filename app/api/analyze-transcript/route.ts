@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createClient } from '@supabase/supabase-js'
 
+// Vercel configuration: Increase timeout for image analysis
+// Hobby plan: max 10s, Pro plan: max 300s (5 minutes)
+// Set to 60s to handle OpenAI API calls + database queries
+export const maxDuration = 60
+
 // Lazy initialization to avoid build-time errors
 const getOpenAI = () => {
   if (!process.env.OPENAI_API_KEY) {
@@ -47,10 +52,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check file size before processing
+    // Vercel Hobby plan has 4.5MB request body limit
+    // Base64 encoding increases size by ~33%, so limit raw file to ~3MB
+    const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3MB
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { 
+          error: 'File too large',
+          message: `Image file is too large (${(file.size / 1024 / 1024).toFixed(2)}MB). Please use an image under 3MB. Vercel has request body size limits that prevent larger files.`
+        },
+        { status: 400 }
+      )
+    }
+
     // Convert file to base64
     const bytes = await file.arrayBuffer()
     const base64 = Buffer.from(bytes).toString('base64')
     const mimeType = file.type || 'image/jpeg'
+    
+    // Log base64 size for debugging (base64 is ~33% larger than original)
+    const base64Size = base64.length
+    console.log('📊 File size info:', {
+      originalSize: file.size,
+      base64Size: base64Size,
+      sizeIncrease: `${((base64Size / file.size - 1) * 100).toFixed(1)}%`,
+      isWithinLimit: base64Size < 4.5 * 1024 * 1024
+    })
     
     console.log('📸 Starting transcript analysis:', {
       fileName: file.name,
