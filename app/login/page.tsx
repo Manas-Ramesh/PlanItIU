@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
+import { getAuthCallbackUrl } from '@/lib/auth-helpers'
 import Logo from '@/components/Logo'
 import TermsAndPrivacy from '@/components/TermsAndPrivacy'
 import TypingAnimation from '@/components/TypingAnimation'
@@ -87,12 +88,16 @@ function LoginForm() {
   const handleGoogleLogin = async () => {
     setError(null)
     try {
+      // Get the callback URL (works for both localhost and Vercel)
+      const callbackUrl = getAuthCallbackUrl()
+      console.log('🔐 Using callback URL:', callbackUrl)
+      
       // OAuth automatically creates new users if they don't exist, or logs in existing users
       // The database trigger will automatically create a profile with user_id for new users
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: callbackUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -108,8 +113,10 @@ function LoginForm() {
       // Log the redirect URL for debugging
       if (data?.url) {
         console.log('✅ OAuth redirect URL generated:', data.url)
+        console.log('📍 Callback URL configured:', callbackUrl)
         // Supabase should redirect to this URL which goes to Google
-        // The URL should be: https://rwqlxbduoovtwohkoxwg.supabase.co/auth/v1/authorize?provider=google&redirect_to=http://localhost:3000/auth/callback
+        // The redirect_to parameter will be the callbackUrl (localhost or Vercel)
+        // Make sure this URL is added to Supabase Dashboard → Authentication → URL Configuration
       } else {
         console.error('❌ No redirect URL returned from Supabase')
       }

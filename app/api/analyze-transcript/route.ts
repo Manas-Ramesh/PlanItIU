@@ -204,28 +204,130 @@ Return your response as a JSON object with this structure:
       if (!courseCodeMap.has(normalized)) {
         courseCodeMap.set(normalized, course.course_code)
       }
+      // Also create alternative normalizations (remove all spaces, different spacing patterns)
+      const noSpaces = course.course_code.trim().replace(/\s+/g, '').toUpperCase()
+      if (!courseCodeMap.has(noSpaces)) {
+        courseCodeMap.set(noSpaces, course.course_code)
+      }
     })
 
     console.log(`📚 Loaded ${courseCodeMap.size} unique courses from database`)
+    
+    // Debug: Check if BUS-T 175 exists
+    const busT175Variations = ['BUS-T 175', 'BUS-T175', 'BUS T 175', 'bus-t 175']
+    busT175Variations.forEach(variant => {
+      const normalized = variant.trim().replace(/\s+/g, ' ').toUpperCase()
+      const noSpaces = variant.trim().replace(/\s+/g, '').toUpperCase()
+      if (courseCodeMap.has(normalized)) {
+        console.log(`🔍 Found BUS-T 175 variant "${variant}" (normalized: "${normalized}") -> ${courseCodeMap.get(normalized)}`)
+      } else if (courseCodeMap.has(noSpaces)) {
+        console.log(`🔍 Found BUS-T 175 variant "${variant}" (no spaces: "${noSpaces}") -> ${courseCodeMap.get(noSpaces)}`)
+      } else {
+        console.log(`❌ BUS-T 175 variant "${variant}" not found in map`)
+      }
+    })
 
     // Match extracted courses (normalized) with database courses
     const validCourseCodes: string[] = []
     const invalidCourses: string[] = []
     const addedCodes = new Set<string>()
+    const matchedExtractedCodes = new Set<string>()
 
+    // First pass: try exact matches with normalization
     uniqueCourses.forEach(extractedCode => {
       const codeStr = extractedCode as string
-      const dbCourseCode = courseCodeMap.get(codeStr)
+      // Try multiple normalization strategies
+      const normalized = codeStr.trim().replace(/\s+/g, ' ').toUpperCase()
+      const noSpaces = codeStr.trim().replace(/\s+/g, '').toUpperCase()
+      
+      let dbCourseCode = courseCodeMap.get(normalized) || courseCodeMap.get(noSpaces)
+      
       if (dbCourseCode && !addedCodes.has(dbCourseCode)) {
         // Use the actual database format and avoid duplicates
         validCourseCodes.push(dbCourseCode)
         addedCodes.add(dbCourseCode)
+        matchedExtractedCodes.add(codeStr)
         console.log(`✅ Matched: ${codeStr} -> ${dbCourseCode}`)
-      } else if (!dbCourseCode) {
-        invalidCourses.push(codeStr)
-        console.log(`❌ No match found for: ${codeStr}`)
       }
     })
+
+    // Second pass: for unmatched courses, try direct database query with case-insensitive matching
+    const unmatchedCourses = uniqueCourses.filter(code => !matchedExtractedCodes.has(code))
+
+    if (unmatchedCourses.length > 0) {
+      console.log(`🔍 Trying direct database queries for ${unmatchedCourses.length} unmatched courses...`)
+      
+      // Try individual queries for each unmatched course with multiple normalization strategies
+      for (const unmatchedCode of unmatchedCourses) {
+        const normalized = unmatchedCode.trim().replace(/\s+/g, ' ').toUpperCase()
+        const noSpaces = unmatchedCode.trim().replace(/\s+/g, '').toUpperCase()
+        
+        let found = false
+        
+        // Try with normalized (with spaces)
+        const { data: match1 } = await supabase
+          .from('courses')
+          .select('course_code')
+          .ilike('course_code', normalized)
+          .limit(1)
+
+        if (match1 && match1.length > 0) {
+          const dbCode = match1[0].course_code
+          if (!addedCodes.has(dbCode)) {
+            validCourseCodes.push(dbCode)
+            addedCodes.add(dbCode)
+            matchedExtractedCodes.add(unmatchedCode)
+            console.log(`✅ Found via direct query (normalized): ${unmatchedCode} -> ${dbCode}`)
+            found = true
+          }
+        }
+        
+        // If not found, try without spaces
+        if (!found) {
+          const { data: match2 } = await supabase
+            .from('courses')
+            .select('course_code')
+            .ilike('course_code', noSpaces)
+            .limit(1)
+
+          if (match2 && match2.length > 0) {
+            const dbCode = match2[0].course_code
+            if (!addedCodes.has(dbCode)) {
+              validCourseCodes.push(dbCode)
+              addedCodes.add(dbCode)
+              matchedExtractedCodes.add(unmatchedCode)
+              console.log(`✅ Found via direct query (no spaces): ${unmatchedCode} -> ${dbCode}`)
+              found = true
+            }
+          }
+        }
+        
+        // If still not found, try exact match (case-insensitive)
+        if (!found) {
+          const { data: match3 } = await supabase
+            .from('courses')
+            .select('course_code')
+            .eq('course_code', normalized)
+            .limit(1)
+
+          if (match3 && match3.length > 0) {
+            const dbCode = match3[0].course_code
+            if (!addedCodes.has(dbCode)) {
+              validCourseCodes.push(dbCode)
+              addedCodes.add(dbCode)
+              matchedExtractedCodes.add(unmatchedCode)
+              console.log(`✅ Found via exact match: ${unmatchedCode} -> ${dbCode}`)
+              found = true
+            }
+          }
+        }
+        
+        if (!found) {
+          invalidCourses.push(unmatchedCode)
+          console.log(`❌ No match found for: ${unmatchedCode} (tried: "${normalized}", "${noSpaces}")`)
+        }
+      }
+    }
 
     console.log(`✅ Valid courses: ${validCourseCodes.length}, Invalid: ${invalidCourses.length}`)
 

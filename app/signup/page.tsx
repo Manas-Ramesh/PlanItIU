@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { getAuthCallbackUrl } from '@/lib/auth-helpers'
 import TypingAnimation from '@/components/TypingAnimation'
 
 export default function SignupPage() {
@@ -95,12 +96,16 @@ export default function SignupPage() {
   const handleGoogleSignup = async () => {
     setError(null)
     try {
+      // Get the callback URL (works for both localhost and Vercel)
+      const callbackUrl = getAuthCallbackUrl()
+      console.log('🔐 Using callback URL:', callbackUrl)
+      
       // OAuth automatically creates new users if they don't exist, or logs in existing users
       // The database trigger will automatically create a profile with user_id for new users
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: callbackUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

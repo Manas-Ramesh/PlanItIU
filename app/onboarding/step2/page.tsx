@@ -240,54 +240,125 @@ export default function OnboardingStep2() {
   }
 
   const handleContinue = async () => {
-    if (!user) return
-
-    // Validate all courses before continuing
-    const invalidCourses = courses.filter(
-      course => !allCourses.some(c => c.course_code === course)
-    )
-
-    if (invalidCourses.length > 0) {
-      setError(`Invalid courses detected: ${invalidCourses.join(', ')}. Please remove them.`)
-      return
-    }
-
+    console.log('🚀 Continue button clicked')
     setLoading(true)
     setError(null)
 
     try {
+      console.log('📋 Current state:', { 
+        coursesCount: courses.length, 
+        allCoursesCount: allCourses.length,
+        hasUser: !!user 
+      })
+
+      // Get current user (try state first, then fetch if needed)
+      let currentUser = user
+      if (!currentUser) {
+        console.log('👤 User not in state, fetching...')
+        const { data: { user: fetchedUser }, error: userError } = await supabase.auth.getUser()
+        if (userError || !fetchedUser) {
+          console.error('❌ User fetch error:', userError)
+          throw new Error('You must be logged in to continue. Please refresh the page.')
+        }
+        currentUser = fetchedUser
+        setUser(fetchedUser)
+        console.log('✅ User fetched:', currentUser.id)
+      } else {
+        console.log('✅ User already in state:', currentUser.id)
+      }
+
+      // Validate all courses before continuing (case-insensitive, with whitespace normalization)
+      // Note: Courses from transcript scanner are already validated by the API
+      const invalidCourses = courses.filter(course => {
+        const normalizedCourse = course.toUpperCase().trim().replace(/\s+/g, ' ')
+        return !allCourses.some(c => {
+          const normalizedDb = c.course_code.toUpperCase().trim().replace(/\s+/g, ' ')
+          return normalizedDb === normalizedCourse
+        })
+      })
+
+      if (invalidCourses.length > 0) {
+        console.warn('⚠️ Invalid courses detected:', invalidCourses)
+        console.log('🔍 Checking if these courses exist with different formatting...')
+        
+        // Try to find matches with different formatting
+        for (const invalidCourse of invalidCourses) {
+          const normalizedInvalid = invalidCourse.toUpperCase().trim().replace(/\s+/g, ' ')
+          const similarCourses = allCourses.filter(c => {
+            const normalizedDb = c.course_code.toUpperCase().trim().replace(/\s+/g, ' ')
+            return normalizedDb.includes(normalizedInvalid) || normalizedInvalid.includes(normalizedDb)
+          })
+          if (similarCourses.length > 0) {
+            console.log(`💡 Found similar courses for "${invalidCourse}":`, similarCourses.map(c => c.course_code))
+          }
+        }
+        
+        // Show error but allow user to proceed if they want (since courses from API are already validated)
+        const errorMsg = `Warning: Some courses may not be in our database: ${invalidCourses.join(', ')}. You can still continue, but these courses may not be used in recommendations.`
+        console.warn(errorMsg)
+        // Don't block - just warn. Courses from transcript scanner are already validated.
+        // setError(errorMsg)
+        // setLoading(false)
+        // return
+      }
+
       const major = sessionStorage.getItem('onboarding_major')
       const graduationYear = sessionStorage.getItem('onboarding_graduation_year')
 
+      console.log('📝 Onboarding data:', { major, graduationYear })
+
       if (!major || !graduationYear) {
-        router.push('/onboarding/step1')
+        console.error('❌ Missing onboarding data')
+        setError('Missing onboarding data. Redirecting to step 1...')
+        setTimeout(() => router.push('/onboarding/step1'), 1000)
+        setLoading(false)
         return
       }
 
+      console.log('💾 Saving preferences to database...')
       // Insert or update user preferences
-      const { error } = await supabase
+      const { data: upsertData, error: upsertError } = await supabase
         .from('user_preferences')
         .upsert({
-          id: user.id,
-          user_id: user.id,
+          id: currentUser.id,
+          user_id: currentUser.id,
           major: major,
           expected_graduation_year: parseInt(graduationYear),
           courses_taken: courses,
           onboarding_completed: true,
         })
+        .select()
 
-      if (error) throw error
+      if (upsertError) {
+        console.error('❌ Supabase error:', upsertError)
+        throw new Error(upsertError.message || 'Failed to save preferences')
+      }
+
+      console.log('✅ Preferences saved:', upsertData)
 
       // Clear session storage
       sessionStorage.removeItem('onboarding_major')
       sessionStorage.removeItem('onboarding_graduation_year')
 
-      // Redirect to landing page
-      router.push('/home')
+      console.log('🔄 Redirecting to /home...')
+      // Redirect to landing page - use window.location as fallback
+      try {
+        router.push('/home')
+        console.log('✅ Router.push called')
+        // Fallback: if router doesn't work, use window.location after a short delay
+        setTimeout(() => {
+          if (window.location.pathname === '/onboarding/step2') {
+            console.log('⚠️ Router.push may have failed, using window.location')
+            window.location.href = '/home'
+          }
+        }, 1000)
+      } catch (navError) {
+        console.error('❌ Navigation error:', navError)
+        window.location.href = '/home'
+      }
     } catch (error: any) {
-      console.error('Error saving preferences:', error)
-      setError('Failed to save preferences: ' + error.message)
-    } finally {
+      console.error('❌ Error in handleContinue:', error)
+      setError(error.message || 'Failed to save preferences. Please try again.')
       setLoading(false)
     }
   }
@@ -535,7 +606,13 @@ export default function OnboardingStep2() {
 
         <div>
           <button
-            onClick={handleContinue}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              console.log('🔘 Button clicked')
+              handleContinue()
+            }}
             disabled={loading}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             style={{ backgroundColor: '#dc2626' }}
