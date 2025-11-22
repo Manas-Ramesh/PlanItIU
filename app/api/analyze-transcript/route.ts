@@ -305,12 +305,18 @@ Return your response as a JSON object with this structure:
       console.error('❌ Error fetching courses:', fetchError)
       // Fallback to individual queries
     } else {
-      console.log(`📚 Loaded ${allCourses?.length || 0} courses from database`)
+      console.log(`📚 Loaded ${allCourses?.length || 0} course rows from database`)
+      
+      // Get unique course codes (deduplicate)
+      const uniqueDbCourses = Array.from(new Set(allCourses?.map(c => c.course_code).filter(Boolean) || []))
+      console.log(`📚 Found ${uniqueDbCourses.length} unique course codes in database`)
+      
+      // Log sample of actual course codes from database for debugging
+      console.log('📚 Sample of database course codes (first 10):', uniqueDbCourses.slice(0, 10))
       
       // Create a normalized lookup map
       const courseCodeMap = new Map<string, string>()
-      allCourses?.forEach(course => {
-        const code = course.course_code
+      uniqueDbCourses.forEach(code => {
         if (!code) return
         
         // Store multiple normalized versions
@@ -326,6 +332,38 @@ Return your response as a JSON object with this structure:
       })
       
       console.log(`📚 Created lookup map with ${courseCodeMap.size} normalized entries`)
+      
+      // Debug: Check if specific courses exist in the map
+      console.log('🔍 Debug: Checking lookup map for extracted courses...')
+      for (const extractedCode of uniqueCourses.slice(0, 3)) {
+        const normalized = extractedCode.trim().replace(/\s+/g, ' ').toUpperCase()
+        const noSpaces = extractedCode.trim().replace(/\s+/g, '').toUpperCase()
+        const foundInMap = courseCodeMap.has(normalized) || courseCodeMap.has(noSpaces)
+        const mapValue = courseCodeMap.get(normalized) || courseCodeMap.get(noSpaces)
+        
+        console.log(`   "${extractedCode}":`, {
+          normalized: normalized,
+          noSpaces: noSpaces,
+          inMap: foundInMap,
+          mapValue: mapValue || null,
+          mapKeys_sample: Array.from(courseCodeMap.keys()).filter(k => k.includes('BUS-C') || k.includes('PHIL')).slice(0, 5)
+        })
+        
+        // Also try a direct database query for this specific course
+        if (!foundInMap) {
+          const { data: directQuery, error: directErr } = await supabase
+            .from('courses')
+            .select('course_code')
+            .ilike('course_code', `%${extractedCode.replace(/\s+/g, '%')}%`)
+            .limit(5)
+          
+          console.log(`   Direct DB query for "${extractedCode}":`, {
+            found: directQuery?.length || 0,
+            results: directQuery?.map(c => c.course_code) || [],
+            error: directErr?.message || null
+          })
+        }
+      }
       
       // Now match extracted courses against the map
       for (const extractedCode of uniqueCourses) {
@@ -356,10 +394,18 @@ Return your response as a JSON object with this structure:
         }
         
         // If not found in map, try database query as fallback
+        // Use multiple query strategies
         let found = false
-        const patterns = [normalized, noSpaces, original]
+        const patterns = [
+          normalized,           // "BUS-C 104"
+          noSpaces,             // "BUS-C104"
+          original,             // "BUS-C 104" (original)
+          original.toUpperCase(), // "BUS-C 104" (uppercase)
+          normalized.replace(/\s+/g, ''), // Remove all spaces
+        ]
         
         for (const pattern of patterns) {
+          // Try exact case-insensitive match
           const { data: match1, error: err1 } = await supabase
             .from('courses')
             .select('course_code')
@@ -367,14 +413,47 @@ Return your response as a JSON object with this structure:
             .limit(1)
           
           if (err1) {
-            console.error(`❌ Database error for "${extractedCode}":`, err1.message)
+            console.error(`❌ Database error for "${extractedCode}" with pattern "${pattern}":`, err1.message)
+            continue
           }
           
-          if (!err1 && match1 && match1.length > 0) {
+          if (match1 && match1.length > 0) {
             matchedDbCode = match1[0].course_code
             found = true
-            console.log(`✅ Found via query: "${extractedCode}" -> "${matchedDbCode}"`)
+            console.log(`✅ Found via query: "${extractedCode}" -> "${matchedDbCode}" (pattern: "${pattern}")`)
             break
+          }
+        }
+        
+        // If still not found, try a more flexible pattern match
+        if (!found) {
+          // Try matching with wildcards - e.g., "BUS-C%" or "BUS C%"
+          const basePattern = normalized.split(' ')[0] // Get "BUS-C" or "BUS"
+          if (basePattern) {
+            const { data: wildcardMatch, error: wildcardErr } = await supabase
+              .from('courses')
+              .select('course_code')
+              .ilike('course_code', `${basePattern}%`)
+              .limit(10)
+            
+            if (!wildcardErr && wildcardMatch && wildcardMatch.length > 0) {
+              // Find the closest match
+              const possibleMatches = wildcardMatch.map(c => c.course_code)
+              console.log(`🔍 Wildcard match for "${extractedCode}":`, possibleMatches)
+              
+              // Try to find exact match in the results
+              for (const possibleMatch of possibleMatches) {
+                const matchNormalized = possibleMatch.trim().replace(/\s+/g, ' ').toUpperCase()
+                const matchNoSpaces = possibleMatch.trim().replace(/\s+/g, '').toUpperCase()
+                
+                if (matchNormalized === normalized || matchNoSpaces === noSpaces) {
+                  matchedDbCode = possibleMatch
+                  found = true
+                  console.log(`✅ Found via wildcard: "${extractedCode}" -> "${matchedDbCode}"`)
+                  break
+                }
+              }
+            }
           }
         }
         
@@ -441,41 +520,52 @@ Return your response as a JSON object with this structure:
     }
     
     // Debug: Check a few specific courses to see what's in the database
+    // This helps diagnose why matching is failing in production
     console.log('🔍 Debug: Checking if specific courses exist in database...')
     const testCourses = ['BUS-C 104', 'PHIL-P 106', 'ECON-B 251', 'BUS-A 100', 'BUS-K 201', 'BUS-T 175', 'ENG-W 131']
     for (const testCourse of testCourses) {
-      // Try multiple query methods
-      const { data: testMatch1, error: err1 } = await supabase
-        .from('courses')
-        .select('course_code')
-        .ilike('course_code', testCourse)
-        .limit(5)
-      
-      const { data: testMatch2, error: err2 } = await supabase
-        .from('courses')
-        .select('course_code')
-        .eq('course_code', testCourse)
-        .limit(5)
-      
-      const { data: testMatch3, error: err3 } = await supabase
-        .from('courses')
-        .select('course_code')
-        .ilike('course_code', testCourse.replace(/\s+/g, ''))
-        .limit(5)
-      
-      const allMatches = [
-        ...(testMatch1 || []),
-        ...(testMatch2 || []),
-        ...(testMatch3 || [])
+      // Try multiple query methods with various formats
+      const variations = [
+        testCourse,                              // "BUS-C 104"
+        testCourse.toUpperCase(),                // "BUS-C 104"
+        testCourse.replace(/\s+/g, ''),         // "BUS-C104"
+        testCourse.replace(/\s+/g, ' ').trim(), // "BUS-C 104" (normalized)
+        testCourse.replace(/-/g, ' '),          // "BUS C 104"
+        testCourse.replace(/\s+/g, '-'),        // "BUS-C-104"
       ]
-      const uniqueMatches = Array.from(new Set(allMatches.map(c => c.course_code)))
+      
+      const allMatches: string[] = []
+      const errors: any[] = []
+      
+      for (const variation of variations) {
+        // Try ilike (case-insensitive LIKE)
+        const { data: ilikeMatch, error: ilikeErr } = await supabase
+          .from('courses')
+          .select('course_code')
+          .ilike('course_code', variation)
+          .limit(5)
+        
+        if (ilikeErr) errors.push({ method: 'ilike', pattern: variation, error: ilikeErr.message })
+        if (ilikeMatch) allMatches.push(...ilikeMatch.map(c => c.course_code))
+        
+        // Try exact match (case-sensitive)
+        const { data: exactMatch, error: exactErr } = await supabase
+          .from('courses')
+          .select('course_code')
+          .eq('course_code', variation)
+          .limit(5)
+        
+        if (exactErr) errors.push({ method: 'eq', pattern: variation, error: exactErr.message })
+        if (exactMatch) allMatches.push(...exactMatch.map(c => c.course_code))
+      }
+      
+      const uniqueMatches = Array.from(new Set(allMatches))
       
       console.log(`   "${testCourse}":`, {
-        ilike: testMatch1?.length || 0,
-        exact: testMatch2?.length || 0,
-        noSpaces: testMatch3?.length || 0,
+        totalMatches: uniqueMatches.length,
         matches: uniqueMatches,
-        errors: err1 || err2 || err3 || null
+        errors: errors.length > 0 ? errors : null,
+        searchedVariations: variations.length
       })
     }
     
