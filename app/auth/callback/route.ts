@@ -8,14 +8,28 @@ export async function GET(request: Request) {
   const errorDescription = requestUrl.searchParams.get('error_description')
   const next = requestUrl.searchParams.get('next') || '/'
 
+  // Log environment info for debugging
+  const isProduction = requestUrl.hostname !== 'localhost' && !requestUrl.hostname.includes('127.0.0.1')
+  const expectedCallbackUrl = `${requestUrl.origin}/auth/callback`
+
   console.log('OAuth callback received:', {
     hasCode: !!code,
     hasError: !!error,
     error,
     errorDescription,
     fullUrl: requestUrl.toString(),
+    origin: requestUrl.origin,
+    hostname: requestUrl.hostname,
+    isProduction,
+    expectedCallbackUrl,
     allParams: Object.fromEntries(requestUrl.searchParams.entries())
   })
+
+  // Warn if callback URL might not be configured in Supabase
+  if (isProduction) {
+    console.log('⚠️  Production callback detected. Make sure this URL is in Supabase Dashboard → Authentication → URL Configuration → Redirect URLs:')
+    console.log('   ', expectedCallbackUrl)
+  }
 
   // If Supabase returns an error parameter, log it
   if (error) {
@@ -82,7 +96,11 @@ export async function GET(request: Request) {
     console.error('❌ OAuth callback called without code and no session/user exists')
     console.log('Request details:', {
       url: requestUrl.toString(),
+      origin: requestUrl.origin,
+      hostname: requestUrl.hostname,
       referer,
+      isProduction,
+      expectedCallbackUrl,
       allParams: Object.fromEntries(requestUrl.searchParams.entries()),
       cookies: request.headers.get('cookie') ? 'present' : 'missing',
       cookieNames: request.headers.get('cookie')?.split(';').map(c => c.split('=')[0].trim()) || []
@@ -96,8 +114,19 @@ export async function GET(request: Request) {
       console.error('   Fix: Update Google Cloud Console Authorized redirect URIs to ONLY include Supabase callback URL')
     }
     
+    // Check if this might be a Supabase redirect URL configuration issue
+    if (isProduction) {
+      console.error('⚠️  Production callback issue detected!')
+      console.error('   Make sure this URL is added to Supabase Dashboard:')
+      console.error('   → Authentication → URL Configuration → Redirect URLs')
+      console.error('   → Add:', expectedCallbackUrl)
+    }
+    
     // No code and no session - redirect to login
-    return NextResponse.redirect(new URL('/login?error=oauth_error&details=google_redirect_misconfigured', requestUrl.origin))
+    const errorDetails = isProduction 
+      ? 'oauth_error_production_config' 
+      : 'google_redirect_misconfigured'
+    return NextResponse.redirect(new URL(`/login?error=oauth_error&details=${errorDetails}`, requestUrl.origin))
   }
 
   // Exchange code for session

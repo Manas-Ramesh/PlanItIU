@@ -32,6 +32,8 @@ function LoginForm() {
       
       if (errorDetails === 'google_redirect_misconfigured') {
         errorMessage = 'Google OAuth is misconfigured. The redirect URI in Google Cloud Console must point to Supabase, not your app. See OAUTH_FIX.md for instructions.'
+      } else if (errorDetails === 'oauth_error_production_config') {
+        errorMessage = 'OAuth configuration issue detected. Please ensure your production URL is added to Supabase Dashboard → Authentication → URL Configuration → Redirect URLs. See VERCEL_DEPLOYMENT.md for instructions.'
       } else if (errorDetails) {
         errorMessage = `Google sign-in failed: ${errorDetails}`
       }
