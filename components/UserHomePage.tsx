@@ -92,8 +92,8 @@ export default function UserHomePage({ userId }: { userId: string }) {
       {activeTab === 'calendar' && <Calendar userId={userId} />}
       {activeTab === 'chatbot' && <Chatbot userId={userId} />}
       {activeTab === 'swipe' && <Swipe userId={userId} />}
-      {activeTab === 'bank' && <Bank userId={userId} />}
-      {activeTab === 'gpa' && <GPACalculator userId={userId} />}
+      {/* {activeTab === 'bank' && <Bank userId={userId} />} */}
+      {/* {activeTab === 'gpa' && <GPACalculator userId={userId} />} */}
 
       {/* Bottom Tab Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
@@ -216,7 +216,8 @@ export default function UserHomePage({ userId }: { userId: string }) {
               </svg>
               <span className="text-xs font-medium">Chat</span>
             </button>
-            <button
+            {/* Bank tab - Commented out for now */}
+            {/* <button
               onClick={() => setActiveTab('bank')}
               className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
                 activeTab === 'bank'
@@ -238,8 +239,9 @@ export default function UserHomePage({ userId }: { userId: string }) {
                 />
               </svg>
               <span className="text-xs font-medium">Bank</span>
-            </button>
-            <button
+            </button> */}
+            {/* GPA tab - Commented out for now */}
+            {/* <button
               onClick={() => setActiveTab('gpa')}
               className={`flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-colors ${
                 activeTab === 'gpa'
@@ -261,7 +263,7 @@ export default function UserHomePage({ userId }: { userId: string }) {
                 />
               </svg>
               <span className="text-xs font-medium">GPA</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

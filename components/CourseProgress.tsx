@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { Calculator, Plus, Trash2, X } from 'lucide-react'
 
 interface Requirement {
   id: string
@@ -29,15 +30,109 @@ interface UserPreferences {
   courses_taken: string[] | null
 }
 
+interface CourseWithGrade {
+  course_code: string
+  course_name: string
+  grade: string | null
+}
+
+const GRADE_POINTS: { [key: string]: number } = {
+  'A+': 4.0,
+  'A': 4.0,
+  'A-': 3.7,
+  'B+': 3.3,
+  'B': 3.0,
+  'B-': 2.7,
+  'C+': 2.3,
+  'C': 2.0,
+  'C-': 1.7,
+  'D+': 1.3,
+  'D': 1.0,
+  'D-': 0.7,
+  'F': 0.0,
+}
+
+const GRADES = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F']
+
 export default function CourseProgress({ userId }: { userId: string }) {
   const [preferences, setPreferences] = useState<UserPreferences | null>(null)
   const [semesterData, setSemesterData] = useState<SemesterData[]>([])
   const [loading, setLoading] = useState(true)
   const [totalProgress, setTotalProgress] = useState({ completed: 0, total: 0, percentage: 0 })
+  const [gpaCourses, setGpaCourses] = useState<CourseWithGrade[]>([])
+  const [gpaLoading, setGpaLoading] = useState(true)
+  const [showGpaSidebar, setShowGpaSidebar] = useState(true)
 
   useEffect(() => {
     fetchData()
+    loadGpaCourses()
   }, [userId])
+
+  const loadGpaCourses = async () => {
+    try {
+      setGpaLoading(true)
+      const { data: prefsData } = await supabase
+        .from('user_preferences')
+        .select('courses_taken')
+        .eq('user_id', userId)
+        .single()
+
+      const coursesTaken = prefsData?.courses_taken || []
+      const gradesKey = `gpaGrades_${userId}`
+      const savedGrades = localStorage.getItem(gradesKey)
+      const gradesMap: { [key: string]: string } = savedGrades ? JSON.parse(savedGrades) : {}
+
+      if (coursesTaken.length > 0) {
+        const { data: coursesData } = await supabase
+          .from('courses')
+          .select('course_code, course_name')
+          .in('course_code', coursesTaken)
+
+        const coursesMap = new Map<string, string>()
+        if (coursesData) {
+          coursesData.forEach((c: { course_code: string; course_name: string }) => {
+            coursesMap.set(c.course_code, c.course_name)
+          })
+        }
+
+        const coursesWithGradesData: CourseWithGrade[] = coursesTaken.map((code: string) => ({
+          course_code: code,
+          course_name: coursesMap.get(code) || code,
+          grade: gradesMap[code] || null
+        }))
+
+        setGpaCourses(coursesWithGradesData)
+      } else {
+        setGpaCourses([])
+      }
+    } catch (error: any) {
+      console.error('Error loading GPA courses:', error)
+    } finally {
+      setGpaLoading(false)
+    }
+  }
+
+  const updateGpaGrade = (courseCode: string, grade: string) => {
+    const updated = gpaCourses.map(c => 
+      c.course_code === courseCode ? { ...c, grade } : c
+    )
+    setGpaCourses(updated)
+
+    const gradesKey = `gpaGrades_${userId}`
+    const savedGrades = localStorage.getItem(gradesKey)
+    const gradesMap: { [key: string]: string } = savedGrades ? JSON.parse(savedGrades) : {}
+    gradesMap[courseCode] = grade
+    localStorage.setItem(gradesKey, JSON.stringify(gradesMap))
+  }
+
+  const calculateGPA = (): number => {
+    const coursesWithGradesOnly = gpaCourses.filter(c => c.grade !== null)
+    if (coursesWithGradesOnly.length === 0) return 0
+    const totalPoints = coursesWithGradesOnly.reduce((sum, c) => {
+      return sum + (GRADE_POINTS[c.grade!] || 0)
+    }, 0)
+    return totalPoints / coursesWithGradesOnly.length
+  }
 
   const fetchData = async () => {
     try {
@@ -321,10 +416,15 @@ export default function CourseProgress({ userId }: { userId: string }) {
   }
 
   const creditsRemaining = totalProgress.total - totalProgress.completed
+  const gpa = calculateGPA()
+  const coursesWithGradesCount = gpaCourses.filter(c => c.grade !== null).length
 
   return (
     <div className="min-h-screen pb-20 bg-white">
-      <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-6">
+          {/* Main Content */}
+          <div className={`flex-1 transition-all ${showGpaSidebar ? 'lg:mr-80' : ''}`}>
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Degree Progress</h1>
@@ -392,6 +492,88 @@ export default function CourseProgress({ userId }: { userId: string }) {
               </div>
             )
           })}
+        </div>
+          </div>
+
+          {/* GPA Calculator Sidebar */}
+          {showGpaSidebar && (
+            <div className="hidden lg:block fixed right-4 top-20 bottom-20 w-80 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-10">
+              <div className="h-full flex flex-col">
+                {/* Sidebar Header */}
+                <div className="bg-red-600 text-white p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Calculator className="w-5 h-5" />
+                    <h3 className="font-bold text-lg">GPA Calculator</h3>
+                  </div>
+                  <button
+                    onClick={() => setShowGpaSidebar(false)}
+                    className="text-white hover:text-gray-200"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* GPA Display */}
+                <div className="p-4 border-b border-gray-200">
+                  <div className="bg-red-50 border-2 border-red-600 rounded-lg p-4">
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600 mb-1">Current GPA</p>
+                      <p className="text-4xl font-bold text-red-600">{gpa.toFixed(2)}</p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Based on {coursesWithGradesCount} course{coursesWithGradesCount !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Courses List */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  {gpaLoading ? (
+                    <div className="text-center text-gray-500 py-8">Loading...</div>
+                  ) : gpaCourses.length === 0 ? (
+                    <div className="text-center text-gray-500 py-8">
+                      <p className="text-sm">No courses added</p>
+                      <p className="text-xs mt-1">Courses from your progress will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {gpaCourses.map((course) => (
+                        <div
+                          key={course.course_code}
+                          className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                        >
+                          <div className="mb-2">
+                            <h4 className="text-sm font-semibold text-gray-900">{course.course_code}</h4>
+                            <p className="text-xs text-gray-600 truncate">{course.course_name}</p>
+                          </div>
+                          <select
+                            value={course.grade || ''}
+                            onChange={(e) => updateGpaGrade(course.course_code, e.target.value)}
+                            className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-red-500"
+                          >
+                            <option value="">Select Grade</option>
+                            {GRADES.map(grade => (
+                              <option key={grade} value={grade}>{grade}</option>
+                            ))}
+                          </select>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Toggle Button (when sidebar is hidden) */}
+          {!showGpaSidebar && (
+            <button
+              onClick={() => setShowGpaSidebar(true)}
+              className="hidden lg:block fixed right-4 top-20 bg-red-600 text-white p-3 rounded-lg shadow-lg hover:bg-red-700 z-10"
+            >
+              <Calculator className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
     </div>

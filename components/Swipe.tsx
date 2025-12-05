@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { collectRequirementOptions, parseMeetingTime, TimeSlot, ScheduledCourse, hasTimeSlotsConflict } from '@/lib/scheduleCore'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
-import { Clock, MapPin, Users, Star, BookOpen, Calculator, Users as GroupIcon, FlaskConical, X, RotateCcw, Heart, ChevronDown, ChevronUp, Filter, Check, AlertTriangle, Settings, MessageSquare, Beaker, FileText, Presentation, Clipboard } from 'lucide-react'
+import { Clock, MapPin, Users, Star, BookOpen, Calculator, Users as GroupIcon, FlaskConical, X, RotateCcw, Heart, ChevronDown, ChevronUp, Filter, Check, AlertTriangle, Settings, MessageSquare, Beaker, FileText, Presentation, Clipboard, Search } from 'lucide-react'
 
 interface Course {
   course_code: string
@@ -75,6 +75,12 @@ export default function Swipe({ userId }: { userId: string }) {
   const [genEdFilter, setGenEdFilter] = useState<string[]>([])
   const [courseTypeFilter, setCourseTypeFilter] = useState<string[]>([])
   const [difficultyFilter, setDifficultyFilter] = useState<number[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<Course[]>([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [showSearchResults, setShowSearchResults] = useState(false)
+  const [searchRank, setSearchRank] = useState<{ rank: number; total: number } | null>(null)
+  const [searchRankMap, setSearchRankMap] = useState<Map<string, { rank: number; total: number }>>(new Map())
   const cardRef = useRef<HTMLDivElement>(null)
 
   const fetchData = async (swipedSet?: Set<string>, fulfilledReqsSet?: Set<string>) => {
@@ -1132,7 +1138,16 @@ export default function Swipe({ userId }: { userId: string }) {
     return filtered
   }
 
-  const availableCourses = getFilteredCourses()
+  // Get current courses (either search results or filtered courses)
+  const getCurrentCourses = () => {
+    if (showSearchResults && searchResults.length > 0) {
+      return searchResults
+    }
+    return getFilteredCourses()
+  }
+
+  const availableCourses = getCurrentCourses()
+  const currentCourse = availableCourses[currentIndex]
   
   // Ensure currentIndex is within bounds
   useEffect(() => {
@@ -1140,8 +1155,13 @@ export default function Swipe({ userId }: { userId: string }) {
       setCurrentIndex(0)
     }
   }, [availableCourses.length, currentIndex])
-  
-  const currentCourse = availableCourses[currentIndex]
+
+  // Update search rank when current course changes
+  useEffect(() => {
+    if (showSearchResults && currentCourse && searchRankMap.has(currentCourse.course_code)) {
+      setSearchRank(searchRankMap.get(currentCourse.course_code)!)
+    }
+  }, [currentIndex, currentCourse?.course_code, showSearchResults])
 
   // Get enrollment status info
   const getEnrollmentStatus = (status: string | null) => {
@@ -1232,15 +1252,84 @@ export default function Swipe({ userId }: { userId: string }) {
     )
   }
 
-  const timeSlots = currentCourse.meeting_time ? parseMeetingTime(currentCourse.meeting_time) : []
+  // Get enrollment status info for current course
   const enrollmentStatus = getEnrollmentStatus(currentCourse.status)
   const StatusIcon = enrollmentStatus.icon
+  const timeSlots = currentCourse.meeting_time ? parseMeetingTime(currentCourse.meeting_time) : []
+
+  // Search handler
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      setShowSearchResults(false)
+      setSearchResults([])
+      setSearchRank(null)
+      setSearchRankMap(new Map())
+      return
+    }
+
+    setIsSearching(true)
+    try {
+      const response = await fetch('/api/search-courses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ searchQuery: query }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        
+        // Convert search results to Course format
+        const convertedResults: Course[] = data.courses.map((c: any) => ({
+          course_code: c.course_code,
+          course_name: c.course_name,
+          credits: null,
+          meeting_time: null,
+          instructor: null,
+          room: null,
+          building: null,
+          status: null,
+          class_number: '',
+          gpa: c.gpa || 0,
+          requirement_names: [],
+          isRequired: false,
+          isCritical: false,
+          fulfillsCurrentSemester: false,
+          isCriticalForCurrentSemester: false,
+          isCriticalFromEarlierSemester: false,
+          isCriticalFromYear1: false,
+          isCriticalFromYear1Fall: false,
+          earliestYear: undefined
+        }))
+
+        setSearchResults(convertedResults)
+        setShowSearchResults(true)
+        if (convertedResults.length > 0) {
+          // Store rank info for each course
+          const rankMap = new Map<string, { rank: number; total: number }>()
+          data.courses.forEach((c: any) => {
+            rankMap.set(c.course_code, { rank: c.rank, total: data.total })
+          })
+          setSearchRankMap(rankMap)
+          // Set initial rank
+          setSearchRank(rankMap.get(convertedResults[0].course_code) || { rank: 1, total: data.total })
+          setCurrentIndex(0)
+        }
+      }
+    } catch (error) {
+      console.error('Error searching courses:', error)
+    } finally {
+      setIsSearching(false)
+    }
+  }
 
   return (
     <div className="min-h-screen pb-20 bg-white flex flex-col p-4">
       {/* Header with Filters */}
       <div className="mb-6">
         <h2 className="text-xl font-bold text-gray-800 text-center mb-4">Find Your Perfect Classes</h2>
+        
         <div className="flex items-center justify-end space-x-2">
           {/* Time Filter Button */}
           <button
@@ -1312,6 +1401,36 @@ export default function Swipe({ userId }: { userId: string }) {
           exit={{ opacity: 0, height: 0 }}
           className="mb-4 p-4 bg-gray-50 rounded-lg space-y-4"
         >
+          {/* Search Bar inside Filters */}
+          <div className="relative">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  handleSearch(e.target.value)
+                }}
+                placeholder="Search courses by name or code..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              />
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                </div>
+              )}
+            </div>
+            {showSearchResults && searchResults.length > 0 && searchRank && (
+              <p className="text-xs text-gray-500 mt-1">
+                Showing result {searchRank.rank} of {searchRank.total} courses
+              </p>
+            )}
+            {showSearchResults && searchResults.length === 0 && searchQuery && (
+              <p className="text-xs text-red-500 mt-1">No courses found matching "{searchQuery}"</p>
+            )}
+          </div>
+
           <div className="flex items-center justify-between">
             <label htmlFor="open-only" className="text-sm text-gray-700">Show only open classes</label>
             <input
@@ -1425,8 +1544,15 @@ export default function Swipe({ userId }: { userId: string }) {
           whileTap={{ scale: 0.98 }}
           className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden cursor-grab active:cursor-grabbing"
         >
-          {/* Degree Progress Badge */}
-          {currentCourse.isRequired && (
+          {/* Degree Progress Badge or Search Rank */}
+          {showSearchResults && searchRank && (
+            <div className="absolute top-4 right-4 z-10">
+              <div className="px-3 py-1 rounded-full text-sm font-bold bg-purple-600 text-white">
+                #{searchRank.rank} of {searchRank.total}
+              </div>
+            </div>
+          )}
+          {!showSearchResults && currentCourse.isRequired && (
             <div className="absolute top-4 right-4 z-10">
               <div className={`px-3 py-1 rounded-full text-sm font-bold ${
                 currentCourse.isCritical 
@@ -1502,7 +1628,8 @@ export default function Swipe({ userId }: { userId: string }) {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Teacher Rating and Average Grade - Commented out */}
+            {/* <div className="grid grid-cols-2 gap-4 mb-4">
               {currentCourse.gpa && currentCourse.gpa > 0 && (
                 <>
                   <div className="text-center">
@@ -1518,15 +1645,22 @@ export default function Swipe({ userId }: { userId: string }) {
                   </div>
                 </>
               )}
-            </div>
+            </div> */}
 
             <div className="mb-4">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm text-gray-600">Difficulty</span>
                 <div className="flex space-x-1">
                   {[1, 2, 3, 4, 5].map((level) => {
-                    // Estimate difficulty from GPA (lower GPA = higher difficulty)
-                    const estimatedDifficulty = currentCourse.gpa ? Math.max(1, Math.min(5, Math.round(5 - (currentCourse.gpa / 4.0 * 4)))) : 3
+                    // Calculate difficulty based on average GPA (median grade predictor)
+                    // Higher GPA = Lower difficulty
+                    // GPA 4.0 = Difficulty 1, GPA 3.0 = Difficulty 2.5, GPA 2.0 = Difficulty 4, GPA 1.0 = Difficulty 5
+                    let estimatedDifficulty = 3 // Default
+                    if (currentCourse.gpa && currentCourse.gpa > 0) {
+                      // Inverse relationship: GPA 4.0 -> difficulty 1, GPA 0.0 -> difficulty 5
+                      // Formula: difficulty = 5 - (GPA / 4.0 * 4) = 5 - GPA
+                      estimatedDifficulty = Math.max(1, Math.min(5, Math.round(5 - currentCourse.gpa)))
+                    }
                     return (
                       <div
                         key={level}
