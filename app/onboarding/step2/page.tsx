@@ -244,7 +244,7 @@ export default function OnboardingStep2() {
           const savedGrades = localStorage.getItem(gradesKey)
           const gradesMap: { [key: string]: string } = savedGrades ? JSON.parse(savedGrades) : {}
           
-          Object.entries(data.courseGrades).forEach(([courseCode, grade]: [string, string | null]) => {
+          Object.entries(data.courseGrades as { [key: string]: string | null }).forEach(([courseCode, grade]) => {
             if (grade && typeof grade === 'string' && uniqueNewCourses.includes(courseCode)) {
               gradesMap[courseCode] = grade
             }
