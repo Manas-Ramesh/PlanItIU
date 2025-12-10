@@ -151,9 +151,12 @@ export default function OnboardingStep2() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file')
+    // Validate file type - accept images and PDFs
+    const isImage = file.type.startsWith('image/')
+    const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+    
+    if (!isImage && !isPDF) {
+      setError('Please upload an image file or PDF')
       return
     }
 
@@ -233,8 +236,32 @@ export default function OnboardingStep2() {
 
       setCourses([...courses, ...uniqueNewCourses])
       
+      // Save grades to localStorage for GPA calculator
+      if (data.courseGrades && Object.keys(data.courseGrades).length > 0) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const gradesKey = `gpaGrades_${user.id}`
+          const savedGrades = localStorage.getItem(gradesKey)
+          const gradesMap: { [key: string]: string } = savedGrades ? JSON.parse(savedGrades) : {}
+          
+          // Add new grades (only non-null grades)
+          Object.entries(data.courseGrades).forEach(([courseCode, grade]) => {
+            if (grade && uniqueNewCourses.includes(courseCode)) {
+              gradesMap[courseCode] = grade
+            }
+          })
+          
+          localStorage.setItem(gradesKey, JSON.stringify(gradesMap))
+          console.log('💾 Saved grades to localStorage:', gradesMap)
+        }
+      }
+      
       // Build success message with details
       let successMsg = `Successfully added ${uniqueNewCourses.length} course${uniqueNewCourses.length > 1 ? 's' : ''}!`
+      if (data.courseGrades && Object.keys(data.courseGrades).filter(g => g).length > 0) {
+        const gradesCount = Object.values(data.courseGrades).filter(g => g !== null).length
+        successMsg += ` ${gradesCount} grade${gradesCount !== 1 ? 's' : ''} automatically added to GPA calculator.`
+      }
       if (data.debug) {
         successMsg += ` (Extracted ${data.debug.extractedCount}, found ${data.debug.validCount} valid)`
       }
@@ -542,7 +569,7 @@ export default function OnboardingStep2() {
             <div className="flex-1">
               <h3 className="font-semibold text-purple-900 mb-1">Quick Upload Option</h3>
               <p className="text-sm text-purple-700 mb-3">
-                Upload a screenshot of your transcript and our AI will automatically scan and add courses to your completed list!
+                Upload a screenshot or PDF of your unofficial transcript and our AI will automatically scan and add courses to your completed list!
               </p>
               <div className="bg-white rounded-md p-3 mb-3 border border-purple-200">
                 <p className="text-xs text-gray-600 mb-2 font-medium">📸 Instructions:</p>
@@ -557,14 +584,14 @@ export default function OnboardingStep2() {
                       https://sisjee.iu.edu/sisigps-prd/web/igps/plan/full/
                     </a>
                   </li>
-                  <li>Take a screenshot of your course schedule</li>
+                  <li>Take a screenshot or download your unofficial transcript as a PDF</li>
                   <li>Upload it below</li>
                 </ol>
               </div>
               <label className="block">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/*,.pdf"
                   onChange={handleImageUpload}
                   disabled={uploadingImage}
                   className="hidden"
@@ -614,13 +641,13 @@ export default function OnboardingStep2() {
                           d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                         />
                       </svg>
-                      <span>Upload Transcript Screenshot</span>
+                      <span>Upload Transcript (Screenshot or PDF)</span>
                     </>
                   )}
                 </span>
               </label>
               <p className="text-xs text-gray-500 mt-2 text-center">
-                Supports images from phone or computer
+                Supports images and PDF files from phone or computer
               </p>
             </div>
           </div>

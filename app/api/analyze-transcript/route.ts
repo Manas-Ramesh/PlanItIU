@@ -68,7 +68,18 @@ export async function POST(request: NextRequest) {
 
     if (!file) {
       return NextResponse.json(
-        { error: 'No image file provided' },
+        { error: 'No file provided' },
+        { status: 400 }
+      )
+    }
+
+    // Check file type
+    const isImage = file.type.startsWith('image/')
+    const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+    
+    if (!isImage && !isPDF) {
+      return NextResponse.json(
+        { error: 'Invalid file type', message: 'Please upload an image file or PDF' },
         { status: 400 }
       )
     }
@@ -81,7 +92,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'File too large',
-          message: `Image file is too large (${(file.size / 1024 / 1024).toFixed(2)}MB). Please use an image under 3MB. Vercel has request body size limits that prevent larger files.`
+          message: `File is too large (${(file.size / 1024 / 1024).toFixed(2)}MB). Please use a file under 3MB. Vercel has request body size limits that prevent larger files.`
+        },
+        { status: 400 }
+      )
+    }
+
+    // For PDFs, we'll need to convert to image first
+    // For now, return an error suggesting to use screenshots
+    // TODO: Add PDF to image conversion using a library like pdf-lib or pdfjs-dist
+    if (isPDF) {
+      return NextResponse.json(
+        { 
+          error: 'PDF support coming soon',
+          message: 'PDF upload is not yet supported. Please take a screenshot of your transcript and upload it as an image file. We\'re working on PDF support!'
         },
         { status: 400 }
       )
@@ -124,15 +148,18 @@ export async function POST(request: NextRequest) {
 Your task is to:
 1. Determine if this image is actually a course schedule/transcript from Indiana University's SIS system
 2. If it's a valid course schedule, extract ALL UNIQUE course codes (e.g., "BUS-C 104", "PHIL-P 106", "ECON-B 251")
-3. Ignore any "Unregistered Items" sections - only extract courses that are actually registered/completed
-4. Return ONLY UNIQUE course codes - each course code should appear only ONCE in the array, even if it appears multiple times in the image
-5. Return an empty array if no valid courses are found
+3. For each course, also extract the grade if visible (e.g., "A", "B+", "A-", "B", "C+", etc.)
+4. Ignore any "Unregistered Items" sections - only extract courses that are actually registered/completed
+5. Return ONLY UNIQUE course codes - each course code should appear only ONCE in the array, even if it appears multiple times in the image
+6. Return an empty array if no valid courses are found
 
 IMPORTANT: 
 - Extract each course code ONLY ONCE, even if it appears multiple times in the image
 - Do NOT include duplicates in the courses array
 - Course codes typically follow patterns like: "BUS-C 104", "PHIL-P 106", "ECON-B 251"
 - Format: Department code, hyphen, single letter, space, number (e.g., "BUS-C 104", "ENG-W 131")
+- Grades should be in standard format: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F
+- If a grade is not visible or unclear, set it to null
 
 Course codes typically follow patterns like:
 - BUS-C 104
@@ -151,7 +178,11 @@ If the image is NOT a course schedule/transcript, return an empty array: []
 Return your response as a JSON object with this structure:
 {
   "isValidSchedule": true/false,
-  "courses": ["BUS-C 104", "PHIL-P 106", ...],  // UNIQUE courses only, no duplicates
+  "courses": [
+    {"course_code": "BUS-C 104", "grade": "A"},
+    {"course_code": "PHIL-P 106", "grade": "B+"},
+    {"course_code": "ECON-B 251", "grade": null}
+  ],  // Array of objects with course_code and grade (grade can be null if not visible)
   "message": "Optional message explaining what was found"
 }`
         },
@@ -166,7 +197,7 @@ Return your response as a JSON object with this structure:
             },
             {
               type: 'text',
-              text: 'Extract ALL course codes from this image. Look carefully at both Fall and Spring terms. Ignore "Unregistered Items" sections. Return only registered/completed courses with grades. Extract every unique course code you see, even if there are many.',
+              text: 'Extract ALL course codes and their corresponding grades from this image. Look carefully at both Fall and Spring terms. Ignore "Unregistered Items" sections. Return only registered/completed courses. For each course, extract the course code and the grade if visible (A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F). If a grade is not visible or unclear, set it to null. Extract every unique course code you see, even if there are many.',
             },
           ],
         },
@@ -258,6 +289,7 @@ Return your response as a JSON object with this structure:
     }
 
     // Validate courses against database
+    // Handle both old format (array of strings) and new format (array of objects)
     const extractedCourses = parsedResponse.courses || []
     console.log('📸 Extracted courses from AI:', extractedCourses)
     
@@ -266,20 +298,43 @@ Return your response as a JSON object with this structure:
         success: false,
         message: 'No courses found in the image. Please ensure you screenshot from the SIS plan page.',
         courses: [],
+        courseGrades: {},
       })
     }
 
-    // Remove duplicates and normalize course codes (trim whitespace, normalize spacing)
-    // Keep original format for matching, but normalize for comparison
-    const normalizedCourses = extractedCourses
-      .map((code: string) => {
-        // Normalize: trim, remove extra spaces, uppercase for comparison
-        return code.trim().replace(/\s+/g, ' ').toUpperCase()
-      })
-      .filter((code: string) => code.length > 0)
+    // Normalize extracted courses - handle both string and object formats
+    const coursesWithGrades: { course_code: string; grade: string | null }[] = []
+    const courseGradesMap: { [key: string]: string | null } = {}
     
-    const uniqueCourses: string[] = Array.from(new Set(normalizedCourses)) as string[]
+    for (const item of extractedCourses) {
+      let courseCode: string
+      let grade: string | null = null
+      
+      if (typeof item === 'string') {
+        // Old format: just course code string
+        courseCode = item
+      } else if (item && typeof item === 'object' && 'course_code' in item) {
+        // New format: object with course_code and grade
+        courseCode = item.course_code
+        grade = item.grade || null
+      } else {
+        continue
+      }
+      
+      // Normalize course code
+      const normalized = courseCode.trim().replace(/\s+/g, ' ').toUpperCase()
+      if (normalized.length === 0) continue
+      
+      // Avoid duplicates
+      if (!courseGradesMap[normalized]) {
+        coursesWithGrades.push({ course_code: normalized, grade })
+        courseGradesMap[normalized] = grade
+      }
+    }
+    
+    const uniqueCourses: string[] = coursesWithGrades.map(c => c.course_code)
     console.log('🔍 Normalized unique courses:', uniqueCourses)
+    console.log('📊 Extracted grades:', courseGradesMap)
 
     if (uniqueCourses.length === 0) {
       return NextResponse.json({
@@ -672,9 +727,18 @@ Return your response as a JSON object with this structure:
       ? `Found ${validCourseCodes.length} valid course${validCourseCodes.length !== 1 ? 's' : ''}. ${invalidCourses.length} course${invalidCourses.length !== 1 ? 's' : ''} not found in database: ${invalidCourses.join(', ')}`
       : `Successfully extracted ${validCourseCodes.length} course${validCourseCodes.length !== 1 ? 's' : ''}!`
 
+    // Build course grades map for valid courses only
+    const validCourseGrades: { [key: string]: string | null } = {}
+    validCourseCodes.forEach(code => {
+      // Find the grade for this course code (try normalized versions)
+      const normalized = code.trim().replace(/\s+/g, ' ').toUpperCase()
+      validCourseGrades[code] = courseGradesMap[normalized] || null
+    })
+
     return NextResponse.json({
       success: true,
       courses: validCourseCodes,
+      courseGrades: validCourseGrades, // Map of course_code -> grade
       invalidCourses: invalidCourses,
       message: responseMessage,
       debug: {

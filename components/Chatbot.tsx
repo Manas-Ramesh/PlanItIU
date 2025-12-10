@@ -2,6 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { BookOpen } from 'lucide-react'
+import { AnimatePresence } from 'framer-motion'
+import { supabase } from '@/lib/supabase'
+import StudyPortalModal from './StudyPortalModal'
 
 interface Message {
   id: string
@@ -14,9 +18,36 @@ export default function Chatbot({ userId }: { userId: string }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [showStudyPortal, setShowStudyPortal] = useState(false)
+  const [userInfo, setUserInfo] = useState<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Load conversation history from localStorage on mount
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: prefs } = await supabase
+            .from('user_preferences')
+            .select('*')
+            .eq('user_id', userId)
+            .single()
+          
+          setUserInfo({
+            id: user.id,
+            user_id: userId,
+            email: user.email,
+            ...prefs
+          })
+        }
+      } catch (error) {
+        console.error('Error loading user info:', error)
+        setUserInfo({ id: userId, user_id: userId })
+      }
+    }
+    loadUserInfo()
+  }, [userId])
+
   useEffect(() => {
     const storageKey = `chatHistory_${userId}`
     const savedMessages = localStorage.getItem(storageKey)
@@ -24,7 +55,6 @@ export default function Chatbot({ userId }: { userId: string }) {
     if (savedMessages) {
       try {
         const parsed = JSON.parse(savedMessages)
-        // Convert timestamp strings back to Date objects
         const messagesWithDates = parsed.map((msg: any) => ({
           ...msg,
           timestamp: new Date(msg.timestamp)
@@ -32,7 +62,6 @@ export default function Chatbot({ userId }: { userId: string }) {
         setMessages(messagesWithDates)
       } catch (error) {
         console.error('Error loading chat history:', error)
-        // Start with welcome message if loading fails
         setMessages([{
           id: '1',
           role: 'assistant',
@@ -41,7 +70,6 @@ export default function Chatbot({ userId }: { userId: string }) {
         }])
       }
     } else {
-      // First time - show welcome message
       setMessages([{
         id: '1',
         role: 'assistant',
@@ -87,7 +115,6 @@ export default function Chatbot({ userId }: { userId: string }) {
     setIsLoading(true)
 
     try {
-      // Prepare messages for API (exclude timestamps)
       const messagesForAPI = messages
         .map(msg => ({ role: msg.role, content: msg.content }))
         .concat({ role: 'user', content: currentInput })
@@ -105,8 +132,6 @@ export default function Chatbot({ userId }: { userId: string }) {
       }
 
       const data = await response.json()
-      
-      // Log to verify API is being used
       if (data._debug) {
         console.log('✅ OpenAI API Response:', {
           tokensUsed: data._debug.tokensUsed,
@@ -129,7 +154,6 @@ export default function Chatbot({ userId }: { userId: string }) {
     } catch (error) {
       console.error('Error calling chat API:', error)
       console.log('Chatbot: Falling back to rule-based response')
-      // Fallback to rule-based response if API fails
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -144,8 +168,6 @@ export default function Chatbot({ userId }: { userId: string }) {
 
   const generateResponse = (userInput: string): string => {
     const lowerInput = userInput.toLowerCase()
-
-    // Simple rule-based responses - replace with actual AI/API later
     if (lowerInput.includes('schedule') || lowerInput.includes('class')) {
       return "I can help you with scheduling! You can generate a schedule in the Schedules tab. The system will automatically select courses with the highest GPAs and ensure no time conflicts. Would you like to know more about how scheduling works?"
     }
@@ -169,8 +191,6 @@ export default function Chatbot({ userId }: { userId: string }) {
     if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
       return "Hello! How can I help you with your course planning today?"
     }
-
-    // Default response
     return "I understand you're asking about: \"" + userInput + "\". I'm still learning, but I can help you with:\n\n• Generating schedules\n• Tracking degree progress\n• Finding courses with high GPAs\n• Answering questions about requirements\n\nCould you rephrase your question or ask about one of these topics?"
   }
 
@@ -186,32 +206,36 @@ export default function Chatbot({ userId }: { userId: string }) {
       <div className="max-w-4xl mx-auto w-full flex flex-col h-[calc(100vh-5rem)]">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg
-                className="w-7 h-7 text-white"
-                fill="none"
-                stroke="currentColor"
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg
+                  className="w-7 h-7 text-white"
+                  fill="none"
+                  stroke="currentColor"
                 viewBox="0 0 24 24"
                 strokeWidth={2}
               >
-                {/* Robot head with antenna */}
                 <rect x="8" y="10" width="8" height="8" rx="1" stroke="white" fill="none" />
-                {/* Square eyes */}
                 <rect x="9.5" y="12" width="2" height="2" fill="white" />
                 <rect x="12.5" y="12" width="2" height="2" fill="white" />
-                {/* Antenna */}
                 <path d="M11 10 L11 8 M11 8 L10 7 M11 8 L12 7" stroke="white" strokeLinecap="round" />
-              </svg>
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Hoosier AI</h1>
+                <p className="text-sm text-gray-600">Your AI academic advisor.</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Hoosier AI</h1>
-              <p className="text-sm text-gray-600">Your AI academic advisor.</p>
-            </div>
+            <button
+              onClick={() => setShowStudyPortal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all text-sm font-medium shadow-md"
+            >
+              <BookOpen className="w-4 h-4" />
+              Study Portal
+            </button>
           </div>
         </div>
-
-        {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map((message) => (
             <div
@@ -276,8 +300,6 @@ export default function Chatbot({ userId }: { userId: string }) {
           
           <div ref={messagesEndRef} />
         </div>
-
-        {/* Input */}
         <div className="bg-white border-t border-gray-200 p-4">
           <div className="flex gap-2">
             <textarea
@@ -302,6 +324,14 @@ export default function Chatbot({ userId }: { userId: string }) {
           </p>
         </div>
       </div>
+      <AnimatePresence>
+        {showStudyPortal && userInfo && (
+          <StudyPortalModal
+            userInfo={userInfo}
+            onClose={() => setShowStudyPortal(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
