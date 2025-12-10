@@ -93,7 +93,7 @@ export default function UserHomePage({ userId }: { userId: string }) {
       {activeTab === 'calendar' && <Calendar userId={userId} />}
       {activeTab === 'chatbot' && <Chatbot userId={userId} />}
       {activeTab === 'swipe' && <Swipe userId={userId} />}
-      {activeTab === 'assignments' && <AssignmentTab userInfo={{ id: userId, user_id: userId, ...preferences }} />}
+      {activeTab === 'assignments' && <AssignmentTab userInfo={{ ...preferences, id: userId, user_id: userId }} />}
       {/* {activeTab === 'bank' && <Bank userId={userId} />} */}
       {/* {activeTab === 'gpa' && <GPACalculator userId={userId} />} */}
 
