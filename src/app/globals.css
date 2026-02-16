@@ -1,26 +1,117 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Semantic token bridge for Tailwind */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-bg-base);
+  --color-surface: var(--color-bg-surface);
+  --color-elevated: var(--color-bg-elevated);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+
+  --color-brand: var(--color-brand-primary);
+  --color-brand-strong: var(--color-brand-strong);
+
+  --color-border-subtle: var(--color-border-subtle);
+  --color-border-strong: var(--color-border-strong);
+  --color-danger: var(--color-danger);
+  --color-bg-deep: var(--color-bg-deep);
+  --color-course-block: var(--color-bg-course-block);
+  --color-nav-active: var(--color-nav-active);
+  --color-tag-open: var(--color-tag-open);
+  --color-tag-credits: var(--color-tag-credits);
+
+  /* Feature icon gradients */
+  --color-feature-teal: var(--color-feature-teal);
+  --color-feature-cyan: var(--color-feature-cyan);
+  --color-feature-blue: var(--color-feature-blue);
+  --color-feature-green: var(--color-feature-green);
+  --color-feature-emerald: var(--color-feature-emerald);
+  --color-feature-purple: var(--color-feature-purple);
+  --color-feature-indigo: var(--color-feature-indigo);
+  --color-feature-orange: var(--color-feature-orange);
+  --color-feature-amber: var(--color-feature-amber);
+  --color-feature-pink: var(--color-feature-pink);
+  --color-feature-rose: var(--color-feature-rose);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  --shadow-card: var(--shadow-card);
+
+  /* Spacing scale from design tokens */
+  --spacing-2: var(--space-xs);
+  --spacing-3: var(--space-sm);
+  --spacing-4: var(--space-md);
+  --spacing-6: var(--space-lg);
+  --spacing-8: var(--space-xl);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base layer */
+html {
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-background text-text-primary antialiased;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-base),
+    var(--color-bg-surface) 40%,
+    var(--color-bg-deep)
+  );
+  background-attachment: fixed;
+}
+
+/* Typography system */
+h1 {
+  @apply text-4xl md:text-5xl font-semibold tracking-tight;
+}
+
+h2 {
+  @apply text-3xl md:text-4xl font-semibold tracking-tight;
+}
+
+h3 {
+  @apply text-xl font-semibold;
+}
+
+p {
+  @apply text-text-secondary leading-relaxed;
+}
+
+/* Landing hero: subtle starry/speckled texture (Figma 3:366) */
+.landing-hero-bg {
+  position: relative;
+}
+
+.landing-hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+      circle at 20% 30%,
+      rgba(255, 255, 255, 0.03) 0%,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(255, 255, 255, 0.02) 0%,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.02) 0%,
+      transparent 1px
+    );
+  background-size: 48px 48px, 64px 64px, 32px 32px;
+  background-position: 0 0, 24px 24px, 12px 12px;
+  pointer-events: none;
+  z-index: 0;
 }

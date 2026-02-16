@@ -1,0 +1,74 @@
+:root {
+    /* ===== COLOR SYSTEM ===== */
+  
+    /* Backgrounds */
+    --color-bg-base: #1A1B2C;
+    --color-bg-surface: #131422;
+    --color-bg-elevated: #2C2D3E;
+  
+    /* Text */
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #e0e0e0;
+    --color-text-muted: #94a3b8;
+  
+    /* Brand (primary blue: Save schedule, Swap Class, Export) */
+    --color-brand-primary: #4285F4;
+    --color-brand-accent: #5B9ADF;
+    --color-brand-strong: #4285F4;
+  
+  /* Borders */
+  --color-border-subtle: #2C2D3E;
+  --color-border-strong: #35374C;
+
+  /* Page gradient (base → surface → deep) */
+  --color-bg-deep: #000000;
+
+  /* Schedule: uniform background for course cards and calendar blocks */
+  --color-bg-course-block: #2C2D3E;
+
+  /* Sidebar active / premium purple */
+  --color-nav-active: #9A53F4;
+
+  /* Schedule tags */
+  --color-tag-open: #A0C4FF;
+  --color-tag-credits: #AEE2FF;
+
+  /* Feature icon gradients (from → to, semantic only) */
+  --color-feature-teal: #14b8a6;
+  --color-feature-cyan: #06b6d4;
+  --color-feature-blue: #4285F4;
+  --color-feature-green: #22c55e;
+  --color-feature-emerald: #50C878;
+  --color-feature-purple: #8B5CF6;
+  --color-feature-indigo: #6366f1;
+  --color-feature-orange: #f97316;
+  --color-feature-amber: #FBBF24;
+  --color-feature-pink: #ec4899;
+  --color-feature-rose: #f43f5e;
+
+  /* Feedback (semantic use only) */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #EF4444;
+  
+    /* ===== RADIUS SYSTEM ===== */
+  
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 1rem;
+  
+    /* ===== SPACING SCALE ===== */
+  
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+  
+    /* ===== SHADOWS ===== */
+  
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
+  
