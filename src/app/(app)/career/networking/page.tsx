@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { CareerSubLayout } from '@/components/career/CareerSubLayout';
 import {
   SAMPLE_CONTACTS,
   SAMPLE_OUTREACH_METRICS,
@@ -11,26 +10,35 @@ import {
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils/cn';
 
-const TABS = [
-  { href: '/career/networking?tab=swipe', label: 'Swipe Contacts' },
-  { href: '/career/networking?tab=network', label: 'My Network (1)' },
-  { href: '/career/networking?tab=analytics', label: 'Outreach Analytics' },
-] as const;
-
 export default function CareerNetworkingPage() {
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') as 'swipe' | 'network' | 'analytics') || 'swipe';
 
   return (
-    <CareerSubLayout
-      title="Career Networking"
-      subtitle="Connect with IU alumni and build your professional network"
-      tabs={TABS}
-    >
-      {tab === 'swipe' && <SwipeContactsTab />}
-      {tab === 'network' && <MyNetworkTab />}
-      {tab === 'analytics' && <OutreachAnalyticsTab />}
-    </CareerSubLayout>
+    <div className="flex flex-col h-full">
+      <header className="shrink-0 border-b border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-base)] px-6 py-[15.4px]">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--color-feature-teal)]/10 border border-[var(--color-feature-teal)]/20 shrink-0">
+              <svg className="size-4 text-[var(--color-feature-teal)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+            <h1 className="text-xl font-semibold text-[var(--color-text-primary)]">Networking</h1>
+            <span className="rounded-full bg-[var(--color-feature-teal)]/10 border border-[var(--color-feature-teal)]/20 px-3 py-0.5 text-xs font-semibold text-[var(--color-feature-teal)]">
+              IU Alumni
+            </span>
+          </div>
+        </div>
+      </header>
+      <main className="flex-1 overflow-y-auto p-6">
+        {tab === 'swipe' && <SwipeContactsTab />}
+        {tab === 'network' && <MyNetworkTab />}
+        {tab === 'analytics' && <OutreachAnalyticsTab />}
+      </main>
+    </div>
   );
 }
 

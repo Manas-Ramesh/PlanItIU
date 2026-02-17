@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils/cn';
@@ -77,8 +77,33 @@ export function AppSidebar({
 }: Props) {
   const pathname = usePathname();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
-  const collapsed = controlledCollapsed ?? internalCollapsed;
-  const toggleCollapse = onToggleCollapse ?? (() => setInternalCollapsed((c) => !c));
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Detect small screens
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1024px)');
+    const onChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      setIsMobile(e.matches);
+      if (e.matches) setMobileOpen(false);
+    };
+    onChange(mq);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  // Close mobile sidebar on navigation
+  useEffect(() => {
+    if (isMobile) setMobileOpen(false);
+  }, [pathname, isMobile]);
+
+  // On mobile: collapsed sliver is always visible; expanded state overlays
+  const collapsed = isMobile ? !mobileOpen : (controlledCollapsed ?? internalCollapsed);
+  const toggleCollapse = isMobile
+    ? () => setMobileOpen((o) => !o)
+    : (onToggleCollapse ?? (() => setInternalCollapsed((c) => !c)));
+
+  const toggleMobile = useCallback(() => setMobileOpen((o) => !o), []);
 
   const initials = userDisplayName
     .split(' ')
@@ -88,12 +113,32 @@ export function AppSidebar({
     .toUpperCase();
 
   return (
+    <>
+    {/* Backdrop overlay when mobile sidebar is expanded */}
+    {isMobile && mobileOpen && (
+      <div
+        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] transition-opacity"
+        onClick={toggleMobile}
+        aria-hidden
+      />
+    )}
+
+    {/* Collapsed sliver — always in document flow on mobile */}
+    {isMobile && (
+      <div className="shrink-0 w-[68px]" aria-hidden />
+    )}
+
     <aside
       className={cn(
-        'shrink-0 flex flex-col h-screen sticky top-0',
+        'shrink-0 flex flex-col h-screen',
         'bg-[var(--color-bg-elevated)] border-r border-[var(--color-border-subtle)]/40',
         'transition-all duration-300 ease-out',
-        collapsed ? 'w-[68px]' : 'w-[240px]',
+        // Desktop: normal inline flow
+        !isMobile && (collapsed ? 'w-[68px]' : 'w-[240px]'),
+        !isMobile && 'sticky top-0',
+        // Mobile: collapsed sliver is fixed, expands as overlay
+        isMobile && 'fixed top-0 left-0 h-screen',
+        isMobile && (mobileOpen ? 'w-[240px] z-50 shadow-2xl' : 'w-[68px] z-30'),
         className
       )}
       aria-label="App navigation"
@@ -252,7 +297,7 @@ export function AppSidebar({
           {!collapsed && <span className="text-[13px] font-medium">Settings</span>}
         </button>
 
-        {/* Collapse toggle */}
+        {/* Collapse / Expand toggle */}
         <button
           type="button"
           onClick={toggleCollapse}
@@ -301,5 +346,6 @@ export function AppSidebar({
         </div>
       </div>
     </aside>
+    </>
   );
 }

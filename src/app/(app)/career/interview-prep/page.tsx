@@ -1,32 +1,38 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { CareerSubLayout } from '@/components/career/CareerSubLayout';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils/cn';
-
-const TABS = [
-  { href: '/career/interview-prep?tab=practice', label: 'Practice Chat' },
-  { href: '/career/interview-prep?tab=drills', label: 'Question Drills' },
-  { href: '/career/interview-prep?tab=mock', label: 'Mock Interview' },
-] as const;
 
 export default function InterviewPrepPage() {
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') as 'practice' | 'drills' | 'mock') || 'practice';
 
   return (
-    <CareerSubLayout
-      title="PlanIt Interview Prep"
-      subtitle="Sharpen your investment banking technicals, interviews, and outreach with one personalized workspace."
-      highlightText="investment banking"
-      tabs={TABS}
-    >
-      {tab === 'practice' && <PracticeChatTab />}
-      {tab === 'drills' && <QuestionDrillsTab />}
-      {tab === 'mock' && <MockInterviewTab />}
-    </CareerSubLayout>
+    <div className="flex flex-col h-full">
+      <header className="shrink-0 border-b border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-base)] py-[15.4px]">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--color-brand-primary)]/10 border border-[var(--color-brand-primary)]/20 shrink-0">
+              <svg className="size-4 text-[var(--color-brand-primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="6" />
+                <circle cx="12" cy="12" r="2" />
+              </svg>
+            </div>
+            <h1 className="text-xl font-semibold text-[var(--color-text-primary)]">Interview Prep</h1>
+            <span className="rounded-full bg-[var(--color-brand-primary)]/10 border border-[var(--color-brand-primary)]/20 px-3 py-0.5 text-xs font-semibold text-[var(--color-brand-primary)]">
+              PlanIt AI
+            </span>
+          </div>
+        </div>
+      </header>
+      <main className="flex-1 overflow-y-auto p-6">
+        {tab === 'practice' && <PracticeChatTab />}
+        {tab === 'drills' && <QuestionDrillsTab />}
+        {tab === 'mock' && <MockInterviewTab />}
+      </main>
+    </div>
   );
 }
 
