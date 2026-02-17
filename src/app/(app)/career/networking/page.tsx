@@ -59,7 +59,7 @@ function SwipeContactsTab() {
             className="flex items-center gap-4 rounded-xl border border-border-subtle bg-surface p-4"
           >
             <span
-              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[var(--color-nav-active)] text-sm font-semibold text-white"
+              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[var(--color-nav-active)] text-sm font-semibold text-text-on-brand"
               aria-hidden
             >
               {c.name
@@ -108,7 +108,7 @@ function MyNetworkTab() {
     <div className="mx-auto max-w-2xl space-y-6">
       {showToast && (
         <div className="rounded-lg border border-border-subtle bg-surface px-4 py-3 flex items-center gap-2 text-text-primary">
-          <span className="text-green-500">✔</span>
+          <span className="text-success">✔</span>
           Added Timothy Johnson to your network!
         </div>
       )}
@@ -119,7 +119,7 @@ function MyNetworkTab() {
       <div className="rounded-xl border border-border-subtle bg-surface p-5">
         <div className="flex gap-4">
           <span
-            className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[var(--color-nav-active)] text-lg font-semibold text-white"
+            className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[var(--color-nav-active)] text-lg font-semibold text-text-on-brand"
             aria-hidden
           >
             TJ
@@ -174,7 +174,7 @@ function OutreachAnalyticsTab() {
         <div className="mt-4 flex gap-2">
           <button
             type="button"
-            className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white"
+            className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-text-on-brand"
           >
             Email Analytics
           </button>

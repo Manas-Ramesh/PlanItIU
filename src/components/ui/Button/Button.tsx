@@ -10,7 +10,7 @@ import type {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-brand text-white border-0 hover:bg-brand-strong focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background transition',
+    'bg-brand text-text-on-brand border-0 hover:bg-brand-strong focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background transition',
   secondary:
     'bg-transparent text-text-primary border border-border-subtle hover:bg-surface focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background transition',
   ghost:

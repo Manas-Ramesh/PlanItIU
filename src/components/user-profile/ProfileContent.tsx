@@ -30,7 +30,7 @@ export function ProfileContent({
       ) : null}
       <div className="text-center mt-2">
         <div
-          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand text-lg font-semibold text-white"
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand text-lg font-semibold text-text-on-brand"
           aria-hidden
         >
           {displayName.slice(0, 2).toUpperCase()}

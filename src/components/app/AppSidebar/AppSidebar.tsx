@@ -140,7 +140,7 @@ export function AppSidebar({
           aria-label={`${brandLabel} home`}
         >
           <span
-            className="flex size-9 shrink-0 items-center justify-center rounded-full text-white bg-nav-active"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-text-on-brand bg-nav-active"
             aria-hidden
           >
             <LogoIcon className="size-5" />
@@ -167,7 +167,7 @@ export function AppSidebar({
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition',
                     isActive
-                      ? 'bg-nav-active text-white'
+                      ? 'bg-nav-active text-text-on-brand'
                       : 'text-text-secondary hover:bg-elevated hover:text-text-primary'
                   )}
                   aria-current={isActive ? 'page' : undefined}
@@ -229,12 +229,12 @@ export function AppSidebar({
             <button
               type="button"
               onClick={onUpgradeClick}
-              className="mt-3 w-full rounded-lg bg-nav-active py-2 text-sm font-medium text-white hover:opacity-90"
+              className="mt-3 w-full rounded-lg bg-nav-active py-2 text-sm font-medium text-text-on-brand hover:opacity-90"
             >
               Purchase Premium
             </button>
           ) : (
-            <span className="mt-3 block w-full rounded-lg bg-nav-active py-2 text-center text-sm font-medium text-white">
+            <span className="mt-3 block w-full rounded-lg bg-nav-active py-2 text-center text-sm font-medium text-text-on-brand">
               Purchase Premium
             </span>
           )}
@@ -248,7 +248,7 @@ export function AppSidebar({
           aria-label="Profile menu"
         >
           <span
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-nav-active text-white"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-nav-active text-text-on-brand"
             aria-hidden
           >
             <PersonIcon className="size-4" />

@@ -148,7 +148,7 @@ export function AdvisorHome({
                       className={cn(
                         'rounded-lg px-3 py-2 text-sm',
                         msg.sender === 'user'
-                          ? 'ml-8 bg-brand text-white'
+                          ? 'ml-8 bg-brand text-text-on-brand'
                           : 'mr-8 bg-elevated text-text-primary'
                       )}
                     >

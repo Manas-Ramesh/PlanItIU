@@ -195,18 +195,18 @@ export function HomeView({ queryValue, onQueryChange, onSendMessage }: HomeViewP
           >
             <div className="flex items-start gap-4">
               <span
-                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-white"
+                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-overlay-light text-text-on-brand"
                 aria-hidden
               >
                 <InfoIcon className="size-5" />
               </span>
               <div className="min-w-0 flex-1">
-                <h2 id="how-it-works-heading" className="text-lg font-semibold text-white">
+                <h2 id="how-it-works-heading" className="text-lg font-semibold text-text-on-brand">
                   How It Works
                 </h2>
                 <div className="mt-2 flex items-start gap-2">
-                  <SparkleIcon className="mt-0.5 size-5 shrink-0 text-white/80" />
-                  <div className="text-sm text-white/95">
+                  <SparkleIcon className="mt-0.5 size-5 shrink-0 text-text-on-brand/80" />
+                  <div className="text-sm text-text-on-brand/95">
                     <p className="font-semibold">An LLM designed for Indiana University</p>
                     <p className="mt-1">
                       Plan your courses, chat with Hoosier AI, pre-grade homework assignments,

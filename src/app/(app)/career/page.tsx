@@ -154,7 +154,7 @@ export default function CareerChoosePathPage() {
               >
                 <span
                   className={cn(
-                    'flex size-14 shrink-0 items-center justify-center rounded-full text-white',
+                    'flex size-14 shrink-0 items-center justify-center rounded-full text-text-on-brand',
                     card.iconBg
                   )}
                   aria-hidden

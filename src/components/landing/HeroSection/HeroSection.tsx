@@ -31,7 +31,7 @@ export function HeroSection({
       <div className="relative z-10 space-y-6">
         <h1
           id={headingId}
-          className="text-6xl md:text-7xl font-bold tracking-tight text-white leading-tight"
+          className="text-6xl md:text-7xl font-bold tracking-tight text-text-on-brand leading-tight"
         >
           {headline}
           {highlight ? (

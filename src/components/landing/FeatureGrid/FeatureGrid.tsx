@@ -28,7 +28,7 @@ export function FeatureGrid({
       aria-labelledby={ariaLabelledBy ?? headingId}
       aria-describedby={subtitle ? subtitleId : undefined}
     >
-      <h2 id={headingId} className="text-4xl font-bold text-white mb-4">
+      <h2 id={headingId} className="text-4xl font-bold text-text-on-brand mb-4">
         {title}
       </h2>
       {subtitle ? (

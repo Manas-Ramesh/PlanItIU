@@ -54,11 +54,11 @@ export function FeatureCard({
       aria-labelledby={ariaLabelledBy ?? titleId}
     >
       <div className={getIconWrapperClasses(iconGradient)}>
-        <Icon size="lg" className={iconGradient ? 'text-white' : undefined}>
+        <Icon size="lg" className={iconGradient ? 'text-text-on-brand' : undefined}>
           {icon}
         </Icon>
       </div>
-      <h3 id={titleId} className="text-lg font-bold text-white mb-2">
+      <h3 id={titleId} className="text-lg font-bold text-text-on-brand mb-2">
         {title}
       </h3>
       <p className="text-text-secondary text-sm leading-relaxed">{description}</p>

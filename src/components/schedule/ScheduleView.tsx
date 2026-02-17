@@ -106,7 +106,7 @@ export function ScheduleView({
             <Button
               type="button"
               size="sm"
-              className="bg-brand text-white border-0"
+              className="bg-brand text-text-on-brand border-0"
             >
               Export
             </Button>
@@ -162,7 +162,7 @@ export function ScheduleView({
 
       {saveDialogOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay"
           role="dialog"
           aria-modal="true"
           aria-labelledby="save-schedule-title"
@@ -232,7 +232,7 @@ function CourseCard({
           {tagLabel ? (
             <span
               className={cn(
-                'rounded px-1.5 py-0.5 text-xs font-medium text-white',
+                'rounded px-1.5 py-0.5 text-xs font-medium text-text-on-brand',
                 variant === 'closed' && 'bg-danger',
                 variant === 'critical' && 'bg-danger',
                 variant === 'open' && tagLabel !== 'Just Opened!' && 'bg-tag-open',
@@ -244,7 +244,7 @@ function CourseCard({
               {tagLabel}
             </span>
           ) : null}
-          <span className="rounded bg-tag-credits px-1.5 py-0.5 text-xs font-medium text-white">
+          <span className="rounded bg-tag-credits px-1.5 py-0.5 text-xs font-medium text-text-on-brand">
             {course.credits}cr
           </span>
         </div>
@@ -255,7 +255,7 @@ function CourseCard({
           <span className="font-medium text-feature-amber" aria-hidden>★{course.rating}</span>
         )}
         {course.avgGrade && (
-          <span className="rounded bg-feature-green px-1.5 py-0.5 text-xs font-medium text-white">
+          <span className="rounded bg-feature-green px-1.5 py-0.5 text-xs font-medium text-text-on-brand">
             {course.avgGrade}
           </span>
         )}
@@ -287,7 +287,7 @@ function CourseCard({
       <Button
         type="button"
         size="sm"
-        className="mt-1 bg-brand text-white hover:opacity-90 border-0"
+        className="mt-1 bg-brand text-text-on-brand hover:opacity-90 border-0"
       >
         Swap Class
       </Button>

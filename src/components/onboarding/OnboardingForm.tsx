@@ -406,7 +406,7 @@ export function OnboardingForm({
                 >
                   <span
                     className={cn(
-                      'flex size-12 shrink-0 items-center justify-center rounded-full text-white',
+                      'flex size-12 shrink-0 items-center justify-center rounded-full text-text-on-brand',
                       'bg-[var(--color-nav-active)]'
                     )}
                     aria-hidden
@@ -439,7 +439,7 @@ export function OnboardingForm({
                 >
                   <span
                     className={cn(
-                      'flex size-12 shrink-0 items-center justify-center rounded-lg text-white',
+                      'flex size-12 shrink-0 items-center justify-center rounded-lg text-text-on-brand',
                       'bg-[var(--color-feature-green)]'
                     )}
                     aria-hidden
@@ -483,7 +483,7 @@ export function OnboardingForm({
                   >
                     <div className="flex items-start gap-4">
                       <span
-                        className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white bg-[var(--color-nav-active)]"
+                        className="flex size-10 shrink-0 items-center justify-center rounded-lg text-text-on-brand bg-[var(--color-nav-active)]"
                         aria-hidden
                       >
                         <ScanIcon className="size-5" />
@@ -499,7 +499,7 @@ export function OnboardingForm({
                         <Button
                           type="button"
                           className={cn(
-                            'mt-4 gap-2 text-white',
+                            'mt-4 gap-2 text-text-on-brand',
                             'bg-[var(--color-nav-active)] hover:opacity-90',
                             'focus:ring-2 focus:ring-[var(--color-nav-active)] focus:ring-offset-2 focus:ring-offset-background'
                           )}
@@ -599,7 +599,7 @@ export function OnboardingForm({
                       fullWidth
                       onClick={handleAddCredit}
                       className={cn(
-                        'gap-2 text-white bg-[var(--color-nav-active)] hover:opacity-90',
+                        'gap-2 text-text-on-brand bg-[var(--color-nav-active)] hover:opacity-90',
                         'focus:ring-2 focus:ring-[var(--color-nav-active)] focus:ring-offset-2 focus:ring-offset-background'
                       )}
                     >

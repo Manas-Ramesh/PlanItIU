@@ -59,7 +59,7 @@ export function CareerSubLayout({
                 className={cn(
                   'px-4 py-2 text-sm font-medium transition',
                   isActive
-                    ? 'text-white border-b-2 border-brand'
+                    ? 'text-text-on-brand border-b-2 border-brand'
                     : 'text-text-muted hover:text-text-secondary'
                 )}
               >

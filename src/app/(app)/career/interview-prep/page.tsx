@@ -80,7 +80,7 @@ function PracticeChatTab() {
             className={cn(
               'rounded-full px-4 py-2 text-sm font-medium transition',
               topic === 'General'
-                ? 'bg-brand text-white'
+                ? 'bg-brand text-text-on-brand'
                 : 'bg-elevated text-text-secondary hover:bg-surface'
             )}
           >
@@ -108,7 +108,7 @@ function QuestionDrillsTab() {
               type="button"
               className={cn(
                 'rounded-lg px-4 py-2 text-sm font-medium',
-                d === 'Any' ? 'bg-brand text-white' : 'border border-border-subtle bg-surface text-text-secondary'
+                d === 'Any' ? 'bg-brand text-text-on-brand' : 'border border-border-subtle bg-surface text-text-secondary'
               )}
             >
               {d}
@@ -125,7 +125,7 @@ function QuestionDrillsTab() {
               type="button"
               className={cn(
                 'rounded-lg px-4 py-2 text-sm font-medium',
-                b === 'Any' ? 'bg-brand text-white' : 'border border-border-subtle bg-surface text-text-secondary'
+                b === 'Any' ? 'bg-brand text-text-on-brand' : 'border border-border-subtle bg-surface text-text-secondary'
               )}
             >
               {b}
@@ -178,7 +178,7 @@ function MockInterviewTab() {
         </p>
       </section>
       <div className="rounded-xl border border-border-subtle bg-surface p-6 text-center">
-        <span className="flex mx-auto size-16 items-center justify-center rounded-full bg-[var(--color-danger)] text-white">
+        <span className="flex mx-auto size-16 items-center justify-center rounded-full bg-[var(--color-danger)] text-text-on-brand">
           <svg className="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polygon points="23 7 16 12 23 17 23 7" />
             <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
@@ -199,7 +199,7 @@ function MockInterviewTab() {
             key={item.step}
             className="flex gap-4 rounded-xl border border-border-subtle bg-surface p-4"
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-text-on-brand">
               {item.step}
             </span>
             <div>

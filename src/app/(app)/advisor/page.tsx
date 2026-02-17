@@ -18,7 +18,7 @@ export default function AdvisorPage() {
       </p>
       <Link
         href="/dashboard"
-        className="inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 bg-brand text-white hover:bg-brand-strong transition"
+        className="inline-flex items-center justify-center rounded-lg font-medium px-4 py-2 bg-brand text-text-on-brand hover:bg-brand-strong transition"
       >
         Open Dashboard
       </Link>

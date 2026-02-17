@@ -37,13 +37,13 @@ export function AssignmentsView({
           </div>
 
           <div className="flex gap-4">
-            <Button className="bg-brand text-white">4 Your Submissions</Button>
-            <Button className="bg-brand text-white">75% Your Accuracy</Button>
+            <Button className="bg-brand text-text-on-brand">4 Your Submissions</Button>
+            <Button className="bg-brand text-text-on-brand">75% Your Accuracy</Button>
           </div>
 
           <section>
             <h2 className="text-lg font-semibold text-text-primary">Step 1: Upload Assignment Instructions.</h2>
-            <span className="inline-block mt-1 rounded bg-[var(--color-success)] px-2 py-0.5 text-xs font-medium text-white">Uploaded</span>
+            <span className="inline-block mt-1 rounded bg-[var(--color-success)] px-2 py-0.5 text-xs font-medium text-text-on-brand">Uploaded</span>
             <div className="mt-2 rounded-lg border border-border-subtle bg-surface p-4 flex items-center gap-3">
               <span className="text-text-muted">
                 <svg className="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -63,7 +63,7 @@ export function AssignmentsView({
 
           <section>
             <h2 className="text-lg font-semibold text-text-primary">Step 2: Upload Your Submission.</h2>
-            <span className="inline-block mt-1 rounded bg-[var(--color-success)] px-2 py-0.5 text-xs font-medium text-white">PDF Document</span>
+            <span className="inline-block mt-1 rounded bg-[var(--color-success)] px-2 py-0.5 text-xs font-medium text-text-on-brand">PDF Document</span>
             <div className="mt-2 rounded-lg border border-border-subtle bg-surface p-4 flex items-center gap-3">
               <span className="text-text-muted">
                 <svg className="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -82,7 +82,7 @@ export function AssignmentsView({
           </section>
 
           <div className="flex gap-2">
-            <Button className="gap-2 bg-brand text-white">
+            <Button className="gap-2 bg-brand text-text-on-brand">
               <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polygon points="12 2 15 9 22 9 17 14 18 22 12 18 6 22 7 14 2 9 9 9" />
               </svg>

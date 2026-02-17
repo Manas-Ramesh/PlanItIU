@@ -139,7 +139,7 @@ export function Select({
           'w-full flex items-center justify-between gap-2 rounded-lg border text-left transition',
           'focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed',
           variant === 'landing'
-            ? 'min-h-12 py-3 px-4 rounded-xl bg-white border-[#e5e7eb] text-[#1f2937] placeholder:text-[#6b7280] hover:border-[#d1d5db] focus:ring-offset-0'
+            ? 'min-h-12 py-3 px-4 rounded-xl bg-bg-light border-border-light text-text-dark placeholder:text-text-dark-muted hover:border-border-light-hover focus:ring-offset-0'
             : 'min-h-10 py-2 px-3 border-border-subtle bg-surface text-text-primary focus:ring-offset-background hover:border-border-strong',
           disabled && 'opacity-60 cursor-not-allowed'
         )}
@@ -148,7 +148,7 @@ export function Select({
         <span
           className={cn(
             variant === 'landing'
-              ? !selectedOption && 'text-[#6b7280]'
+              ? !selectedOption && 'text-text-dark-muted'
               : !selectedOption && 'text-text-muted'
           )}
         >

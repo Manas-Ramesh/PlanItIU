@@ -69,7 +69,7 @@ function BrowseJobsTab() {
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex gap-3">
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-[var(--color-nav-active)] text-white font-bold">
+                <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-[var(--color-nav-active)] text-text-on-brand font-bold">
                   P
                 </span>
                 <div>
@@ -83,10 +83,10 @@ function BrowseJobsTab() {
                     key={tag}
                     className={cn(
                       'rounded-full px-2 py-0.5 text-xs font-medium',
-                      tag === 'Internship' && 'bg-[var(--color-nav-active)] text-white',
-                      tag === 'Full-time' && 'bg-brand text-white',
-                      tag === 'Remote' && 'bg-[var(--color-feature-green)] text-white',
-                      tag === 'Entry-Level' && 'bg-[var(--color-feature-pink)] text-white'
+                      tag === 'Internship' && 'bg-[var(--color-nav-active)] text-text-on-brand',
+                      tag === 'Full-time' && 'bg-brand text-text-on-brand',
+                      tag === 'Remote' && 'bg-[var(--color-feature-green)] text-text-on-brand',
+                      tag === 'Entry-Level' && 'bg-[var(--color-feature-pink)] text-text-on-brand'
                     )}
                   >
                     {tag}
@@ -151,7 +151,7 @@ function ApplicationTrackerTab() {
               <tr key={i} className="border-b border-border-subtle hover:bg-surface">
                 <td className="p-3">
                   <span className="inline-flex items-center gap-2">
-                    <span className="flex size-8 items-center justify-center rounded-full bg-[var(--color-nav-active)] text-white text-xs font-bold">
+                    <span className="flex size-8 items-center justify-center rounded-full bg-[var(--color-nav-active)] text-text-on-brand text-xs font-bold">
                       A
                     </span>
                     {row.company}
@@ -166,9 +166,9 @@ function ApplicationTrackerTab() {
                   <span
                     className={cn(
                       'inline-block rounded px-2 py-1 text-xs font-medium',
-                      row.status === 'Applied' && 'bg-[var(--color-nav-active)] text-white',
-                      row.status === 'Interview' && 'bg-brand text-white',
-                      row.status === 'Offer' && 'bg-[var(--color-feature-orange)] text-white'
+                      row.status === 'Applied' && 'bg-[var(--color-nav-active)] text-text-on-brand',
+                      row.status === 'Interview' && 'bg-brand text-text-on-brand',
+                      row.status === 'Offer' && 'bg-[var(--color-feature-orange)] text-text-on-brand'
                     )}
                   >
                     {row.status}

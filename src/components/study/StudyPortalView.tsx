@@ -108,7 +108,7 @@ export function StudyPortalView({
 
       {uploadModalOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay"
           role="dialog"
           aria-modal="true"
           aria-labelledby="upload-study-title"

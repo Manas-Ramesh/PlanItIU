@@ -92,7 +92,7 @@ export function DegreeProgressView({
                         <div className="flex flex-wrap items-center gap-1">
                           <span className="text-text-primary font-medium">{req.name}</span>
                           {req.critical ? (
-                            <span className="rounded bg-danger px-1.5 py-0.5 text-xs font-medium text-white">
+                            <span className="rounded bg-danger px-1.5 py-0.5 text-xs font-medium text-text-on-brand">
                               CRITICAL
                             </span>
                           ) : null}

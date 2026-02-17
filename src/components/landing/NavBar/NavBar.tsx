@@ -14,7 +14,7 @@ export function NavBar(props: Props) {
   } = props;
 
   const ctaClasses =
-    'bg-brand text-white px-4 py-2 rounded-md hover:bg-brand-strong transition font-medium inline-flex items-center justify-center';
+    'bg-brand text-text-on-brand px-4 py-2 rounded-md hover:bg-brand-strong transition font-medium inline-flex items-center justify-center';
 
   return (
     <header

@@ -53,7 +53,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
   return (
     <>
       <div
-        className="fixed inset-0 z-50 bg-black/50"
+        className="fixed inset-0 z-50 bg-overlay"
         onClick={onClose}
         aria-hidden
       />
