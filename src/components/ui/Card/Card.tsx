@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils/cn';
 import type { CardProps as Props, CardVariant, CardPadding } from './Card.types';
 
 const variantClasses: Record<CardVariant, string> = {
-  default: 'bg-transparent border border-border-subtle rounded-lg',
+  default: 'bg-transparent border border-[var(--color-border-subtle)] rounded-lg',
   feature:
-    'bg-surface border border-border-subtle rounded-2xl p-6 shadow-card text-center flex flex-col items-center hover:border-border-strong transition-colors',
+    'bg-[var(--color-bg-surface)] border border-[var(--color-border-subtle)] rounded-2xl p-6 shadow-[var(--shadow-card)] text-center flex flex-col items-center hover:border-[var(--color-border-strong)] transition-colors',
 };
 
 const paddingClasses: Record<CardPadding, string> = {

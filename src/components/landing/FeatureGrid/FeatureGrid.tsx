@@ -21,28 +21,39 @@ export function FeatureGrid({
   return (
     <section
       id={id}
-      className={cn(
-        'py-24 px-6 text-center',
-        className
-      )}
+      className={cn('py-28 px-6 lg:px-8', className)}
       aria-labelledby={ariaLabelledBy ?? headingId}
       aria-describedby={subtitle ? subtitleId : undefined}
     >
       <div className="max-w-6xl mx-auto">
-        <h2 id={headingId} className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
-          {title}
-        </h2>
-        {subtitle ? (
-          <p id={subtitleId} className="text-text-muted text-lg max-w-2xl mx-auto mb-16">
-            {subtitle}
-          </p>
-        ) : null}
+        {/* Section header */}
+        <div className="max-w-2xl mb-16">
+          <h2
+            id={headingId}
+            className="font-display text-3xl md:text-4xl lg:text-5xl text-[var(--color-text-primary)] mb-5"
+          >
+            {title}
+          </h2>
+          {subtitle ? (
+            <p id={subtitleId} className="text-[var(--color-text-muted)] text-lg leading-relaxed">
+              {subtitle}
+            </p>
+          ) : null}
+        </div>
+
+        {/* Bento grid */}
         <ul
           role="list"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
         >
-          {features.map((feature) => (
-            <li key={feature.id}>
+          {features.map((feature, i) => (
+            <li
+              key={feature.id}
+              className={cn(
+                /* First and fourth items span 2 columns on large screens for bento effect */
+                (i === 0 || i === 3) && 'lg:col-span-2',
+              )}
+            >
               <FeatureCard
                 id={feature.id}
                 title={feature.title}
@@ -50,6 +61,7 @@ export function FeatureGrid({
                 accentGradient={feature.accentGradient}
                 imageSrc={feature.imageSrc}
                 imagePlaceholder={feature.imagePlaceholder}
+                className="h-full"
               />
             </li>
           ))}

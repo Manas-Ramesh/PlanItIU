@@ -195,18 +195,18 @@ export function HomeView({ queryValue, onQueryChange, onSendMessage }: HomeViewP
           >
             <div className="flex items-start gap-4">
               <span
-                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-overlay-light text-text-on-brand"
+                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-overlay-light)] text-[var(--color-text-on-brand)]"
                 aria-hidden
               >
                 <InfoIcon className="size-5" />
               </span>
               <div className="min-w-0 flex-1">
-                <h2 id="how-it-works-heading" className="text-lg font-semibold text-text-on-brand">
+                <h2 id="how-it-works-heading" className="text-lg font-semibold text-[var(--color-text-on-brand)]">
                   How It Works
                 </h2>
                 <div className="mt-2 flex items-start gap-2">
-                  <SparkleIcon className="mt-0.5 size-5 shrink-0 text-text-on-brand/80" />
-                  <div className="text-sm text-text-on-brand/95">
+                  <SparkleIcon className="mt-0.5 size-5 shrink-0 text-[var(--color-text-on-brand)]/80" />
+                  <div className="text-sm text-[var(--color-text-on-brand)]/95">
                     <p className="font-semibold">An LLM designed for Indiana University</p>
                     <p className="mt-1">
                       Plan your courses, chat with Hoosier AI, pre-grade homework assignments,
@@ -226,21 +226,21 @@ export function HomeView({ queryValue, onQueryChange, onSendMessage }: HomeViewP
                 key={card.href}
                 href={card.href}
                 className={cn(
-                  'flex flex-col rounded-xl border border-border-subtle bg-surface p-4',
-                  'hover:border-border-strong transition',
-                  'focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background'
+                  'flex flex-col rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4',
+                  'hover:border-[var(--color-border-strong)] transition',
+                  'focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)]'
                 )}
               >
                 <span
-                  className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-elevated text-text-muted"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[var(--color-bg-elevated)] text-[var(--color-text-muted)]"
                   aria-hidden
                 >
                   {card.icon === 'building' && <BuildingIcon className="size-5" />}
                   {card.icon === 'document' && <DocumentIcon className="size-5" />}
                   {card.icon === 'graduation' && <GraduationIcon className="size-5" />}
                 </span>
-                <h3 className="mt-3 font-semibold text-text-primary">{card.title}</h3>
-                <p className="mt-1 text-sm text-text-secondary">{card.description}</p>
+                <h3 className="mt-3 font-semibold text-[var(--color-text-primary)]">{card.title}</h3>
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{card.description}</p>
               </Link>
             ))}
           </section>
@@ -248,23 +248,23 @@ export function HomeView({ queryValue, onQueryChange, onSendMessage }: HomeViewP
       </div>
 
       {/* Chat input at bottom */}
-      <div className="shrink-0 border-t border-border-subtle bg-background p-4">
+      <div className="shrink-0 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] p-4">
         <form onSubmit={handleSubmit} className="mx-auto max-w-4xl">
           <div
             className={cn(
-              'flex items-center gap-2 rounded-xl border border-border-subtle bg-surface px-4 py-3'
+              'flex items-center gap-2 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-3'
             )}
           >
             <button
               type="button"
-              className="shrink-0 rounded p-1 text-text-muted hover:text-text-secondary"
+              className="shrink-0 rounded p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
               aria-label="Options"
             >
               <ChevronDownIcon className="size-5" />
             </button>
             <button
               type="button"
-              className="shrink-0 rounded p-1 text-text-muted hover:text-text-secondary"
+              className="shrink-0 rounded p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
               aria-label="Attach file"
             >
               <PaperclipIcon className="size-5" />
@@ -280,13 +280,13 @@ export function HomeView({ queryValue, onQueryChange, onSendMessage }: HomeViewP
             <Button
               type="submit"
               disabled={!queryValue.trim()}
-              className="shrink-0 rounded-full size-10 p-0 bg-elevated hover:bg-border-strong text-text-primary"
+              className="shrink-0 rounded-full size-10 p-0 bg-[var(--color-bg-elevated)] hover:bg-[var(--color-border-strong)] text-[var(--color-text-primary)]"
               aria-label="Send"
             >
               <SendArrowIcon className="size-5" />
             </Button>
           </div>
-          <p className="mt-2 text-center text-xs text-text-muted">
+          <p className="mt-2 text-center text-xs text-[var(--color-text-muted)]">
             Planituni can make mistakes. Check important info.
           </p>
         </form>

@@ -12,7 +12,7 @@ export function Label({
   return (
     <label
       htmlFor={htmlFor}
-      className={cn('block text-sm font-medium text-text-secondary', className)}
+      className={cn('block text-sm font-medium text-[var(--color-text-secondary)]', className)}
       {...rest}
     >
       {children}

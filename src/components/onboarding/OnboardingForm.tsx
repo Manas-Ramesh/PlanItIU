@@ -15,6 +15,8 @@ const TOTAL_STEPS = 3;
 
 const SAMPLE_GRADUATION_YEAR = { value: '2026', label: '2026' } as const;
 
+/* ── Inline SVG icons ── */
+
 function BackArrowIcon({ className }: { readonly className?: string }) {
   return (
     <svg
@@ -30,26 +32,6 @@ function BackArrowIcon({ className }: { readonly className?: string }) {
       aria-hidden
     >
       <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-  );
-}
-
-function PlanitUniLogoIcon({ className }: { readonly className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="48"
-      height="48"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M12 14l9-5-9-5-9 5 9 5z" />
-      <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
     </svg>
   );
 }
@@ -138,20 +120,28 @@ function CameraIcon({ className }: { readonly className?: string }) {
   );
 }
 
+/* ── Shared input styling ── */
+
+const inputStyles = cn(
+  'mt-1.5 rounded-xl border-[var(--color-border-subtle)]/40 bg-[var(--color-bg-elevated)]/50',
+  'px-4 py-3 text-sm',
+  'placeholder:text-[var(--color-text-muted)]/50',
+  'focus:border-[var(--color-brand-primary)]/40 focus:ring-[var(--color-brand-primary)]/30'
+);
+
+/* ── Component ── */
+
 export function OnboardingForm({
   graduationYearOptions,
-  schoolOptions = [],
   onComplete,
 }: OnboardingFormProps) {
   const [step, setStep] = useState(1);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
   const [major, setMajor] = useState('');
   const [graduationYear, setGraduationYear] = useState('');
   const [careerInterests, setCareerInterests] = useState('');
   const [courseworkMethod, setCourseworkMethod] = useState<'manual' | 'highschool' | null>(null);
-  const [school, setSchool] = useState('');
   const [greekHouse, setGreekHouse] = useState('');
   const [courses, setCourses] = useState<ReadonlyArray<string>>([]);
   const [highSchoolCredits, setHighSchoolCredits] = useState<ReadonlyArray<HighSchoolCreditEntry>>([]);
@@ -176,9 +166,6 @@ export function OnboardingForm({
   );
   const handleCareerInterestsChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCareerInterests(e.target.value);
-  }, []);
-  const handleSchoolChange = useCallback((value: string) => {
-    setSchool(value);
   }, []);
   const handleGreekHouseChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setGreekHouse(e.target.value);
@@ -211,12 +198,10 @@ export function OnboardingForm({
     const data: OnboardingCompleteData = {
       firstName,
       lastName,
-      email,
       major,
       majors: major ? [major] : [],
       graduationYear,
       careerInterests,
-      school,
       greekHouse,
       courseworkMethod,
       courses,
@@ -226,11 +211,9 @@ export function OnboardingForm({
   }, [
     firstName,
     lastName,
-    email,
     major,
     graduationYear,
     careerInterests,
-    school,
     greekHouse,
     courseworkMethod,
     courses,
@@ -250,80 +233,86 @@ export function OnboardingForm({
   const showNext = !isLastStep;
   const showFinish = isLastStep;
 
-  const step2And3BackButton = step > 1 ? (
-    <button
-      type="button"
-      onClick={handleBack}
-      className="flex items-center gap-2 text-text-primary hover:text-text-secondary transition shrink-0"
-      aria-label="Back to previous step"
-    >
-      <BackArrowIcon className="size-6" />
-    </button>
-  ) : null;
-
-  const progressBar = (
-    <div className="flex flex-col gap-1 flex-1 min-w-0" role="tablist" aria-label="Onboarding steps">
-      <div className="flex gap-1">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className={cn(
-              'h-1 flex-1 rounded-full',
-              step >= i ? 'bg-[var(--color-nav-active)]' : 'bg-elevated'
-            )}
-            aria-hidden
-          />
-        ))}
-      </div>
-      <p className="text-sm text-text-muted text-center">
-        Step {step} of {TOTAL_STEPS}
-      </p>
-    </div>
-  );
-
-  const headerLogo = (
-    <header className="flex flex-col items-center gap-2 text-center">
-      <Link
-        href="/"
-        className="flex flex-col items-center gap-2 text-text-primary no-underline hover:text-text-primary"
-        aria-label="PlanitUni home"
-      >
-        <span className="flex size-12 items-center justify-center rounded-full bg-elevated text-text-primary">
-          <PlanitUniLogoIcon className="size-8" />
-        </span>
-        <span className="text-xl font-semibold">PlanitUni</span>
-      </Link>
-    </header>
-  );
-
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg-base)] relative overflow-hidden">
+
       <main
         id="main-content"
-        className="flex-1 flex flex-col items-center p-6"
+        className="relative z-10 flex-1 flex flex-col items-center px-6 py-10"
         aria-label="Onboarding"
       >
-        <div className="w-full max-w-lg flex flex-col gap-6">
-          {/* Top: back (step 2+ only) + progress */}
-          <div className={cn('flex gap-2', step > 1 ? 'items-center' : 'flex-col')}>
-            {step > 1 && step2And3BackButton}
-            {progressBar}
+        <div className="w-full max-w-lg flex flex-col gap-8">
+          {/* ── Header: brand + progress ── */}
+          <div className="flex flex-col gap-6">
+            {/* Back + brand row */}
+            <div className="flex items-center gap-3">
+              {step > 1 ? (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className={cn(
+                    'flex items-center justify-center w-9 h-9 rounded-xl',
+                    'bg-[var(--color-bg-elevated)]/50 border border-[var(--color-border-subtle)]/30',
+                    'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-subtle)]/50 transition-all'
+                  )}
+                  aria-label="Back to previous step"
+                >
+                  <BackArrowIcon className="size-4" />
+                </button>
+              ) : null}
+
+              <Link
+                href="/"
+                className="flex items-center gap-2.5"
+                aria-label="PlanitUni home"
+              >
+                <div className="w-8 h-8 rounded-lg bg-[var(--color-brand-primary)]/10 border border-[var(--color-brand-primary)]/20 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-[var(--color-brand-primary)]" aria-hidden>
+                    <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
+                  </svg>
+                </div>
+                <span className="font-display text-lg text-[var(--color-text-primary)]">PlanitUni</span>
+              </Link>
+
+              {/* Spacer + step indicator */}
+              <div className="ml-auto">
+                <span className="text-xs text-[var(--color-text-muted)]/60 tabular-nums">
+                  {step}/{TOTAL_STEPS}
+                </span>
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="relative h-1 rounded-full bg-[var(--color-bg-elevated)]" role="tablist" aria-label="Onboarding steps">
+              {/* Grey track */}
+              <div className="absolute inset-0 rounded-full bg-[var(--color-border-subtle)]/30" aria-hidden />
+              {/* Active fill */}
+              <div
+                className="absolute inset-y-0 left-0 rounded-full bg-[var(--color-brand-primary)] shadow-[0_0_10px_var(--color-brand-glow)] transition-all duration-500 ease-out"
+                style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
+                aria-hidden
+              />
+            </div>
           </div>
 
-          {/* Step 1: Tell us about yourself */}
+          {/* ── Step 1: Tell us about yourself ── */}
           {step === 1 && (
-            <>
-              {headerLogo}
-              <h1 className="text-2xl font-semibold text-text-primary text-center">
-                Welcome to Planitiu, Tell us about yourself!
-              </h1>
-              <p className="text-sm text-text-secondary text-center -mt-2">
-                Help us personalize your course recommendations
-              </p>
-              <section className="flex flex-col gap-4" aria-label="Your details">
+            <div className="animate-fade-in-up flex flex-col gap-6">
+              <div>
+                <h1 className="font-display text-3xl text-[var(--color-text-primary)] mb-2">
+                  Tell us about <em className="text-[var(--color-brand-primary)] not-italic">yourself</em>
+                </h1>
+                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                  Help us personalize your course recommendations
+                </p>
+              </div>
+
+              <section className="flex flex-col gap-5" aria-label="Your details">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="onboarding-first-name">First Name</Label>
+                    <Label htmlFor="onboarding-first-name" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                      First Name
+                    </Label>
                     <Input
                       id="onboarding-first-name"
                       type="text"
@@ -332,10 +321,13 @@ export function OnboardingForm({
                       onChange={handleFirstNameChange}
                       required
                       aria-required
+                      className={inputStyles}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="onboarding-last-name">Last Name</Label>
+                    <Label htmlFor="onboarding-last-name" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                      Last Name
+                    </Label>
                     <Input
                       id="onboarding-last-name"
                       type="text"
@@ -344,19 +336,25 @@ export function OnboardingForm({
                       onChange={handleLastNameChange}
                       required
                       aria-required
+                      className={inputStyles}
                     />
                   </div>
                 </div>
+
                 <div>
-                  <Label htmlFor="onboarding-major">Major(s)</Label>
+                  <Label htmlFor="onboarding-major" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                    Major(s)
+                  </Label>
                   <Input
                     id="onboarding-major"
                     type="text"
                     placeholder="Type your major..."
                     value={major}
                     onChange={handleMajorChange}
+                    className={inputStyles}
                   />
                 </div>
+
                 <div>
                   <Select
                     id="onboarding-graduation-year"
@@ -365,10 +363,14 @@ export function OnboardingForm({
                     value={graduationYear}
                     onChange={handleGraduationYearChange}
                     placeholder="Select graduation year"
+                    className=""
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="onboarding-career">Career Interests (Optional)</Label>
+                  <Label htmlFor="onboarding-career" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                    Career Interests <span className="text-[var(--color-text-muted)]/50 font-normal">(Optional)</span>
+                  </Label>
                   <Textarea
                     id="onboarding-career"
                     placeholder="Type your career interests..."
@@ -376,143 +378,160 @@ export function OnboardingForm({
                     onChange={handleCareerInterestsChange}
                     rows={3}
                     aria-required={false}
+                    className={inputStyles}
                   />
                 </div>
               </section>
-            </>
+            </div>
           )}
 
-          {/* Step 2: Previous Coursework – option cards */}
+          {/* ── Step 2: Previous Coursework ── */}
           {step === 2 && (
-            <>
-              {headerLogo}
-              <h1 className="text-2xl font-semibold text-text-primary text-center">
-                Previous Coursework
-              </h1>
-              <p className="text-sm text-text-secondary text-center -mt-2">
-                How would you like to add your completed courses?
-              </p>
+            <div className="animate-fade-in-up flex flex-col gap-6">
+              <div>
+                <h1 className="font-display text-3xl text-[var(--color-text-primary)] mb-2">
+                  Previous <em className="text-[var(--color-brand-primary)] not-italic">Coursework</em>
+                </h1>
+                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                  How would you like to add your completed courses?
+                </p>
+              </div>
+
               <section className="flex flex-col gap-4" aria-label="Coursework method">
+                {/* Manual Entry card */}
                 <button
                   type="button"
                   onClick={setCourseworkManual}
                   className={cn(
-                    'flex items-center gap-4 w-full rounded-xl border-2 p-4 text-left transition',
-                    'bg-surface border-border-subtle hover:border-border-strong',
-                    courseworkMethod === 'manual' && 'border-[var(--color-nav-active)]'
+                    'flex items-center gap-4 w-full rounded-2xl p-5 text-left transition-all duration-300',
+                    'bg-[var(--color-bg-elevated)]/40 border hover:bg-[var(--color-bg-elevated)]/60',
+                    courseworkMethod === 'manual'
+                      ? 'border-[var(--color-brand-primary)]/40 shadow-[0_0_20px_var(--color-brand-glow)]'
+                      : 'border-[var(--color-border-subtle)]/30 hover:border-[var(--color-border-subtle)]/50'
                   )}
                   aria-pressed={courseworkMethod === 'manual'}
                   aria-label="Manual Entry – type in your courses one by one"
                 >
                   <span
                     className={cn(
-                      'flex size-12 shrink-0 items-center justify-center rounded-full text-text-on-brand',
-                      'bg-[var(--color-nav-active)]'
+                      'flex size-12 shrink-0 items-center justify-center rounded-xl transition-colors',
+                      courseworkMethod === 'manual'
+                        ? 'bg-[var(--color-brand-primary)]/15 text-[var(--color-brand-primary)]'
+                        : 'bg-[var(--color-brand-primary)]/8 text-[var(--color-brand-primary)]/60'
                     )}
                     aria-hidden
                   >
                     <PlusCircleIcon className="size-6" />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-text-primary">Manual Entry</p>
-                    <p className="text-sm text-text-secondary">
+                    <p className="font-semibold text-[var(--color-text-primary)] text-sm">Manual Entry</p>
+                    <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
                       Type in your courses one by one
                     </p>
                   </div>
                   {courseworkMethod === 'manual' && (
                     <span
-                      className="size-3 shrink-0 rounded-full bg-[var(--color-nav-active)]"
+                      className="size-2.5 shrink-0 rounded-full bg-[var(--color-brand-primary)] shadow-[0_0_8px_var(--color-brand-glow)]"
                       aria-hidden
                     />
                   )}
                 </button>
+
+                {/* High School Credits card */}
                 <button
                   type="button"
                   onClick={setCourseworkHighSchool}
                   className={cn(
-                    'flex items-center gap-4 w-full rounded-xl border-2 p-4 text-left transition',
-                    'bg-surface border-border-subtle hover:border-border-strong',
-                    courseworkMethod === 'highschool' && 'border-[var(--color-nav-active)]'
+                    'flex items-center gap-4 w-full rounded-2xl p-5 text-left transition-all duration-300',
+                    'bg-[var(--color-bg-elevated)]/40 border hover:bg-[var(--color-bg-elevated)]/60',
+                    courseworkMethod === 'highschool'
+                      ? 'border-[var(--color-feature-green)]/40 shadow-[0_0_20px_var(--color-feature-green)]'
+                      : 'border-[var(--color-border-subtle)]/30 hover:border-[var(--color-border-subtle)]/50'
                   )}
                   aria-pressed={courseworkMethod === 'highschool'}
                   aria-label="High School Credits – add AP, IB, dual enrollment, or other credits"
                 >
                   <span
                     className={cn(
-                      'flex size-12 shrink-0 items-center justify-center rounded-lg text-text-on-brand',
-                      'bg-[var(--color-feature-green)]'
+                      'flex size-12 shrink-0 items-center justify-center rounded-xl transition-colors',
+                      courseworkMethod === 'highschool'
+                        ? 'bg-[var(--color-feature-green)]/15 text-[var(--color-feature-green)]'
+                        : 'bg-[var(--color-feature-green)]/8 text-[var(--color-feature-green)]/60'
                     )}
                     aria-hidden
                   >
                     <BookIcon className="size-6" />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-text-primary">High School Credits</p>
-                    <p className="text-sm text-text-secondary">
+                    <p className="font-semibold text-[var(--color-text-primary)] text-sm">High School Credits</p>
+                    <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
                       Add AP, IB, dual enrollment, or other credits
                     </p>
                   </div>
                   {courseworkMethod === 'highschool' && (
                     <span
-                      className="size-3 shrink-0 rounded-full bg-[var(--color-nav-active)]"
+                      className="size-2.5 shrink-0 rounded-full bg-[var(--color-feature-green)] shadow-[0_0_8px_var(--color-feature-green)]"
                       aria-hidden
                     />
                   )}
                 </button>
               </section>
-            </>
+            </div>
           )}
 
-          {/* Step 3: Conditional – Manual (Add Your Courses) or High School (Add Credit) + Greek House */}
+          {/* ── Step 3: Coursework details + Greek House ── */}
           {step === 3 && (
-            <>
+            <div className="animate-fade-in-up flex flex-col gap-6">
               {courseworkMethod === 'manual' && (
                 <section className="flex flex-col gap-6" aria-label="Add your courses">
-                  <header>
-                    <h1 className="text-2xl font-semibold text-text-primary">
-                      Add Your Courses
+                  <div>
+                    <h1 className="font-display text-3xl text-[var(--color-text-primary)] mb-2">
+                      Add Your <em className="text-[var(--color-brand-primary)] not-italic">Courses</em>
                     </h1>
-                    <p className="mt-1 text-sm text-text-secondary">
+                    <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
                       Add any courses you&apos;ve completed to help us recommend better options.
                     </p>
-                  </header>
-                  <div
-                    className={cn(
-                      'rounded-xl border border-border-subtle bg-surface p-4 flex flex-col gap-4'
-                    )}
-                  >
+                  </div>
+
+                  {/* Transcript upload card */}
+                  <div className="rounded-2xl border border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-elevated)]/40 p-5">
                     <div className="flex items-start gap-4">
                       <span
-                        className="flex size-10 shrink-0 items-center justify-center rounded-lg text-text-on-brand bg-[var(--color-nav-active)]"
+                        className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)]"
                         aria-hidden
                       >
                         <ScanIcon className="size-5" />
                       </span>
                       <div className="flex-1 min-w-0">
-                        <h2 className="font-semibold text-text-primary">
+                        <h2 className="font-semibold text-[var(--color-text-primary)] text-sm">
                           Scan Your Transcript
                         </h2>
-                        <p className="text-sm text-text-secondary mt-1">
+                        <p className="text-sm text-[var(--color-text-muted)] mt-1 leading-relaxed">
                           Take a screenshot of your transcript and upload it. Our AI will
                           automatically extract your completed courses.
                         </p>
                         <Button
                           type="button"
                           className={cn(
-                            'mt-4 gap-2 text-text-on-brand',
-                            'bg-[var(--color-nav-active)] hover:opacity-90',
-                            'focus:ring-2 focus:ring-[var(--color-nav-active)] focus:ring-offset-2 focus:ring-offset-background'
+                            'mt-4 gap-2 rounded-xl text-sm',
+                            'shadow-[0_0_20px_var(--color-brand-glow)]',
+                            'hover:shadow-[0_0_30px_var(--color-brand-glow-strong)]',
+                            'hover:-translate-y-0.5 transition-all duration-300'
                           )}
                           aria-label="Upload transcript screenshot"
                         >
-                          <CameraIcon className="size-5" />
-                          Upload Transcript Screenshot
+                          <CameraIcon className="size-4" />
+                          Upload Transcript
                         </Button>
                       </div>
                     </div>
                   </div>
+
+                  {/* Manual course input */}
                   <div>
-                    <Label htmlFor="onboarding-courses">Completed Courses</Label>
+                    <Label htmlFor="onboarding-courses" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                      Completed Courses
+                    </Label>
                     <Input
                       id="onboarding-courses"
                       type="text"
@@ -522,14 +541,19 @@ export function OnboardingForm({
                         setCourses(e.target.value ? [e.target.value] : [])
                       }
                       aria-required={false}
+                      className={inputStyles}
                     />
-                    <p className="mt-1 text-xs text-text-muted">
+                    <p className="mt-1.5 text-xs text-[var(--color-text-muted)]/50">
                       You can skip this step if you prefer, but adding courses helps us make
                       better recommendations.
                     </p>
                   </div>
-                  <div className="border-t border-border-subtle pt-6">
-                    <Label htmlFor="onboarding-greek-house-manual">Greek House (Optional)</Label>
+
+                  {/* Greek House */}
+                  <div className="border-t border-[var(--color-border-subtle)]/20 pt-6">
+                    <Label htmlFor="onboarding-greek-house-manual" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                      Greek House <span className="text-[var(--color-text-muted)]/50 font-normal">(Optional)</span>
+                    </Label>
                     <Input
                       id="onboarding-greek-house-manual"
                       type="text"
@@ -537,8 +561,9 @@ export function OnboardingForm({
                       value={greekHouse}
                       onChange={handleGreekHouseChange}
                       aria-required={false}
+                      className={inputStyles}
                     />
-                    <p className="mt-1 text-xs text-text-muted">
+                    <p className="mt-1.5 text-xs text-[var(--color-text-muted)]/50">
                       Join the Greek house leaderboard and earn XP for your house!
                     </p>
                   </div>
@@ -547,43 +572,49 @@ export function OnboardingForm({
 
               {courseworkMethod === 'highschool' && (
                 <section className="flex flex-col gap-6" aria-label="High school credits">
-                  <header>
-                    <h1 className="text-2xl font-semibold text-text-primary">
-                      High School Credits
+                  <div>
+                    <h1 className="font-display text-3xl text-[var(--color-text-primary)] mb-2">
+                      High School <em className="text-[var(--color-feature-green)] not-italic">Credits</em>
                     </h1>
-                    <p className="mt-1 text-sm text-text-secondary">
+                    <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
                       Add any college credits you earned in high school.
                     </p>
-                  </header>
-                  <div
-                    className={cn(
-                      'rounded-xl border border-border-subtle bg-surface p-4 flex flex-col gap-4'
-                    )}
-                  >
-                    <h2 className="font-semibold text-text-primary">Add Credit</h2>
+                  </div>
+
+                  {/* Add credit card */}
+                  <div className="rounded-2xl border border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-elevated)]/40 p-5 flex flex-col gap-4">
+                    <h2 className="font-semibold text-[var(--color-text-primary)] text-sm">Add Credit</h2>
                     <div>
-                      <Label htmlFor="onboarding-credit-subject">Subject/Course</Label>
+                      <Label htmlFor="onboarding-credit-subject" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                        Subject/Course
+                      </Label>
                       <Input
                         id="onboarding-credit-subject"
                         type="text"
                         placeholder="e.g., AP Calculus, IB Biology, Dual Enrollment"
                         value={newCreditSubject}
                         onChange={(e) => setNewCreditSubject(e.target.value)}
+                        className={inputStyles}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="onboarding-credit-credits">Credits</Label>
+                        <Label htmlFor="onboarding-credit-credits" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                          Credits
+                        </Label>
                         <Input
                           id="onboarding-credit-credits"
                           type="text"
                           placeholder="3"
                           value={newCreditCredits}
                           onChange={(e) => setNewCreditCredits(e.target.value)}
+                          className={inputStyles}
                         />
                       </div>
                       <div>
-                        <Label htmlFor="onboarding-credit-grade">Grade (Optional)</Label>
+                        <Label htmlFor="onboarding-credit-grade" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                          Grade <span className="text-[var(--color-text-muted)]/50 font-normal">(Optional)</span>
+                        </Label>
                         <Input
                           id="onboarding-credit-grade"
                           type="text"
@@ -591,6 +622,7 @@ export function OnboardingForm({
                           value={newCreditGrade}
                           onChange={(e) => setNewCreditGrade(e.target.value)}
                           aria-required={false}
+                          className={inputStyles}
                         />
                       </div>
                     </div>
@@ -599,44 +631,69 @@ export function OnboardingForm({
                       fullWidth
                       onClick={handleAddCredit}
                       className={cn(
-                        'gap-2 text-text-on-brand bg-[var(--color-nav-active)] hover:opacity-90',
-                        'focus:ring-2 focus:ring-[var(--color-nav-active)] focus:ring-offset-2 focus:ring-offset-background'
+                        'gap-2 rounded-xl text-sm',
+                        'shadow-[0_0_20px_var(--color-brand-glow)]',
+                        'hover:shadow-[0_0_30px_var(--color-brand-glow-strong)]',
+                        'hover:-translate-y-0.5 transition-all duration-300'
                       )}
                     >
-                      <PlusCircleIcon className="size-5" />
-                      + Add Credit
+                      <PlusCircleIcon className="size-4" />
+                      Add Credit
                     </Button>
                   </div>
-                  <p className="text-sm text-text-secondary">
+
+                  {/* Credit list */}
+                  {highSchoolCredits.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      {highSchoolCredits.map((credit, i) => (
+                        <div
+                          key={`${credit.subject}-${i}`}
+                          className="flex items-center justify-between rounded-xl bg-[var(--color-bg-elevated)]/30 border border-[var(--color-border-subtle)]/20 px-4 py-3"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-feature-green)]" aria-hidden />
+                            <span className="text-sm text-[var(--color-text-primary)]">{credit.subject}</span>
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-[var(--color-text-muted)]">
+                            <span>{credit.credits} cr</span>
+                            {credit.grade && <span>{credit.grade}</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="text-xs text-[var(--color-text-muted)]/50 leading-relaxed">
                     Adding high school credits helps us understand your academic background
                     and avoid recommending courses you may have already covered.
                   </p>
+
+                  {/* Greek House */}
+                  <div className="border-t border-[var(--color-border-subtle)]/20 pt-6">
+                    <Label htmlFor="onboarding-greek-house-hs" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                      Greek House <span className="text-[var(--color-text-muted)]/50 font-normal">(Optional)</span>
+                    </Label>
+                    <Input
+                      id="onboarding-greek-house-hs"
+                      type="text"
+                      placeholder="Type your Greek house..."
+                      value={greekHouse}
+                      onChange={handleGreekHouseChange}
+                      aria-required={false}
+                      className={inputStyles}
+                    />
+                    <p className="mt-1.5 text-xs text-[var(--color-text-muted)]/50">
+                      Join the Greek house leaderboard and earn XP for your house!
+                    </p>
+                  </div>
                 </section>
               )}
-
-              {/* Greek House (Optional) – high school path only (manual has it in-section) */}
-              {courseworkMethod === 'highschool' && (
-                <div className="flex flex-col gap-1 border-t border-border-subtle pt-6">
-                  <Label htmlFor="onboarding-greek-house-hs">Greek House (Optional)</Label>
-                  <Input
-                    id="onboarding-greek-house-hs"
-                    type="text"
-                    placeholder="Type your Greek house..."
-                    value={greekHouse}
-                    onChange={handleGreekHouseChange}
-                    aria-required={false}
-                  />
-                  <p className="text-xs text-text-muted">
-                    Join the Greek house leaderboard and earn XP for your house!
-                  </p>
-                </div>
-              )}
-            </>
+            </div>
           )}
 
-          {/* Footer: single full-width Next or Continue (Figma) */}
+          {/* ── Footer CTA ── */}
           <footer
-            className="mt-auto pt-6 border-t border-border-subtle"
+            className="mt-auto pt-6"
             role="navigation"
             aria-label="Onboarding actions"
           >
@@ -646,7 +703,17 @@ export function OnboardingForm({
                 fullWidth
                 onClick={handleNext}
                 disabled={(step === 1 && !canProceedStep1) || (step === 2 && !canProceedStep2)}
-                className={step === 2 ? 'bg-[var(--color-nav-active)] hover:opacity-90 focus:ring-[var(--color-nav-active)]' : undefined}
+                className={cn(
+                  'py-3.5 rounded-xl font-semibold text-sm',
+                  'shadow-[0_0_30px_var(--color-brand-glow)]',
+                  'hover:shadow-[0_4px_50px_var(--color-brand-glow-strong)]',
+                  'hover:-translate-y-0.5 transition-all duration-300'
+                )}
+                rightIcon={
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4" aria-hidden>
+                    <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+                  </svg>
+                }
               >
                 Next
               </Button>
@@ -656,9 +723,19 @@ export function OnboardingForm({
                 type="button"
                 fullWidth
                 onClick={handleFinish}
-                className="bg-[var(--color-nav-active)] hover:opacity-90 focus:ring-[var(--color-nav-active)]"
+                className={cn(
+                  'py-3.5 rounded-xl font-semibold text-sm',
+                  'shadow-[0_0_30px_var(--color-brand-glow)]',
+                  'hover:shadow-[0_4px_50px_var(--color-brand-glow-strong)]',
+                  'hover:-translate-y-0.5 transition-all duration-300'
+                )}
+                rightIcon={
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4" aria-hidden>
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                }
               >
-                Continue
+                Get Started
               </Button>
             )}
           </footer>

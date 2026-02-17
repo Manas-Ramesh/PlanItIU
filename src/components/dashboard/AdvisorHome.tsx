@@ -54,8 +54,8 @@ export function AdvisorHome({
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex shrink-0 items-center justify-between border-b border-border-subtle bg-background px-6 py-4">
-        <h1 id="dashboard-title" className="text-xl font-semibold text-text-primary">
+      <header className="flex shrink-0 items-center justify-between border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-6 py-4">
+        <h1 id="dashboard-title" className="text-xl font-semibold text-[var(--color-text-primary)]">
           Dashboard
         </h1>
         <div className="flex items-center gap-3">
@@ -72,11 +72,11 @@ export function AdvisorHome({
 
       <div className="flex flex-1 overflow-hidden">
         <aside
-          className="flex w-56 shrink-0 flex-col border-r border-border-subtle bg-surface p-3"
+          className="flex w-56 shrink-0 flex-col border-r border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-3"
           aria-label="Advisor chats"
         >
           <div className="flex items-center justify-between px-2 pb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
               Advisor Chats
             </span>
             <Button
@@ -91,16 +91,16 @@ export function AdvisorHome({
           </div>
           <ul className="space-y-1 overflow-y-auto" role="list">
             {savedChats.length === 0 ? (
-              <li className="px-2 py-2 text-xs text-text-muted">No chats yet</li>
+              <li className="px-2 py-2 text-xs text-[var(--color-text-muted)]">No chats yet</li>
             ) : (
               savedChats.map((chat) => (
                 <li key={chat.id}>
                   <button
                     type="button"
-                    className="w-full rounded-lg px-2 py-2 text-left text-sm text-text-primary hover:bg-elevated"
+                    className="w-full rounded-lg px-2 py-2 text-left text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)]"
                   >
                     <span className="block truncate">{chat.title}</span>
-                    <span className="block text-xs text-text-muted">{chat.timestamp}</span>
+                    <span className="block text-xs text-[var(--color-text-muted)]">{chat.timestamp}</span>
                   </button>
                 </li>
               ))
@@ -109,7 +109,7 @@ export function AdvisorHome({
         </aside>
 
         <section
-          className="flex flex-1 flex-col overflow-hidden bg-background"
+          className="flex flex-1 flex-col overflow-hidden bg-[var(--color-bg-base)]"
           aria-labelledby="dashboard-title"
         >
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-6">
@@ -122,25 +122,25 @@ export function AdvisorHome({
                     const handler = navHandlers[item.href];
                     if (handler) handler();
                   }}
-                  className="focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background rounded-xl"
+                  className="focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)] rounded-xl"
                   aria-label={`${item.label}: ${item.description}`}
                 >
                   <Card variant="feature" padding="lg" as="div">
-                    <p className="font-medium text-text-primary">{item.label}</p>
-                    <p className="mt-1 text-sm text-text-secondary">{item.description}</p>
+                    <p className="font-medium text-[var(--color-text-primary)]">{item.label}</p>
+                    <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{item.description}</p>
                   </Card>
                 </Link>
               ))}
             </div>
 
             <Card variant="default" padding="lg" className="flex flex-1 flex-col min-h-[240px]">
-              <h2 className="text-lg font-semibold text-text-primary">Hoosier AI Advisor</h2>
-              <p className="mt-1 text-sm text-text-secondary">
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Hoosier AI Advisor</h2>
+              <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
                 Ask about course selection, degree requirements, or study tips.
               </p>
               <div className="mt-4 flex-1 overflow-y-auto space-y-3">
                 {messages.length === 0 ? (
-                  <p className="text-sm text-text-muted">No messages yet. Type below to start.</p>
+                  <p className="text-sm text-[var(--color-text-muted)]">No messages yet. Type below to start.</p>
                 ) : (
                   messages.map((msg) => (
                     <div
@@ -148,8 +148,8 @@ export function AdvisorHome({
                       className={cn(
                         'rounded-lg px-3 py-2 text-sm',
                         msg.sender === 'user'
-                          ? 'ml-8 bg-brand text-text-on-brand'
-                          : 'mr-8 bg-elevated text-text-primary'
+                          ? 'ml-8 bg-[var(--color-brand-primary)] text-[var(--color-text-on-brand)]'
+                          : 'mr-8 bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)]'
                       )}
                     >
                       {msg.text}
@@ -157,7 +157,7 @@ export function AdvisorHome({
                   ))
                 )}
                 {isTyping ? (
-                  <div className="mr-8 rounded-lg bg-elevated px-3 py-2 text-sm text-text-muted">
+                  <div className="mr-8 rounded-lg bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-muted)]">
                     Thinking…
                   </div>
                 ) : null}

@@ -10,11 +10,11 @@ import type {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-brand text-text-on-brand border-0 hover:bg-brand-strong focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background transition',
+    'bg-[var(--color-brand-primary)] text-[var(--color-text-on-brand)] border-0 hover:bg-[var(--color-brand-strong)] focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)] transition',
   secondary:
-    'bg-transparent text-text-primary border border-border-subtle hover:bg-surface focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background transition',
+    'bg-transparent text-[var(--color-text-primary)] border border-[var(--color-border-subtle)] hover:bg-[var(--color-bg-surface)] focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)] transition',
   ghost:
-    'bg-transparent text-text-primary border-0 hover:bg-surface focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-background transition',
+    'bg-transparent text-[var(--color-text-primary)] border-0 hover:bg-[var(--color-bg-surface)] focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)] transition',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

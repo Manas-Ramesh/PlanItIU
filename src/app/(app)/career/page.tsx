@@ -136,10 +136,10 @@ export default function CareerChoosePathPage() {
     <div className="flex flex-col h-full">
       <main className="flex-1 overflow-y-auto p-6">
         <div className="mx-auto max-w-5xl">
-          <h1 className="text-3xl font-bold text-text-primary text-center">
+          <h1 className="text-3xl font-bold text-[var(--color-text-primary)] text-center">
             Choose Your Career Path
           </h1>
-          <p className="mt-2 text-text-secondary text-center">
+          <p className="mt-2 text-[var(--color-text-secondary)] text-center">
             Select how you want to advance your career
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
@@ -148,13 +148,13 @@ export default function CareerChoosePathPage() {
                 key={card.href}
                 href={card.href}
                 className={cn(
-                  'flex flex-col rounded-xl border border-border-subtle bg-surface p-5',
+                  'flex flex-col rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5',
                   'hover:border-[var(--color-nav-active)] transition'
                 )}
               >
                 <span
                   className={cn(
-                    'flex size-14 shrink-0 items-center justify-center rounded-full text-text-on-brand',
+                    'flex size-14 shrink-0 items-center justify-center rounded-full text-[var(--color-text-on-brand)]',
                     card.iconBg
                   )}
                   aria-hidden
@@ -163,12 +163,12 @@ export default function CareerChoosePathPage() {
                   {card.icon === 'search' && <SearchIcon className="size-7" />}
                   {card.icon === 'network' && <NetworkIcon className="size-7" />}
                 </span>
-                <h2 className="mt-4 text-xl font-semibold text-text-primary">{card.title}</h2>
-                <p className="mt-2 text-sm text-text-secondary">{card.description}</p>
+                <h2 className="mt-4 text-xl font-semibold text-[var(--color-text-primary)]">{card.title}</h2>
+                <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{card.description}</p>
                 <ul className="mt-4 space-y-2">
                   {card.features.map((f) => (
-                    <li key={f.label} className="flex items-center gap-2 text-sm text-text-secondary">
-                      <span className="shrink-0 text-text-muted">
+                    <li key={f.label} className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+                      <span className="shrink-0 text-[var(--color-text-muted)]">
                         {f.icon === 'document' && <DocumentIcon className="size-4" />}
                         {f.icon === 'brain' && <span aria-hidden>🧠</span>}
                         {f.icon === 'video' && <VideoIcon className="size-4" />}

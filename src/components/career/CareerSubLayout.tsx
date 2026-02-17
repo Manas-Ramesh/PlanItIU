@@ -28,28 +28,28 @@ export function CareerSubLayout({
 
   return (
     <div className="flex flex-col h-full">
-      <header className="shrink-0 border-b border-border-subtle px-6 py-4">
+      <header className="shrink-0 border-b border-[var(--color-border-subtle)] px-6 py-4">
         <Link
           href="/career"
-          className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-secondary"
+          className="inline-flex items-center gap-1 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
         >
           ← Back to Career Selection
         </Link>
-        <h1 className="mt-2 text-2xl font-bold text-text-primary">{title}</h1>
-        <p className="mt-1 text-text-secondary">
+        <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">{title}</h1>
+        <p className="mt-1 text-[var(--color-text-secondary)]">
           {highlightText
             ? (() => {
                 const parts = subtitle.split(highlightText);
                 return parts.map((part, i) => (
                   <span key={i}>
                     {part}
-                    {i < parts.length - 1 ? <span className="text-brand">{highlightText}</span> : null}
+                    {i < parts.length - 1 ? <span className="text-[var(--color-brand-primary)]">{highlightText}</span> : null}
                   </span>
                 ));
               })()
             : subtitle}
         </p>
-        <nav className="mt-4 flex gap-1 border-b border-border-subtle" aria-label="Career sub-navigation">
+        <nav className="mt-4 flex gap-1 border-b border-[var(--color-border-subtle)]" aria-label="Career sub-navigation">
           {tabs.map((tab) => {
             const isActive = currentFull === tab.href || pathname === tab.href || pathname.startsWith(tab.href.split('?')[0] + '/');
             return (
@@ -59,8 +59,8 @@ export function CareerSubLayout({
                 className={cn(
                   'px-4 py-2 text-sm font-medium transition',
                   isActive
-                    ? 'text-text-on-brand border-b-2 border-brand'
-                    : 'text-text-muted hover:text-text-secondary'
+                    ? 'text-[var(--color-text-on-brand)] border-b-2 border-[var(--color-brand-primary)]'
+                    : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]'
                 )}
               >
                 {tab.label}

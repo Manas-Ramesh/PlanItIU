@@ -54,8 +54,8 @@ export function ScheduleView({
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-border-subtle bg-background px-6 py-4">
-        <h1 id="schedule-title" className="text-xl font-semibold text-text-primary">
+      <header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-6 py-4">
+        <h1 id="schedule-title" className="text-xl font-semibold text-[var(--color-text-primary)]">
           Plan your classes
         </h1>
         <Input
@@ -69,7 +69,7 @@ export function ScheduleView({
         <Button
           type="button"
           size="sm"
-          className="border border-brand bg-transparent text-text-primary hover:bg-brand/10"
+          className="border border-[var(--color-brand-primary)] bg-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-brand-primary)]/10"
         >
           Add to generate schedule
         </Button>
@@ -85,38 +85,38 @@ export function ScheduleView({
 
       <div className="flex flex-1 overflow-hidden">
         <aside
-          className="w-80 shrink-0 overflow-y-auto border-r border-border-subtle bg-surface p-4"
+          className="w-80 shrink-0 overflow-y-auto border-r border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4"
           aria-label="Current schedule"
         >
           <div className="flex gap-2 mb-3">
             <Button
               type="button"
               size="sm"
-              className="bg-elevated text-text-primary hover:bg-border-strong border-0"
+              className="bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-strong)] border-0"
             >
               Regenerate
             </Button>
             <Button
               type="button"
               size="sm"
-              className="bg-elevated text-text-primary hover:bg-border-strong border-0"
+              className="bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-strong)] border-0"
             >
               Undo
             </Button>
             <Button
               type="button"
               size="sm"
-              className="bg-brand text-text-on-brand border-0"
+              className="bg-[var(--color-brand-primary)] text-[var(--color-text-on-brand)] border-0"
             >
               Export
             </Button>
           </div>
-          <div className="flex gap-4 text-xs font-medium text-text-muted mb-2">
+          <div className="flex gap-4 text-xs font-medium text-[var(--color-text-muted)] mb-2">
             <span>Rating</span>
             <span>Grade</span>
             <span>Credits</span>
           </div>
-          <h2 className="text-sm font-semibold text-text-primary sr-only">Current schedule</h2>
+          <h2 className="text-sm font-semibold text-[var(--color-text-primary)] sr-only">Current schedule</h2>
           {courses.length === 0 ? (
             <EmptyState
               title="No courses"
@@ -141,9 +141,9 @@ export function ScheduleView({
         </aside>
 
         <main className="flex-1 overflow-auto p-6" aria-labelledby="schedule-title">
-          <h2 className="text-lg font-semibold text-text-primary">Weekly Calendar View</h2>
+          <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Weekly Calendar View</h2>
           {courses.length === 0 ? (
-            <div className="mt-4 rounded-xl border border-border-subtle bg-surface p-8">
+            <div className="mt-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-8">
               <EmptyState
                 title="No schedule to display"
                 description="Save or load a schedule to see the calendar."
@@ -151,8 +151,8 @@ export function ScheduleView({
             </div>
           ) : (
             <>
-              <p className="mt-2 text-sm text-text-muted">credits</p>
-              <div className="mt-2 rounded-xl border border-border-subtle overflow-hidden">
+              <p className="mt-2 text-sm text-[var(--color-text-muted)]">credits</p>
+              <div className="mt-2 rounded-xl border border-[var(--color-border-subtle)] overflow-hidden">
                 <CalendarGrid courses={courses} />
               </div>
             </>
@@ -162,13 +162,13 @@ export function ScheduleView({
 
       {saveDialogOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-overlay)]"
           role="dialog"
           aria-modal="true"
           aria-labelledby="save-schedule-title"
         >
           <Card variant="default" padding="lg" className="mx-4 w-full max-w-md">
-            <h2 id="save-schedule-title" className="text-lg font-semibold text-text-primary">
+            <h2 id="save-schedule-title" className="text-lg font-semibold text-[var(--color-text-primary)]">
               Save schedule
             </h2>
             <Input
@@ -222,64 +222,64 @@ function CourseCard({
       variant="default"
       padding="md"
       className={cn(
-        'flex flex-col gap-2 border border-border-subtle',
-        'bg-course-block'
+        'flex flex-col gap-2 border border-[var(--color-border-subtle)]',
+        'bg-[var(--color-bg-course-block)]'
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-1">
-        <span className="text-xs font-medium text-text-primary">{course.code}</span>
+        <span className="text-xs font-medium text-[var(--color-text-primary)]">{course.code}</span>
         <div className="flex flex-wrap gap-1">
           {tagLabel ? (
             <span
               className={cn(
-                'rounded px-1.5 py-0.5 text-xs font-medium text-text-on-brand',
-                variant === 'closed' && 'bg-danger',
-                variant === 'critical' && 'bg-danger',
-                variant === 'open' && tagLabel !== 'Just Opened!' && 'bg-tag-open',
-                tagLabel === 'Just Opened!' && 'bg-tag-open',
-                variant === 'required' && 'bg-feature-purple',
-                variant === 'genEd' && 'bg-tag-open'
+                'rounded px-1.5 py-0.5 text-xs font-medium text-[var(--color-text-on-brand)]',
+                variant === 'closed' && 'bg-[var(--color-danger)]',
+                variant === 'critical' && 'bg-[var(--color-danger)]',
+                variant === 'open' && tagLabel !== 'Just Opened!' && 'bg-[var(--color-tag-open)]',
+                tagLabel === 'Just Opened!' && 'bg-[var(--color-tag-open)]',
+                variant === 'required' && 'bg-[var(--color-feature-purple)]',
+                variant === 'genEd' && 'bg-[var(--color-tag-open)]'
               )}
             >
               {tagLabel}
             </span>
           ) : null}
-          <span className="rounded bg-tag-credits px-1.5 py-0.5 text-xs font-medium text-text-on-brand">
+          <span className="rounded bg-[var(--color-tag-credits)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-text-on-brand)]">
             {course.credits}cr
           </span>
         </div>
       </div>
-      <p className="font-medium text-text-primary">{course.title}</p>
-      <div className="flex items-center gap-2 text-sm text-text-secondary">
+      <p className="font-medium text-[var(--color-text-primary)]">{course.title}</p>
+      <div className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
         {course.rating != null && (
-          <span className="font-medium text-feature-amber" aria-hidden>★{course.rating}</span>
+          <span className="font-medium text-[var(--color-feature-amber)]" aria-hidden>★{course.rating}</span>
         )}
         {course.avgGrade && (
-          <span className="rounded bg-feature-green px-1.5 py-0.5 text-xs font-medium text-text-on-brand">
+          <span className="rounded bg-[var(--color-feature-green)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-text-on-brand)]">
             {course.avgGrade}
           </span>
         )}
       </div>
       {course.professor && (
-        <p className="text-xs text-text-muted">{course.professor}</p>
+        <p className="text-xs text-[var(--color-text-muted)]">{course.professor}</p>
       )}
       {course.time && (
-        <p className="text-xs text-text-muted">{course.time}</p>
+        <p className="text-xs text-[var(--color-text-muted)]">{course.time}</p>
       )}
       {course.location && (
-        <p className="text-xs text-text-muted">{course.location}</p>
+        <p className="text-xs text-[var(--color-text-muted)]">{course.location}</p>
       )}
       <button
         type="button"
         onClick={onToggleExpand}
-        className="flex items-center gap-1 text-xs text-text-muted hover:text-text-secondary"
+        className="flex items-center gap-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
       >
         Course Description
         <span className={cn('transition', isExpanded && 'rotate-180')} aria-hidden>▼</span>
       </button>
       <button
         type="button"
-        className="flex items-center gap-1 text-xs text-text-muted hover:text-text-secondary"
+        className="flex items-center gap-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
       >
         Rate My Professor
         <span aria-hidden>▼</span>
@@ -287,7 +287,7 @@ function CourseCard({
       <Button
         type="button"
         size="sm"
-        className="mt-1 bg-brand text-text-on-brand hover:opacity-90 border-0"
+        className="mt-1 bg-[var(--color-brand-primary)] text-[var(--color-text-on-brand)] hover:opacity-90 border-0"
       >
         Swap Class
       </Button>
@@ -319,12 +319,12 @@ function CalendarGrid({ courses }: { readonly courses: ReadonlyArray<Course> }) 
   }
 
   return (
-    <div className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr] gap-px bg-border-subtle">
-      <div className="bg-surface p-2" aria-hidden />
+    <div className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr] gap-px bg-[var(--color-border-subtle)]">
+      <div className="bg-[var(--color-bg-surface)] p-2" aria-hidden />
       {DAY_LABELS.map((day) => (
         <div
           key={day}
-          className="bg-surface p-2 text-center text-sm font-medium text-text-primary"
+          className="bg-[var(--color-bg-surface)] p-2 text-center text-sm font-medium text-[var(--color-text-primary)]"
         >
           {day}
         </div>
@@ -332,7 +332,7 @@ function CalendarGrid({ courses }: { readonly courses: ReadonlyArray<Course> }) 
       {HOURS.map((hour) => (
         <div key={hour} className="contents">
           <div
-            className="bg-surface py-1 pr-2 text-right text-xs text-text-muted"
+            className="bg-[var(--color-bg-surface)] py-1 pr-2 text-right text-xs text-[var(--color-text-muted)]"
             aria-hidden
           >
             {hour === 12 ? '12' : hour % 12}:00 {hour >= 12 ? 'PM' : 'AM'}
@@ -340,7 +340,7 @@ function CalendarGrid({ courses }: { readonly courses: ReadonlyArray<Course> }) 
           {DAY_LABELS.map((_, dayIndex) => (
             <div
               key={`${hour}-${dayIndex}`}
-              className="relative bg-background overflow-visible"
+              className="relative bg-[var(--color-bg-base)] overflow-visible"
               style={{ height: ROW_HEIGHT_PX }}
             >
               {blocks
@@ -357,15 +357,15 @@ function CalendarGrid({ courses }: { readonly courses: ReadonlyArray<Course> }) 
                   return (
                     <div
                       key={`${b.course.id}-${b.dayIndex}-${b.startMinutes}`}
-                      className="absolute left-1 right-1 rounded border border-border-subtle bg-course-block p-1.5 text-xs overflow-hidden z-10"
+                      className="absolute left-1 right-1 rounded border border-[var(--color-border-subtle)] bg-[var(--color-bg-course-block)] p-1.5 text-xs overflow-hidden z-10"
                       style={{ top, height: Math.max(height, 28) }}
                     >
-                      <p className="truncate font-medium text-text-primary">
+                      <p className="truncate font-medium text-[var(--color-text-primary)]">
                         {b.course.code} {b.course.title}
                       </p>
-                      <p className="truncate text-text-muted">{b.course.time}</p>
+                      <p className="truncate text-[var(--color-text-muted)]">{b.course.time}</p>
                       {b.course.location && (
-                        <p className="truncate text-text-muted">{b.course.location}</p>
+                        <p className="truncate text-[var(--color-text-muted)]">{b.course.location}</p>
                       )}
                     </div>
                   );

@@ -128,28 +128,28 @@ export function AppSidebar({
   return (
     <aside
       className={cn(
-        'w-56 shrink-0 flex flex-col border-r border-border-subtle bg-surface',
+        'w-56 shrink-0 flex flex-col border-r border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]',
         className
       )}
       aria-label="App navigation"
     >
-      <div className="flex items-center gap-2 p-4 border-b border-border-subtle">
+      <div className="flex items-center gap-2 p-4 border-b border-[var(--color-border-subtle)]">
         <Link
           href={brandHref}
           className="flex items-center gap-2 min-w-0"
           aria-label={`${brandLabel} home`}
         >
           <span
-            className="flex size-9 shrink-0 items-center justify-center rounded-full text-text-on-brand bg-nav-active"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-[var(--color-text-on-brand)] bg-[var(--color-nav-active)]"
             aria-hidden
           >
             <LogoIcon className="size-5" />
           </span>
-          <span className="truncate text-lg font-semibold text-text-primary">{brandLabel}</span>
+          <span className="truncate text-lg font-semibold text-[var(--color-text-primary)]">{brandLabel}</span>
         </Link>
         <button
           type="button"
-          className="shrink-0 rounded p-1 text-text-muted hover:text-text-secondary"
+          className="shrink-0 rounded p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
           aria-label="Collapse sidebar"
         >
           <ChevronLeftIcon className="size-4" />
@@ -167,8 +167,8 @@ export function AppSidebar({
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition',
                     isActive
-                      ? 'bg-nav-active text-text-on-brand'
-                      : 'text-text-secondary hover:bg-elevated hover:text-text-primary'
+                      ? 'bg-[var(--color-nav-active)] text-[var(--color-text-on-brand)]'
+                      : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]'
                   )}
                   aria-current={isActive ? 'page' : undefined}
                 >
@@ -184,16 +184,16 @@ export function AppSidebar({
           })}
         </ul>
 
-        <div className="mt-4 pt-4 border-t border-border-subtle">
+        <div className="mt-4 pt-4 border-t border-[var(--color-border-subtle)]">
           <div className="flex items-center justify-between px-2 pb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
               ADVISOR CHATS
             </span>
             {onNewChat ? (
               <button
                 type="button"
                 onClick={onNewChat}
-                className="rounded p-1 text-text-muted hover:bg-elevated hover:text-text-primary"
+                className="rounded p-1 text-[var(--color-text-muted)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]"
                 aria-label="New chat"
               >
                 <PlusIcon className="size-4" />
@@ -202,16 +202,16 @@ export function AppSidebar({
           </div>
           <ul className="space-y-0.5" role="list">
             {savedChats.length === 0 ? (
-              <li className="px-2 py-2 text-xs text-text-muted">No chats yet</li>
+              <li className="px-2 py-2 text-xs text-[var(--color-text-muted)]">No chats yet</li>
             ) : (
               savedChats.map((chat) => (
                 <li key={chat.id}>
                   <Link
                     href="/dashboard"
-                    className="flex flex-col rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-elevated hover:text-text-primary"
+                    className="flex flex-col rounded-lg px-2 py-2 text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]"
                   >
                     <span className="truncate">{chat.title}</span>
-                    <span className="text-xs text-text-muted">{chat.timestamp}</span>
+                    <span className="text-xs text-[var(--color-text-muted)]">{chat.timestamp}</span>
                   </Link>
                 </li>
               ))
@@ -219,36 +219,36 @@ export function AppSidebar({
           </ul>
         </div>
 
-        <div className="mt-4 rounded-lg border border-border-subtle bg-elevated p-3">
+        <div className="mt-4 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3">
           <div className="flex items-center gap-2">
-            <CrownIcon className="size-5 shrink-0 text-nav-active" />
-            <span className="text-sm font-medium text-text-primary">Upgrade to Premium</span>
+            <CrownIcon className="size-5 shrink-0 text-[var(--color-nav-active)]" />
+            <span className="text-sm font-medium text-[var(--color-text-primary)]">Upgrade to Premium</span>
           </div>
-          <p className="mt-1 text-xs text-text-muted">Unlock all features</p>
+          <p className="mt-1 text-xs text-[var(--color-text-muted)]">Unlock all features</p>
           {onUpgradeClick ? (
             <button
               type="button"
               onClick={onUpgradeClick}
-              className="mt-3 w-full rounded-lg bg-nav-active py-2 text-sm font-medium text-text-on-brand hover:opacity-90"
+              className="mt-3 w-full rounded-lg bg-[var(--color-nav-active)] py-2 text-sm font-medium text-[var(--color-text-on-brand)] hover:opacity-90"
             >
               Purchase Premium
             </button>
           ) : (
-            <span className="mt-3 block w-full rounded-lg bg-nav-active py-2 text-center text-sm font-medium text-text-on-brand">
+            <span className="mt-3 block w-full rounded-lg bg-[var(--color-nav-active)] py-2 text-center text-sm font-medium text-[var(--color-text-on-brand)]">
               Purchase Premium
             </span>
           )}
         </div>
       </nav>
 
-      <div className="shrink-0 border-t border-border-subtle p-3">
+      <div className="shrink-0 border-t border-[var(--color-border-subtle)] p-3">
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-text-primary hover:bg-elevated"
+          className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)]"
           aria-label="Profile menu"
         >
           <span
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-nav-active text-text-on-brand"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-nav-active)] text-[var(--color-text-on-brand)]"
             aria-hidden
           >
             <PersonIcon className="size-4" />
@@ -256,7 +256,7 @@ export function AppSidebar({
           <span className="min-w-0 flex-1 truncate text-sm font-medium">
             {userDisplayName || 'Profile'}
           </span>
-          <ChevronDownIcon className="size-4 shrink-0 text-text-muted" />
+          <ChevronDownIcon className="size-4 shrink-0 text-[var(--color-text-muted)]" />
         </button>
       </div>
     </aside>

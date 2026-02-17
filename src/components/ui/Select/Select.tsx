@@ -96,6 +96,8 @@ export function Select({
     }
   };
 
+  const isLanding = variant === 'landing';
+
   return (
     <div
       ref={containerRef}
@@ -106,14 +108,14 @@ export function Select({
       <label
         htmlFor={id}
         className={cn(
-          'block text-sm font-medium text-text-secondary mb-1',
+          'block text-sm font-medium text-[var(--color-text-secondary)] mb-1',
           hideLabel && 'sr-only',
           !hideLabel && disabled && 'opacity-60 cursor-not-allowed'
         )}
       >
         {label}
         {required && (
-          <span className="text-danger ml-0.5" aria-hidden>
+          <span className="text-[var(--color-danger)] ml-0.5" aria-hidden>
             *
           </span>
         )}
@@ -136,27 +138,32 @@ export function Select({
             : undefined
         }
         className={cn(
-          'w-full flex items-center justify-between gap-2 rounded-lg border text-left transition',
-          'focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed',
-          variant === 'landing'
-            ? 'min-h-12 py-3 px-4 rounded-xl bg-bg-light border-border-light text-text-dark placeholder:text-text-dark-muted hover:border-border-light-hover focus:ring-offset-0'
-            : 'min-h-10 py-2 px-3 border-border-subtle bg-surface text-text-primary focus:ring-offset-background hover:border-border-strong',
+          'w-full flex items-center justify-between gap-2 text-left transition',
+          'focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/30 disabled:opacity-60 disabled:cursor-not-allowed',
+          isLanding
+            ? 'min-h-12 py-3 px-4 rounded-xl bg-[var(--color-bg-light)] border border-[var(--color-border-light)] text-[var(--color-text-dark)] placeholder:text-[var(--color-text-dark-muted)] hover:border-[var(--color-border-light-hover)] focus:ring-offset-0'
+            : cn(
+                'min-h-10 py-3 px-4 rounded-xl text-sm text-[var(--color-text-primary)]',
+                'border border-[var(--color-border-subtle)]/40 bg-[var(--color-bg-elevated)]',
+                'hover:border-[var(--color-border-subtle)]/60 focus:border-[var(--color-brand-primary)]/40 focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)]'
+              ),
           disabled && 'opacity-60 cursor-not-allowed'
         )}
         onClick={() => !disabled && setIsOpen((prev) => !prev)}
       >
         <span
           className={cn(
-            variant === 'landing'
-              ? !selectedOption && 'text-text-dark-muted'
-              : !selectedOption && 'text-text-muted'
+            'truncate',
+            isLanding
+              ? !selectedOption && 'text-[var(--color-text-dark-muted)]'
+              : !selectedOption && 'text-[var(--color-text-muted)]/50'
           )}
         >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <span
           className={cn(
-            'shrink-0 transition-transform',
+            'shrink-0 transition-transform duration-200 text-[var(--color-text-muted)]',
             isOpen && 'rotate-180'
           )}
           aria-hidden
@@ -172,7 +179,11 @@ export function Select({
           id={listboxIdRef}
           role="listbox"
           aria-label={ariaLabel ?? label}
-          className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-lg border border-border-subtle bg-elevated py-1 shadow-card"
+          className={cn(
+            'absolute z-50 mt-2 w-full max-h-60 overflow-auto py-1.5',
+            'rounded-xl border border-[var(--color-border-subtle)]/40',
+            'bg-[var(--color-bg-elevated)] shadow-[0_8px_32px_var(--color-overlay)]'
+          )}
         >
           {options.map((option, index) => (
             <li
@@ -181,16 +192,25 @@ export function Select({
               role="option"
               aria-selected={option.value === value}
               className={cn(
-                'cursor-pointer py-2 px-3 text-text-primary',
-                option.value === value && 'bg-surface',
+                'cursor-pointer py-2.5 px-4 text-sm transition-colors duration-100',
+                option.value === value
+                  ? 'text-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/10'
+                  : 'text-[var(--color-text-primary)]',
                 option.disabled && 'opacity-50 cursor-not-allowed',
-                focusedIndex === index && 'bg-surface',
-                !option.disabled && 'hover:bg-surface'
+                focusedIndex === index && option.value !== value && 'bg-[var(--color-bg-surface)]',
+                !option.disabled && option.value !== value && 'hover:bg-[var(--color-bg-surface)]'
               )}
               onClick={() => handleSelect(option)}
               onMouseEnter={() => setFocusedIndex(index)}
             >
-              {option.label}
+              <span className="flex items-center justify-between">
+                {option.label}
+                {option.value === value && (
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-[var(--color-brand-primary)]" aria-hidden>
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </span>
             </li>
           ))}
         </ul>

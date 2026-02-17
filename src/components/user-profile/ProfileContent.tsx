@@ -30,36 +30,36 @@ export function ProfileContent({
       ) : null}
       <div className="text-center mt-2">
         <div
-          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand text-lg font-semibold text-text-on-brand"
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-lg font-semibold text-[var(--color-text-on-brand)]"
           aria-hidden
         >
           {displayName.slice(0, 2).toUpperCase()}
         </div>
-        <h2 id="profile-title" className="mt-3 text-xl font-semibold text-text-primary">
+        <h2 id="profile-title" className="mt-3 text-xl font-semibold text-[var(--color-text-primary)]">
           {displayName}
         </h2>
-        <p className="text-sm text-text-secondary">{email || '—'}</p>
+        <p className="text-sm text-[var(--color-text-secondary)]">{email || '—'}</p>
       </div>
-      <div className="mt-6 rounded-lg border border-border-subtle bg-background p-4">
+      <div className="mt-6 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] p-4">
         <div className="flex items-center justify-between">
-          <span className="font-medium text-text-primary">Level {currentLevel}</span>
-          <span className="text-sm text-text-secondary">{currentXP} XP</span>
+          <span className="font-medium text-[var(--color-text-primary)]">Level {currentLevel}</span>
+          <span className="text-sm text-[var(--color-text-secondary)]">{currentXP} XP</span>
         </div>
         <Progress value={xpProgress} className="mt-2" />
-        <p className="mt-1 text-xs text-text-muted">
+        <p className="mt-1 text-xs text-[var(--color-text-muted)]">
           {XP_PER_LEVEL - xpInLevel} XP to next level
         </p>
       </div>
       {profile?.major ? (
         <div className="mt-4">
-          <h3 className="text-sm font-semibold text-text-primary">Major</h3>
-          <p className="text-sm text-text-secondary">{profile.major}</p>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Major</h3>
+          <p className="text-sm text-[var(--color-text-secondary)]">{profile.major}</p>
         </div>
       ) : null}
       {profile?.graduationYear ? (
         <div className="mt-2">
-          <h3 className="text-sm font-semibold text-text-primary">Graduation year</h3>
-          <p className="text-sm text-text-secondary">{profile.graduationYear}</p>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Graduation year</h3>
+          <p className="text-sm text-[var(--color-text-secondary)]">{profile.graduationYear}</p>
         </div>
       ) : null}
     </Card>

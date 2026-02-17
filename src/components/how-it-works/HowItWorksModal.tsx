@@ -53,7 +53,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
   return (
     <>
       <div
-        className="fixed inset-0 z-50 bg-overlay"
+        className="fixed inset-0 z-50 bg-[var(--color-overlay)]"
         onClick={onClose}
         aria-hidden
       />
@@ -61,10 +61,10 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="how-it-works-title"
-        className="fixed inset-x-4 top-4 z-50 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border border-border-subtle bg-elevated shadow-card md:inset-x-auto md:left-1/2 md:top-1/2 md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2"
+        className="fixed inset-x-4 top-4 z-50 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] shadow-[var(--shadow-card)] md:inset-x-auto md:left-1/2 md:top-1/2 md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2"
       >
-        <header className="flex items-center justify-between border-b border-border-subtle p-4">
-          <h2 id="how-it-works-title" className="text-xl font-semibold text-text-primary">
+        <header className="flex items-center justify-between border-b border-[var(--color-border-subtle)] p-4">
+          <h2 id="how-it-works-title" className="text-xl font-semibold text-[var(--color-text-primary)]">
             How Planituni works
           </h2>
           <Button type="button" variant="ghost" size="sm" onClick={onClose} aria-label="Close">
@@ -72,14 +72,14 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
           </Button>
         </header>
         <div className="p-4 space-y-4">
-          <p className="text-text-secondary">
+          <p className="text-[var(--color-text-secondary)]">
             Planituni is your academic success platform. Here’s how to use it.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {FEATURES.map((f) => (
               <Card key={f.title} variant="default" padding="md">
-                <h3 className="font-semibold text-text-primary">{f.title}</h3>
-                <p className="mt-1 text-sm text-text-secondary">{f.description}</p>
+                <h3 className="font-semibold text-[var(--color-text-primary)]">{f.title}</h3>
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{f.description}</p>
               </Card>
             ))}
           </div>

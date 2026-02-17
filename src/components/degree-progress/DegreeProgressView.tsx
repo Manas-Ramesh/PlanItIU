@@ -17,11 +17,11 @@ export function DegreeProgressView({
 
   return (
     <div className="flex h-full flex-col">
-      <header className="shrink-0 border-b border-border-subtle bg-background px-6 py-4">
-        <h1 id="degree-progress-title" className="text-xl font-semibold text-text-primary">
+      <header className="shrink-0 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-6 py-4">
+        <h1 id="degree-progress-title" className="text-xl font-semibold text-[var(--color-text-primary)]">
           Degree Progress
         </h1>
-        <p className="mt-1 text-sm text-text-secondary">
+        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
           Track your progress towards graduation
         </p>
       </header>
@@ -34,23 +34,23 @@ export function DegreeProgressView({
             className="mb-6 bg-[var(--color-nav-active)]/10 border-[var(--color-nav-active)]/30"
           >
             <div className="flex items-center gap-2">
-              <span className="text-nav-active" aria-hidden>
+              <span className="text-[var(--color-nav-active)]" aria-hidden>
                 <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
                   <path d="M6 12v5c3 3 9 3 12 0v-5" />
                 </svg>
               </span>
-              <h2 className="font-semibold text-text-primary">Overall Progress</h2>
+              <h2 className="font-semibold text-[var(--color-text-primary)]">Overall Progress</h2>
             </div>
-            <p className="mt-1 text-sm text-text-secondary">{overall.degreeName}</p>
+            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{overall.degreeName}</p>
             <div className="mt-3 flex items-center gap-4">
               <Progress value={percentage} max={100} className="flex-1 h-3" />
               <div className="text-right shrink-0">
-                <p className="text-2xl font-bold text-text-primary">{percentage}%</p>
-                <p className="text-xs text-text-muted">{remaining} credits remaining</p>
+                <p className="text-2xl font-bold text-[var(--color-text-primary)]">{percentage}%</p>
+                <p className="text-xs text-[var(--color-text-muted)]">{remaining} credits remaining</p>
               </div>
             </div>
-            <p className="mt-2 text-sm text-text-muted">
+            <p className="mt-2 text-sm text-[var(--color-text-muted)]">
               {overall.completedCredits} / {overall.totalCredits} credits · Expected graduation: {overall.expectedGraduation}
             </p>
           </Card>
@@ -66,8 +66,8 @@ export function DegreeProgressView({
             {semesters.map((sem) => (
               <Card key={sem.name} variant="default" padding="lg">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-semibold text-text-primary">{sem.name}</h2>
-                  <span className="text-sm text-text-secondary">{sem.credits}</span>
+                  <h2 className="font-semibold text-[var(--color-text-primary)]">{sem.name}</h2>
+                  <span className="text-sm text-[var(--color-text-secondary)]">{sem.credits}</span>
                 </div>
                 <Progress value={sem.percentage} className="mt-2" />
                 <ul className="mt-4 space-y-3" role="list">
@@ -76,13 +76,13 @@ export function DegreeProgressView({
                       key={req.name + String(i)}
                       className={cn(
                         'flex gap-2 text-sm rounded-lg p-2',
-                        req.completed ? 'bg-[var(--color-success)]/10' : 'bg-elevated/50'
+                        req.completed ? 'bg-[var(--color-success)]/10' : 'bg-[var(--color-bg-elevated)]/50'
                       )}
                     >
                       <span
                         className={cn(
                           'shrink-0',
-                          req.completed ? 'text-[var(--color-success)]' : 'text-text-muted'
+                          req.completed ? 'text-[var(--color-success)]' : 'text-[var(--color-text-muted)]'
                         )}
                         aria-hidden
                       >
@@ -90,19 +90,19 @@ export function DegreeProgressView({
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-1">
-                          <span className="text-text-primary font-medium">{req.name}</span>
+                          <span className="text-[var(--color-text-primary)] font-medium">{req.name}</span>
                           {req.critical ? (
-                            <span className="rounded bg-danger px-1.5 py-0.5 text-xs font-medium text-text-on-brand">
+                            <span className="rounded bg-[var(--color-danger)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-text-on-brand)]">
                               CRITICAL
                             </span>
                           ) : null}
                         </div>
-                        <p className="text-xs text-text-muted mt-0.5">
+                        <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
                           {req.creditsRequired ?? 3} credits required
                           {req.fulfilledBy ? ` · Fulfilled by ${req.fulfilledBy}` : null}
                           {req.canBeFulfilledBy?.length ? ` · Can be fulfilled by ${req.canBeFulfilledBy.join(', ')}` : null}
                         </p>
-                        {req.code ? <p className="text-xs text-text-muted">{req.code}</p> : null}
+                        {req.code ? <p className="text-xs text-[var(--color-text-muted)]">{req.code}</p> : null}
                       </div>
                     </li>
                   ))}

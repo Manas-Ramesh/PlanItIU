@@ -17,13 +17,13 @@ export function Progress({
       aria-valuemin={0}
       aria-valuemax={max}
       className={cn(
-        'h-2 w-full overflow-hidden rounded-full bg-elevated',
+        'h-2 w-full overflow-hidden rounded-full bg-[var(--color-bg-elevated)]',
         className
       )}
       {...rest}
     >
       <div
-        className="h-full rounded-full bg-brand transition-[width] duration-300"
+        className="h-full rounded-full bg-[var(--color-brand-primary)] transition-[width] duration-300"
         style={{ width: `${percent}%` }}
       />
     </div>

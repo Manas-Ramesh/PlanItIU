@@ -21,19 +21,19 @@ export function StudyPortalView({
 
   return (
     <div className="flex h-full flex-col">
-      <header className="shrink-0 border-b border-border-subtle bg-background px-6 py-4">
+      <header className="shrink-0 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 id="study-title" className="text-xl font-semibold text-text-primary">
+            <h1 id="study-title" className="text-xl font-semibold text-[var(--color-text-primary)]">
               Study Portal
             </h1>
-            <p className="mt-1 text-sm text-text-secondary">
+            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
               Practice tests, study guides, flashcards. Upload material to earn download credits.
             </p>
           </div>
           <div className="flex items-center gap-2">
             {downloadCredits > 0 ? (
-              <span className="text-sm text-text-secondary">
+              <span className="text-sm text-[var(--color-text-secondary)]">
                 {downloadCredits} credit{downloadCredits !== 1 ? 's' : ''}
               </span>
             ) : null}
@@ -75,16 +75,16 @@ export function StudyPortalView({
                 {courses.map((course) => (
                   <li key={course.courseCode}>
                     <Card variant="default" padding="lg">
-                      <h2 className="font-semibold text-text-primary">
+                      <h2 className="font-semibold text-[var(--color-text-primary)]">
                         {course.courseCode} – {course.courseName}
                       </h2>
                       <ul className="mt-3 space-y-2" role="list">
                         {course.materials.map((mat) => (
                           <li
                             key={mat.id}
-                            className="flex items-center justify-between rounded-lg border border-border-subtle bg-background px-3 py-2"
+                            className="flex items-center justify-between rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-3 py-2"
                           >
-                            <span className="text-sm text-text-primary">{mat.name}</span>
+                            <span className="text-sm text-[var(--color-text-primary)]">{mat.name}</span>
                             <Button
                               type="button"
                               variant="secondary"
@@ -108,16 +108,16 @@ export function StudyPortalView({
 
       {uploadModalOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-overlay)]"
           role="dialog"
           aria-modal="true"
           aria-labelledby="upload-study-title"
         >
           <Card variant="default" padding="lg" className="mx-4 w-full max-w-md">
-            <h2 id="upload-study-title" className="text-lg font-semibold text-text-primary">
+            <h2 id="upload-study-title" className="text-lg font-semibold text-[var(--color-text-primary)]">
               Upload material
             </h2>
-            <p className="mt-2 text-sm text-text-secondary">
+            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
               Backend will handle file upload and credit assignment.
             </p>
             <div className="mt-4 flex gap-2 justify-end">

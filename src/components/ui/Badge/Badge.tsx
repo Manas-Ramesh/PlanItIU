@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils/cn';
 import type { BadgeProps as Props, BadgeVariant } from './Badge.types';
 
 const variantClasses: Record<BadgeVariant, string> = {
-  default: 'bg-elevated text-text-primary border-border-subtle',
+  default: 'bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] border-[var(--color-border-subtle)]',
   success: 'bg-[var(--color-success)]/20 text-[var(--color-success)] border-[var(--color-success)]/40',
   warning: 'bg-[var(--color-warning)]/20 text-[var(--color-warning)] border-[var(--color-warning)]/40',
   danger: 'bg-[var(--color-danger)]/20 text-[var(--color-danger)] border-[var(--color-danger)]/40',

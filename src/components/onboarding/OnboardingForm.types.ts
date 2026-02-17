@@ -2,7 +2,6 @@ import type { OptionItem } from '@/lib/types';
 
 export interface OnboardingFormProps {
   readonly graduationYearOptions: ReadonlyArray<OptionItem>;
-  readonly schoolOptions?: ReadonlyArray<OptionItem>;
   readonly onComplete: (data: OnboardingCompleteData) => void;
 }
 
@@ -17,12 +16,10 @@ export interface HighSchoolCreditEntry {
 export interface OnboardingCompleteData {
   readonly firstName: string;
   readonly lastName: string;
-  readonly email: string;
   readonly major: string;
   readonly majors: ReadonlyArray<string>;
   readonly graduationYear: string;
   readonly careerInterests: string;
-  readonly school: string;
   readonly greekHouse: string;
   readonly courseworkMethod: 'manual' | 'highschool' | null;
   readonly courses: ReadonlyArray<string>;

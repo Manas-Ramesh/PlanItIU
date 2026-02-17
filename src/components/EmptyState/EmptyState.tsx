@@ -7,14 +7,14 @@ export function EmptyState({ title, description, className }: Props) {
   return (
     <section
       className={cn(
-        'flex flex-col items-center justify-center rounded-lg border border-border-subtle bg-surface p-8 text-center',
+        'flex flex-col items-center justify-center rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-8 text-center',
         className
       )}
       aria-label="Empty state"
     >
-      <p className="text-lg font-medium text-text-primary">{title}</p>
+      <p className="text-lg font-medium text-[var(--color-text-primary)]">{title}</p>
       {description ? (
-        <p className="mt-2 text-sm text-text-secondary">{description}</p>
+        <p className="mt-2 text-sm text-[var(--color-text-secondary)]">{description}</p>
       ) : null}
     </section>
   );

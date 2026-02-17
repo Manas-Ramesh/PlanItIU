@@ -19,8 +19,8 @@ export default function AppLayout({
   return (
     <div
       className={cn(
-        'min-h-screen flex bg-background',
-        'text-text-primary'
+        'min-h-screen flex bg-[var(--color-bg-base)]',
+        'text-[var(--color-text-primary)]'
       )}
     >
       <AppSidebar
@@ -32,12 +32,12 @@ export default function AppLayout({
       />
       <div className="flex-1 flex flex-col min-w-0">
         <header
-          className="shrink-0 flex justify-end border-b border-border-subtle px-4 py-2"
+          className="shrink-0 flex justify-end border-b border-[var(--color-border-subtle)] px-4 py-2"
           aria-label="App top"
         >
           <Link
             href="#"
-            className="text-sm text-text-muted hover:text-text-secondary transition"
+            className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition"
           >
             Mobile App
           </Link>
