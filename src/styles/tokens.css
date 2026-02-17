@@ -13,7 +13,7 @@
   --color-bg-surface: #333333;
   --color-bg-elevated: #181818;
   --color-bg-deep: #000000;
-  --color-bg-course-block: #2C2D3E;
+  --color-bg-course-block: #2A2A2A;
   --color-bg-light: #ffffff;
 
   /* Text */
@@ -26,8 +26,8 @@
 
   /* Borders */
   --color-border-neutral: #4a4a4a;
-  --color-border-subtle: #2C2D3E;
-  --color-border-strong: #35374C;
+  --color-border-subtle: #3a3a3a;
+  --color-border-strong: #505050;
   --color-border-light: #e5e7eb;
   --color-border-light-hover: #d1d5db;
 

@@ -263,3 +263,80 @@ p {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
               0 0 40px var(--color-brand-glow);
 }
+
+/* ═══ FullCalendar Theme Overrides ═══ */
+
+.schedule-calendar {
+  --fc-border-color: var(--color-border-subtle);
+  --fc-page-bg-color: var(--color-bg-base);
+  --fc-neutral-bg-color: var(--color-bg-base);
+  --fc-today-bg-color: transparent;
+  --fc-event-bg-color: var(--color-bg-course-block);
+  --fc-event-border-color: var(--color-border-subtle);
+  --fc-event-text-color: var(--color-text-primary);
+}
+
+.schedule-calendar .fc {
+  height: 100% !important;
+  font-family: inherit;
+}
+
+.schedule-calendar .fc-theme-standard td,
+.schedule-calendar .fc-theme-standard th {
+  border-color: color-mix(in srgb, var(--color-border-subtle) 40%, transparent);
+}
+
+.schedule-calendar .fc-theme-standard .fc-scrollgrid {
+  border-color: color-mix(in srgb, var(--color-border-subtle) 40%, transparent);
+}
+
+.schedule-calendar .fc-col-header .fc-timegrid-axis {
+  background: var(--color-bg-base);
+}
+
+.schedule-calendar .fc-col-header-cell {
+  background: var(--color-bg-base);
+  padding: 8px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.schedule-calendar .fc-timegrid-slot-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+  vertical-align: top;
+  padding-top: 4px;
+}
+
+.schedule-calendar .fc-timegrid-event {
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-border-subtle) 30%, transparent);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.schedule-calendar .fc-timegrid-event:hover {
+  border-color: color-mix(in srgb, var(--color-border-subtle) 60%, transparent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-calendar .fc-event-main {
+  padding: 0;
+}
+
+.schedule-calendar .fc-timegrid-event .fc-event-main-frame {
+  height: 100%;
+}
+
+/* Hide the "all day" row and now-indicator */
+.schedule-calendar .fc-timegrid-now-indicator-line,
+.schedule-calendar .fc-timegrid-now-indicator-arrow {
+  display: none;
+}
+
+/* Remove internal FullCalendar margins on the scrollgrid so it fills edge-to-edge */
+.schedule-calendar .fc-view-harness {
+  height: 100% !important;
+}

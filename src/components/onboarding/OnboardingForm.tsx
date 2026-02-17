@@ -188,6 +188,7 @@ export function OnboardingForm({
   // Auto-select canvas when extension becomes connected
   useEffect(() => {
     if (canvas.extensionInstalled && canvas.connected) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCourseworkMethod('canvas');
     }
   }, [canvas.extensionInstalled, canvas.connected]);

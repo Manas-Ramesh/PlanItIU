@@ -7,10 +7,12 @@ import { cn } from '@/lib/utils/cn';
 import { SAMPLE_SAVED_CHATS, SAMPLE_USER_DISPLAY_NAME } from '@/lib/data/sampleData';
 
 const APP_NAV_LINKS: ReadonlyArray<AppSidebarLink> = [
-  { href: '/dashboard', label: 'Home', icon: 'home' },
-  { href: '/schedule', label: 'Plan your classes', icon: 'schedule' },
-  { href: '/degree-progress', label: 'Degree Progress', icon: 'degree' },
-  { href: '/career', label: 'Career', icon: 'career' },
+  { href: '/dashboard', label: 'AI Advisor', icon: 'home', accent: 'var(--color-feature-blue)' },
+  { href: '/schedule', label: 'Schedule Builder', icon: 'schedule', accent: 'var(--color-feature-cyan)' },
+  { href: '/degree-progress', label: 'Degree Progress', icon: 'degree', accent: 'var(--color-feature-green)' },
+  { href: '/study', label: 'Study Portal', icon: 'study', accent: 'var(--color-feature-teal)' },
+  { href: '/assignments', label: 'Assignments', icon: 'assignments', accent: 'var(--color-feature-orange)' },
+  { href: '/career', label: 'Career Center', icon: 'career', accent: 'var(--color-feature-pink)' },
 ];
 
 export default function AppLayout({
@@ -19,7 +21,7 @@ export default function AppLayout({
   return (
     <div
       className={cn(
-        'min-h-screen flex bg-[var(--color-bg-base)]',
+        'h-screen flex overflow-hidden bg-[var(--color-bg-base)]',
         'text-[var(--color-text-primary)]'
       )}
     >
@@ -31,7 +33,7 @@ export default function AppLayout({
         userDisplayName={SAMPLE_USER_DISPLAY_NAME}
       />
       <div className="flex-1 flex flex-col min-w-0">
-        <header
+        {/* <header
           className="shrink-0 flex justify-end border-b border-[var(--color-border-subtle)] px-4 py-2"
           aria-label="App top"
         >
@@ -41,7 +43,7 @@ export default function AppLayout({
           >
             Mobile App
           </Link>
-        </header>
+        </header> */}
         {children}
       </div>
     </div>
