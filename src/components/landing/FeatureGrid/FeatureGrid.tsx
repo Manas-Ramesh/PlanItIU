@@ -22,36 +22,39 @@ export function FeatureGrid({
     <section
       id={id}
       className={cn(
-        'py-20 px-6 max-w-6xl mx-auto text-center',
+        'py-24 px-6 text-center',
         className
       )}
       aria-labelledby={ariaLabelledBy ?? headingId}
       aria-describedby={subtitle ? subtitleId : undefined}
     >
-      <h2 id={headingId} className="text-4xl font-bold text-text-on-brand mb-4">
-        {title}
-      </h2>
-      {subtitle ? (
-        <p id={subtitleId} className="text-text-secondary text-center mb-16 text-lg">
-          {subtitle}
-        </p>
-      ) : null}
-      <ul
-        role="list"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"
-      >
-        {features.map((feature) => (
-          <li key={feature.id}>
-            <FeatureCard
-              id={feature.id}
-              icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
-              iconGradient={feature.iconGradient}
-            />
-          </li>
-        ))}
-      </ul>
+      <div className="max-w-6xl mx-auto">
+        <h2 id={headingId} className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+          {title}
+        </h2>
+        {subtitle ? (
+          <p id={subtitleId} className="text-text-muted text-lg max-w-2xl mx-auto mb-16">
+            {subtitle}
+          </p>
+        ) : null}
+        <ul
+          role="list"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto"
+        >
+          {features.map((feature) => (
+            <li key={feature.id}>
+              <FeatureCard
+                id={feature.id}
+                title={feature.title}
+                description={feature.description}
+                accentGradient={feature.accentGradient}
+                imageSrc={feature.imageSrc}
+                imagePlaceholder={feature.imagePlaceholder}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

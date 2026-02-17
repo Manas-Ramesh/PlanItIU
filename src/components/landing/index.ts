@@ -1,9 +1,6 @@
 export { NavBar } from './NavBar';
 export type { NavBarProps, NavLinkItem } from './NavBar';
 
-export { LandingSchoolSelect } from './LandingSchoolSelect';
-export type { LandingSchoolSelectProps } from './LandingSchoolSelect';
-
 export { HeroSection } from './HeroSection';
 export type { HeroSectionProps } from './HeroSection';
 
@@ -17,5 +14,14 @@ export type {
   FeatureIconGradient,
 } from './FeatureGrid';
 
+export { StatsSection } from './StatsSection';
+export type { StatsSectionProps, StatItem } from './StatsSection';
+
+export { HowItWorks } from './HowItWorks';
+export type { HowItWorksProps, StepItem } from './HowItWorks';
+
+export { CTASection } from './CTASection';
+export type { CTASectionProps } from './CTASection';
+
 export { Footer } from './Footer';
-export type { FooterProps } from './Footer';
+export type { FooterProps, FooterLinkGroup } from './Footer';

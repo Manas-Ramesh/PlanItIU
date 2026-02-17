@@ -2,9 +2,9 @@
   /* ===== COLOR SYSTEM ===== */
 
   /* Brand (primary blue: Save schedule, Swap Class, Export) */
-  --color-brand-primary: #4285F4;
-  --color-brand-accent: #5B9ADF;
-  --color-brand-strong: #4285F4;
+  --color-brand-primary: #6BA4E7;
+  --color-brand-accent: #89B8ED;
+  --color-brand-strong: #5494E0;
 
   /* Borders */
   --color-border-subtle: #2C2D3E;
@@ -26,7 +26,7 @@
   /* Feature icon gradients (from → to, semantic only) */
   --color-feature-teal: #14b8a6;
   --color-feature-cyan: #06b6d4;
-  --color-feature-blue: #4285F4;
+  --color-feature-blue: #6BA4E7;
   --color-feature-green: #22c55e;
   --color-feature-emerald: #50C878;
   --color-feature-purple: #8B5CF6;
