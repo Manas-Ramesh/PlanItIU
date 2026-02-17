@@ -21,7 +21,7 @@ export function NavBar(props: Props) {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 w-full bg-[var(--color-bg-base)]/60 backdrop-blur-2xl',
+        'shrink-0 z-50 w-full bg-[var(--color-bg-base)]/60 backdrop-blur-2xl',
         'border-b border-[var(--color-border-subtle)]/30',
         className
       )}
@@ -53,7 +53,7 @@ export function NavBar(props: Props) {
                 </a>
               </li>
             ))}
-            <li className="ml-3">
+            <li>
               <ThemeToggle />
             </li>
             <li className="ml-3">
@@ -97,7 +97,7 @@ export function NavBar(props: Props) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <nav className="md:hidden border-t border-[var(--color-border-subtle)]/20 bg-[var(--color-bg-base)]/95 backdrop-blur-2xl px-6 py-5 absolute w-full" aria-label={ariaLabel ?? 'Mobile primary navigation'}>
+        <nav className="md:hidden border-t border-[var(--color-border-subtle)]/20 bg-[var(--color-bg-base)] backdrop-blur-2xl px-6 py-5 absolute w-full" aria-label={ariaLabel ?? 'Mobile primary navigation'}>
           <ul role="list" className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <li key={`mobile-${link.href}`}>

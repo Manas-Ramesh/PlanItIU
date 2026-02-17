@@ -79,7 +79,7 @@ export function HeroSection({
           </a>
           <a
             href="#features"
-            className="inline-flex items-center gap-2 px-6 py-4 rounded-xl font-medium text-base text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border-subtle)]/40 hover:border-[var(--color-border-subtle)]/70 hover:bg-[var(--color-bg-surface)]/30 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-6 py-4 rounded-xl font-medium text-base text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border)]/20 hover:border-[var(--color-border)] hover:bg-[var(--color-bg-surface)]/30 transition-all duration-300"
           >
             Explore Features
             <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4" aria-hidden>

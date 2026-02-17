@@ -21,7 +21,8 @@ export interface OnboardingCompleteData {
   readonly graduationYear: string;
   readonly careerInterests: string;
   readonly greekHouse: string;
-  readonly courseworkMethod: 'manual' | 'highschool' | null;
+  readonly courseworkMethod: 'manual' | 'highschool' | 'canvas' | null;
   readonly courses: ReadonlyArray<string>;
   readonly highSchoolCredits: ReadonlyArray<HighSchoolCreditEntry>;
+  readonly canvasDomain?: string;
 }

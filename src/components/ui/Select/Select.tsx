@@ -101,7 +101,7 @@ export function Select({
   return (
     <div
       ref={containerRef}
-      className={cn('relative', className)}
+      className={cn('relative', isOpen ? 'z-50' : 'z-0', className)}
       onKeyDown={handleKeyDown}
       {...rest}
     >
@@ -144,7 +144,7 @@ export function Select({
             ? 'min-h-12 py-3 px-4 rounded-xl bg-[var(--color-bg-light)] border border-[var(--color-border-light)] text-[var(--color-text-dark)] placeholder:text-[var(--color-text-dark-muted)] hover:border-[var(--color-border-light-hover)] focus:ring-offset-0'
             : cn(
                 'min-h-10 py-3 px-4 rounded-xl text-sm text-[var(--color-text-primary)]',
-                'border border-[var(--color-border-subtle)]/40 bg-[var(--color-bg-elevated)]',
+                'border border-[var(--color-border-subtle)]/40 bg-[var(--color-bg-surface)]',
                 'hover:border-[var(--color-border-subtle)]/60 focus:border-[var(--color-brand-primary)]/40 focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)]'
               ),
           disabled && 'opacity-60 cursor-not-allowed'

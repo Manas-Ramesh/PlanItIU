@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+// import css global
+// import '';
+
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Button, Input, Label, Select, Textarea } from '@/components/ui';
 import type {
@@ -10,6 +13,7 @@ import type {
 } from './OnboardingForm.types';
 import { getOptionsWithSample } from '@/lib/utils/selectOptions';
 import { cn } from '@/lib/utils/cn';
+import { useCanvasExtension } from '@/hooks/useCanvasExtension';
 
 const TOTAL_STEPS = 3;
 
@@ -129,6 +133,13 @@ const inputStyles = cn(
   'focus:border-[var(--color-brand-primary)]/40 focus:ring-[var(--color-brand-primary)]/30'
 );
 
+/* ── Shared card base for Step 2 method cards ── */
+
+const methodCardBase = cn(
+  'flex items-center gap-4 w-full rounded-2xl p-5 text-left transition-all duration-300',
+  'bg-[var(--color-bg-elevated)]/40 border hover:bg-[var(--color-bg-elevated)]/60'
+);
+
 /* ── Component ── */
 
 export function OnboardingForm({
@@ -141,7 +152,8 @@ export function OnboardingForm({
   const [major, setMajor] = useState('');
   const [graduationYear, setGraduationYear] = useState('');
   const [careerInterests, setCareerInterests] = useState('');
-  const [courseworkMethod, setCourseworkMethod] = useState<'manual' | 'highschool' | null>(null);
+  const [courseworkMethod, setCourseworkMethod] = useState<'manual' | 'highschool' | 'canvas' | null>(null);
+  const canvas = useCanvasExtension();
   const [greekHouse, setGreekHouse] = useState('');
   const [courses, setCourses] = useState<ReadonlyArray<string>>([]);
   const [highSchoolCredits, setHighSchoolCredits] = useState<ReadonlyArray<HighSchoolCreditEntry>>([]);
@@ -173,6 +185,12 @@ export function OnboardingForm({
 
   const setCourseworkManual = useCallback(() => setCourseworkMethod('manual'), []);
   const setCourseworkHighSchool = useCallback(() => setCourseworkMethod('highschool'), []);
+  // Auto-select canvas when extension becomes connected
+  useEffect(() => {
+    if (canvas.extensionInstalled && canvas.connected) {
+      setCourseworkMethod('canvas');
+    }
+  }, [canvas.extensionInstalled, canvas.connected]);
   const handleBack = useCallback(() => setStep((s) => s - 1), []);
 
   const handleNext = useCallback(() => {
@@ -234,7 +252,7 @@ export function OnboardingForm({
   const showFinish = isLastStep;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg-base)] relative overflow-hidden">
+    <div className="h-screen flex flex-col bg-[var(--color-bg-base)] relative overflow-auto">
 
       <main
         id="main-content"
@@ -297,7 +315,7 @@ export function OnboardingForm({
 
           {/* ── Step 1: Tell us about yourself ── */}
           {step === 1 && (
-            <div className="animate-fade-in-up flex flex-col gap-6">
+            <div className="relative z-10 animate-fade-in-up flex flex-col gap-6">
               <div>
                 <h1 className="font-display text-3xl text-[var(--color-text-primary)] mb-2">
                   Tell us about <em className="text-[var(--color-brand-primary)] not-italic">yourself</em>
@@ -378,7 +396,11 @@ export function OnboardingForm({
                     onChange={handleCareerInterestsChange}
                     rows={3}
                     aria-required={false}
-                    className={inputStyles}
+                    className={cn(
+                      'min-h-[120px]',
+
+                      inputStyles
+                    )}
                   />
                 </div>
               </section>
@@ -397,84 +419,218 @@ export function OnboardingForm({
                 </p>
               </div>
 
-              <section className="flex flex-col gap-4" aria-label="Coursework method">
-                {/* Manual Entry card */}
-                <button
-                  type="button"
-                  onClick={setCourseworkManual}
-                  className={cn(
-                    'flex items-center gap-4 w-full rounded-2xl p-5 text-left transition-all duration-300',
-                    'bg-[var(--color-bg-elevated)]/40 border hover:bg-[var(--color-bg-elevated)]/60',
-                    courseworkMethod === 'manual'
-                      ? 'border-[var(--color-brand-primary)]/40 shadow-[0_0_20px_var(--color-brand-glow)]'
-                      : 'border-[var(--color-border-subtle)]/30 hover:border-[var(--color-border-subtle)]/50'
-                  )}
-                  aria-pressed={courseworkMethod === 'manual'}
-                  aria-label="Manual Entry – type in your courses one by one"
-                >
-                  <span
-                    className={cn(
-                      'flex size-12 shrink-0 items-center justify-center rounded-xl transition-colors',
-                      courseworkMethod === 'manual'
-                        ? 'bg-[var(--color-brand-primary)]/15 text-[var(--color-brand-primary)]'
-                        : 'bg-[var(--color-brand-primary)]/8 text-[var(--color-brand-primary)]/60'
-                    )}
-                    aria-hidden
-                  >
-                    <PlusCircleIcon className="size-6" />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[var(--color-text-primary)] text-sm">Manual Entry</p>
-                    <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
-                      Type in your courses one by one
-                    </p>
-                  </div>
-                  {courseworkMethod === 'manual' && (
-                    <span
-                      className="size-2.5 shrink-0 rounded-full bg-[var(--color-brand-primary)] shadow-[0_0_8px_var(--color-brand-glow)]"
-                      aria-hidden
-                    />
-                  )}
-                </button>
+              <section className="flex flex-col gap-3" aria-label="Coursework method">
 
-                {/* High School Credits card */}
-                <button
-                  type="button"
-                  onClick={setCourseworkHighSchool}
+                {/* ─ Canvas Import card (always visible) ─ */}
+                <div
                   className={cn(
-                    'flex items-center gap-4 w-full rounded-2xl p-5 text-left transition-all duration-300',
-                    'bg-[var(--color-bg-elevated)]/40 border hover:bg-[var(--color-bg-elevated)]/60',
-                    courseworkMethod === 'highschool'
-                      ? 'border-[var(--color-feature-green)]/40 shadow-[0_0_20px_var(--color-feature-green)]'
-                      : 'border-[var(--color-border-subtle)]/30 hover:border-[var(--color-border-subtle)]/50'
+                    'w-full rounded-2xl p-5 text-left transition-all duration-300',
+                    'bg-[var(--color-bg-elevated)]/40 border',
+                    canvas.connected
+                      ? 'border-[var(--color-canvas-red)]/40 shadow-[0_0_20px_rgba(225,63,43,0.15)]'
+                      : 'border-[var(--color-border-subtle)]/30'
                   )}
-                  aria-pressed={courseworkMethod === 'highschool'}
-                  aria-label="High School Credits – add AP, IB, dual enrollment, or other credits"
                 >
-                  <span
-                    className={cn(
-                      'flex size-12 shrink-0 items-center justify-center rounded-xl transition-colors',
-                      courseworkMethod === 'highschool'
-                        ? 'bg-[var(--color-feature-green)]/15 text-[var(--color-feature-green)]'
-                        : 'bg-[var(--color-feature-green)]/8 text-[var(--color-feature-green)]/60'
-                    )}
-                    aria-hidden
-                  >
-                    <BookIcon className="size-6" />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[var(--color-text-primary)] text-sm">High School Credits</p>
-                    <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
-                      Add AP, IB, dual enrollment, or other credits
-                    </p>
-                  </div>
-                  {courseworkMethod === 'highschool' && (
+                  {/* Header row */}
+                  <div className="flex items-center gap-4">
                     <span
-                      className="size-2.5 shrink-0 rounded-full bg-[var(--color-feature-green)] shadow-[0_0_8px_var(--color-feature-green)]"
+                      className={cn(
+                        'flex size-12 shrink-0 items-center justify-center rounded-xl transition-colors',
+                        canvas.connected
+                          ? 'bg-[var(--color-canvas-red)]/15 text-[var(--color-canvas-red)]'
+                          : 'bg-[var(--color-canvas-red)]/8 text-[var(--color-canvas-red)]/60'
+                      )}
                       aria-hidden
-                    />
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                        <path d="M8 21h8M12 17v4" />
+                      </svg>
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-[var(--color-text-primary)] text-sm">Canvas Import</p>
+                        {canvas.connected && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded-full border border-[var(--color-canvas-red)]/20 bg-[var(--color-canvas-red)]/5 text-[var(--color-canvas-red)]">
+                            <span className="w-1 h-1 rounded-full bg-[var(--color-canvas-red)]" aria-hidden />
+                            Synced
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+                        Automatically import courses from Canvas LMS
+                      </p>
+                    </div>
+                    {canvas.connected && (
+                      <span
+                        className="size-2.5 shrink-0 rounded-full bg-[var(--color-canvas-red)] shadow-[0_0_8px_rgba(225,63,43,0.5)]"
+                        aria-hidden
+                      />
+                    )}
+                  </div>
+
+                  {/* State-specific content below the header */}
+                  {canvas.loading ? (
+                    /* Detecting extension */
+                    <div className="mt-4 flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                      <svg className="animate-spin size-4 text-[var(--color-canvas-red)]/60" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                      </svg>
+                      Checking for Canvas Connect extension...
+                    </div>
+                  ) : !canvas.extensionInstalled ? (
+                    /* No extension: install prompt */
+                    <div className="mt-4 rounded-xl bg-[var(--color-bg-elevated)]/60 border border-[var(--color-border-subtle)]/20 p-4">
+                      <div className="flex items-start gap-3">
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-canvas-red)]/10 text-[var(--color-canvas-red)] mt-0.5" aria-hidden>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <path d="M7 10l5 5 5-5" />
+                            <path d="M12 15V3" />
+                          </svg>
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                            Install Canvas Connect
+                          </p>
+                          <p className="text-xs text-[var(--color-text-muted)] mt-1 leading-relaxed">
+                            Add the Chrome extension to automatically import your courses from Canvas LMS.
+                          </p>
+                          <a
+                            href="https://chrome.google.com/webstore"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cn(
+                              'inline-flex items-center gap-1.5 mt-3 px-3.5 py-2 rounded-lg text-xs font-semibold',
+                              'bg-[var(--color-canvas-red)]/10 text-[var(--color-canvas-red)]',
+                              'border border-[var(--color-canvas-red)]/20',
+                              'hover:bg-[var(--color-canvas-red)]/15 hover:border-[var(--color-canvas-red)]/30 transition-all'
+                            )}
+                          >
+                            Get Extension
+                            <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5" aria-hidden>
+                              <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z" clipRule="evenodd" />
+                            </svg>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  ) : !canvas.connected ? (
+                    /* Extension installed but not connected: guide user to click it */
+                    <div className="mt-4 rounded-xl bg-[var(--color-bg-elevated)]/60 border border-[var(--color-canvas-red)]/15 p-4">
+                      <div className="flex items-start gap-3">
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-canvas-red)]/10 text-[var(--color-canvas-red)] mt-0.5" aria-hidden>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                          </svg>
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                            Connect to Canvas
+                          </p>
+                          <p className="text-xs text-[var(--color-text-muted)] mt-1 leading-relaxed">
+                            Click the <strong className="text-[var(--color-canvas-red)]">Canvas Connect</strong> extension icon in your browser toolbar, enter your Canvas domain, and hit Connect. This page updates automatically.
+                          </p>
+                          <div className="flex items-center gap-2 mt-3 text-xs text-[var(--color-canvas-red)]">
+                            <svg className="animate-spin size-3.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                            </svg>
+                            Waiting for connection...
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Connected: success confirmation */
+                    <div className="mt-3 text-sm text-[var(--color-canvas-red)] flex items-center gap-2">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <path d="M22 4L12 14.01l-3-3" />
+                      </svg>
+                      Connected{canvas.user ? ` as ${canvas.user}` : ''} — courses ready to import
+                    </div>
                   )}
-                </button>
+                </div>
+
+                {/* ─ Manual Entry + High School Credits (only when no extension) ─ */}
+                {!canvas.extensionInstalled && !canvas.loading && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={setCourseworkManual}
+                      className={cn(
+                        methodCardBase,
+                        courseworkMethod === 'manual'
+                          ? 'border-[var(--color-brand-primary)]/40 shadow-[0_0_20px_var(--color-brand-glow)]'
+                          : 'border-[var(--color-border-subtle)]/30 hover:border-[var(--color-border-subtle)]/50'
+                      )}
+                      aria-pressed={courseworkMethod === 'manual'}
+                      aria-label="Manual Entry – type in your courses one by one"
+                    >
+                      <span
+                        className={cn(
+                          'flex size-12 shrink-0 items-center justify-center rounded-xl transition-colors',
+                          courseworkMethod === 'manual'
+                            ? 'bg-[var(--color-brand-primary)]/15 text-[var(--color-brand-primary)]'
+                            : 'bg-[var(--color-brand-primary)]/8 text-[var(--color-brand-primary)]/60'
+                        )}
+                        aria-hidden
+                      >
+                        <PlusCircleIcon className="size-6" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-[var(--color-text-primary)] text-sm">Manual Entry</p>
+                        <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+                          Type in your courses one by one
+                        </p>
+                      </div>
+                      {courseworkMethod === 'manual' && (
+                        <span
+                          className="size-2.5 shrink-0 rounded-full bg-[var(--color-brand-primary)] shadow-[0_0_8px_var(--color-brand-glow)]"
+                          aria-hidden
+                        />
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={setCourseworkHighSchool}
+                      className={cn(
+                        methodCardBase,
+                        courseworkMethod === 'highschool'
+                          ? 'border-[var(--color-feature-green)]/40 shadow-[0_0_20px_var(--color-feature-green)]'
+                          : 'border-[var(--color-border-subtle)]/30 hover:border-[var(--color-border-subtle)]/50'
+                      )}
+                      aria-pressed={courseworkMethod === 'highschool'}
+                      aria-label="High School Credits – add AP, IB, dual enrollment, or other credits"
+                    >
+                      <span
+                        className={cn(
+                          'flex size-12 shrink-0 items-center justify-center rounded-xl transition-colors',
+                          courseworkMethod === 'highschool'
+                            ? 'bg-[var(--color-feature-green)]/15 text-[var(--color-feature-green)]'
+                            : 'bg-[var(--color-feature-green)]/8 text-[var(--color-feature-green)]/60'
+                        )}
+                        aria-hidden
+                      >
+                        <BookIcon className="size-6" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-[var(--color-text-primary)] text-sm">High School Credits</p>
+                        <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+                          Add AP, IB, dual enrollment, or other credits
+                        </p>
+                      </div>
+                      {courseworkMethod === 'highschool' && (
+                        <span
+                          className="size-2.5 shrink-0 rounded-full bg-[var(--color-feature-green)] shadow-[0_0_8px_var(--color-feature-green)]"
+                          aria-hidden
+                        />
+                      )}
+                    </button>
+                  </>
+                )}
               </section>
             </div>
           )}
@@ -482,6 +638,64 @@ export function OnboardingForm({
           {/* ── Step 3: Coursework details + Greek House ── */}
           {step === 3 && (
             <div className="animate-fade-in-up flex flex-col gap-6">
+              {courseworkMethod === 'canvas' && (
+                <section className="flex flex-col gap-6" aria-label="Canvas import complete">
+                  <div>
+                    <h1 className="font-display text-3xl text-[var(--color-text-primary)] mb-2">
+                      Courses <em className="text-[var(--color-brand-primary)] not-italic">Imported</em>
+                    </h1>
+                    <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                      Your Canvas courses have been imported successfully.
+                    </p>
+                  </div>
+
+                  {/* Success card — mirrors the method card layout */}
+                  <div className="rounded-2xl border border-[var(--color-canvas-red)]/20 bg-[var(--color-bg-elevated)]/40 p-5">
+                    <div className="flex items-center gap-4">
+                      <span
+                        className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[var(--color-canvas-red)]/15 text-[var(--color-canvas-red)]"
+                        aria-hidden
+                      >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                          <path d="M22 4L12 14.01l-3-3" />
+                        </svg>
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-[var(--color-text-primary)] text-sm">Canvas Data Synced</p>
+                        <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+                          Your courses have been imported from Canvas
+                          {canvas.user ? <span className="text-[var(--color-canvas-red)]"> &middot; {canvas.user}</span> : ''}
+                        </p>
+                      </div>
+                      <span
+                        className="size-2.5 shrink-0 rounded-full bg-[var(--color-canvas-red)] shadow-[0_0_8px_rgba(225,63,43,0.5)]"
+                        aria-hidden
+                      />
+                    </div>
+                  </div>
+
+                  {/* Greek House */}
+                  <div className="border-t border-[var(--color-border-subtle)]/20 pt-6">
+                    <Label htmlFor="onboarding-greek-house-canvas" className="text-[var(--color-text-secondary)] text-sm font-medium">
+                      Greek House <span className="text-[var(--color-text-muted)]/50 font-normal">(Optional)</span>
+                    </Label>
+                    <Input
+                      id="onboarding-greek-house-canvas"
+                      type="text"
+                      placeholder="Type your Greek house..."
+                      value={greekHouse}
+                      onChange={handleGreekHouseChange}
+                      aria-required={false}
+                      className={inputStyles}
+                    />
+                    <p className="mt-1.5 text-xs text-[var(--color-text-muted)]/50">
+                      Join the Greek house leaderboard and earn XP for your house!
+                    </p>
+                  </div>
+                </section>
+              )}
+
               {courseworkMethod === 'manual' && (
                 <section className="flex flex-col gap-6" aria-label="Add your courses">
                   <div>
@@ -693,7 +907,7 @@ export function OnboardingForm({
 
           {/* ── Footer CTA ── */}
           <footer
-            className="mt-auto pt-6"
+            className="relative z-0 mt-auto pt-6"
             role="navigation"
             aria-label="Onboarding actions"
           >
