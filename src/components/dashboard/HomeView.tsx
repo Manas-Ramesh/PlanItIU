@@ -178,17 +178,17 @@ export function HomeView({
               </div>
 
               {/* Quick action cards */}
-              <div className="pt-4">
+              <div className="pt-4 px-4">
                 <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]/50 text-center mb-3">
                   Quick Actions
                 </p>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="flex flex-row flex-wrap gap-2">
                   {QUICK_ACTIONS.map((action) => (
                     <Link
                       key={action.href}
                       href={action.href}
                       className={cn(
-                        'group flex flex-col items-center gap-2 rounded-xl p-3 transition-all duration-200',
+                        'group flex flex-col items-center gap-2 rounded-xl p-3 transition-all duration-200 flex-1 min-w-[100px]',
                         'border border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-surface)]/40',
                         'hover:border-[var(--color-border-subtle)]/60 hover:bg-[var(--color-bg-surface)]/80',
                         'focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)]'

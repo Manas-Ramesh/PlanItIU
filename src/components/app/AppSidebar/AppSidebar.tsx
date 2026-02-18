@@ -59,6 +59,139 @@ function NavIcon({ type, className }: { readonly type: NavIconType; readonly cla
   }
 }
 
+/* ── Nav link renderer ── */
+
+function NavLink({
+  link,
+  isActive,
+  collapsed,
+}: {
+  readonly link: { href: string; label: string; icon: NavIconType; accent?: string };
+  readonly isActive: boolean;
+  readonly collapsed: boolean;
+}) {
+  const accentVar = link.accent ?? 'var(--color-text-muted)';
+  return (
+    <Link
+      href={link.href}
+      className={cn(
+        'group relative flex items-center rounded-xl transition-all duration-200',
+        collapsed ? 'justify-center h-10 w-10 mx-auto' : 'gap-3 px-3 h-10',
+        isActive
+          ? 'bg-[var(--color-brand-primary)]/10 text-[var(--color-text-primary)]'
+          : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface)]/40'
+      )}
+      aria-current={isActive ? 'page' : undefined}
+      title={collapsed ? link.label : undefined}
+    >
+      {isActive && (
+        <span
+          className={cn(
+            'absolute left-0 w-[3px] rounded-full bg-[var(--color-brand-primary)]',
+            'shadow-[0_0_8px_var(--color-brand-glow)]',
+            collapsed ? 'h-5 -left-[5px]' : 'h-5 -left-0.5'
+          )}
+          aria-hidden
+        />
+      )}
+      <span
+        className={cn('shrink-0 transition-colors duration-200', isActive ? 'text-[var(--color-brand-primary)]' : '')}
+        style={!isActive ? { color: accentVar } : undefined}
+      >
+        <NavIcon type={link.icon} />
+      </span>
+      {!collapsed && <span className="text-[13px] font-medium truncate">{link.label}</span>}
+    </Link>
+  );
+}
+
+function MoreNavLinks({
+  primaryLinks,
+  moreLinks,
+  anyMoreActive,
+  pathname,
+  collapsed,
+}: {
+  readonly primaryLinks: ReadonlyArray<{ href: string; label: string; icon: NavIconType; accent?: string }>;
+  readonly moreLinks: ReadonlyArray<{ href: string; label: string; icon: NavIconType; accent?: string }>;
+  readonly anyMoreActive: boolean;
+  readonly pathname: string;
+  readonly collapsed: boolean;
+}) {
+  const [moreOpen, setMoreOpen] = useState(anyMoreActive);
+
+  return (
+    <ul role="list" className="flex flex-col gap-0.5">
+      {primaryLinks.map((link) => (
+        <li key={link.href}>
+          <NavLink
+            link={link}
+            isActive={pathname === link.href || pathname.startsWith(link.href + '/')}
+            collapsed={collapsed}
+          />
+        </li>
+      ))}
+
+      {moreLinks.length > 0 && (
+        <>
+          {/* More tools toggle */}
+          <li>
+            <button
+              type="button"
+              onClick={() => setMoreOpen((o) => !o)}
+              className={cn(
+                'group relative flex items-center rounded-xl transition-all duration-200 w-full',
+                collapsed ? 'justify-center h-10 w-10 mx-auto' : 'gap-3 px-3 h-10',
+                anyMoreActive
+                  ? 'bg-[var(--color-brand-primary)]/10 text-[var(--color-text-primary)]'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface)]/40'
+              )}
+              title={collapsed ? 'More tools' : undefined}
+              aria-expanded={moreOpen}
+            >
+              {/* Active dot when collapsed and a "more" link is active */}
+              {anyMoreActive && collapsed && (
+                <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-[var(--color-brand-primary)]" aria-hidden />
+              )}
+              {/* Grid icon */}
+              <span className={cn('shrink-0', anyMoreActive ? 'text-[var(--color-brand-primary)]' : '')}>
+                <svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+              </span>
+              {!collapsed && (
+                <>
+                  <span className="text-[13px] font-medium flex-1 text-left">More tools</span>
+                  <svg
+                    className={cn('size-3.5 shrink-0 transition-transform duration-200', moreOpen ? 'rotate-180' : '')}
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </>
+              )}
+            </button>
+          </li>
+
+          {/* Expanded more links */}
+          {moreOpen && moreLinks.map((link) => (
+            <li key={link.href} className={collapsed ? '' : 'pl-3'}>
+              <NavLink
+                link={link}
+                isActive={pathname === link.href || pathname.startsWith(link.href + '/')}
+                collapsed={collapsed}
+              />
+            </li>
+          ))}
+        </>
+      )}
+    </ul>
+  );
+}
+
 /* ── Component ── */
 
 export function AppSidebar({
@@ -168,52 +301,23 @@ export function AppSidebar({
 
       {/* ── Primary nav ── */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2.5" aria-label="Primary">
-        <ul role="list" className="flex flex-col gap-0.5">
-          {links.map((link) => {
-            const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
-            const accentVar = link.accent ?? 'var(--color-text-muted)';
-            return (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={cn(
-                    'group relative flex items-center rounded-xl transition-all duration-200',
-                    collapsed ? 'justify-center h-10 w-10 mx-auto' : 'gap-3 px-3 h-10',
-                    isActive
-                      ? 'bg-[var(--color-brand-primary)]/10 text-[var(--color-text-primary)]'
-                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface)]/40'
-                  )}
-                  aria-current={isActive ? 'page' : undefined}
-                  title={collapsed ? link.label : undefined}
-                >
-                  {/* Active indicator bar */}
-                  {isActive && (
-                    <span
-                      className={cn(
-                        'absolute left-0 w-[3px] rounded-full bg-[var(--color-brand-primary)]',
-                        'shadow-[0_0_8px_var(--color-brand-glow)]',
-                        collapsed ? 'h-5 -left-[5px]' : 'h-5 -left-0.5'
-                      )}
-                      aria-hidden
-                    />
-                  )}
-                  <span
-                    className={cn(
-                      'shrink-0 transition-colors duration-200',
-                      isActive ? 'text-[var(--color-brand-primary)]' : ''
-                    )}
-                    style={!isActive ? { color: accentVar } : undefined}
-                  >
-                    <NavIcon type={link.icon} />
-                  </span>
-                  {!collapsed && (
-                    <span className="text-[13px] font-medium truncate">{link.label}</span>
-                  )}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        {(() => {
+          const PRIMARY_COUNT = 3;
+          const primaryLinks = links.slice(0, PRIMARY_COUNT);
+          const moreLinks = links.slice(PRIMARY_COUNT);
+          const anyMoreActive = moreLinks.some(
+            (l) => pathname === l.href || pathname.startsWith(l.href + '/')
+          );
+          return (
+            <MoreNavLinks
+              primaryLinks={primaryLinks}
+              moreLinks={moreLinks}
+              anyMoreActive={anyMoreActive}
+              pathname={pathname}
+              collapsed={collapsed}
+            />
+          );
+        })()}
 
         {/* ── Advisor Chats ── */}
         {!collapsed && savedChats.length > 0 && (
@@ -272,7 +376,7 @@ export function AppSidebar({
               </svg>
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-semibold text-[var(--color-text-primary)]">Upgrade to Pro</p>
+              <p className="text-[12px] font-semibold text-[var(--color-text-primary)]">Upgrade to Premium</p>
               <p className="text-[10px] text-[var(--color-text-muted)]/60">Unlock all features</p>
             </div>
           </button>

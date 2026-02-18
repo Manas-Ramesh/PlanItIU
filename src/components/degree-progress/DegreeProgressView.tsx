@@ -120,7 +120,7 @@ export function DegreeProgressView({
     <div className="flex h-full flex-col bg-[var(--color-bg-base)]">
       {/* ── Header ── */}
       <header className="shrink-0 border-b border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-base)] px-6 py-[6.1px]">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-8xl mx-auto">
          <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold text-[var(--color-text-primary)]">
             Degree Progress
@@ -137,9 +137,9 @@ export function DegreeProgressView({
 
       {/* ── Content ── */}
       <main className="flex-1 min-h-0 overflow-y-auto p-6">
-        <div className="max-w-5xl mx-auto space-y-6">
+        <div className="max-w-8xl mx-auto space-y-6">
 
-          {/* ── Stats Row ── */}
+          {/* ── Stats Row ──
           {overall && (
             <div className="grid grid-cols-4 gap-3">
               <StatCard
@@ -171,7 +171,7 @@ export function DegreeProgressView({
                 sub="completed"
               />
             </div>
-          )}
+          )} */}
 
           {/* ── Overall Progress Bar ── */}
           {overall && (

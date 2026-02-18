@@ -23,7 +23,7 @@ export function HeroSection({
     <section
       id={id}
       className={cn(
-        'landing-grid-bg landing-hero-glow relative min-h-[85vh] flex items-center justify-center px-6 lg:px-8',
+        'landing-grid-bg landing-hero-glow relative min-h-[85vh] flex items-center justify-center px-6 lg:px-8 pt-10',
         className
       )}
       aria-labelledby={ariaLabelledBy ?? headingId}
@@ -35,7 +35,7 @@ export function HeroSection({
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[var(--color-brand-primary)]/20 bg-[var(--color-brand-primary)]/5 mb-10">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-brand-primary)] animate-pulse" aria-hidden />
             <span className="text-xs font-medium text-[var(--color-brand-accent)] tracking-wide uppercase">
-              AI-Powered Academic Planning
+              your Ai chatbot for college
             </span>
           </div>
         </div>
