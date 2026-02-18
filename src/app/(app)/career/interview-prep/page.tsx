@@ -1,10 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils/cn';
 
-export default function InterviewPrepPage() {
+function InterviewPrepPageInner() {
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') as 'practice' | 'drills' | 'mock') || 'practice';
 
@@ -237,5 +238,13 @@ function MockInterviewTab() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function InterviewPrepPage() {
+  return (
+    <Suspense fallback={<div className="flex h-full" />}>
+      <InterviewPrepPageInner />
+    </Suspense>
   );
 }

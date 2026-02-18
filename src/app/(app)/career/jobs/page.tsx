@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { SAMPLE_JOBS, SAMPLE_APPLICATIONS } from '@/lib/data/sampleData';
 import type { JobPosting } from '@/lib/types';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils/cn';
 
-export default function CareerJobsPage() {
+function CareerJobsPageInner() {
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') as 'browse' | 'tracker') || 'browse';
 
@@ -403,5 +403,13 @@ function ApplicationTrackerTab() {
         </table>
       </div>
     </div>
+  );
+}
+
+export default function CareerJobsPage() {
+  return (
+    <Suspense fallback={<div className="flex h-full" />}>
+      <CareerJobsPageInner />
+    </Suspense>
   );
 }

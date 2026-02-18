@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { Suspense, useState, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Progress } from '@/components/ui';
 
@@ -804,7 +804,7 @@ const TABS = [
 
 type TabId = typeof TABS[number]['id'];
 
-export default function AssignmentsPage() {
+function AssignmentsPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const activeTab = (searchParams.get('tab') as TabId) ?? 'grade';
@@ -885,5 +885,13 @@ export default function AssignmentsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AssignmentsPage() {
+  return (
+    <Suspense fallback={<div className="flex h-full" />}>
+      <AssignmentsPageInner />
+    </Suspense>
   );
 }

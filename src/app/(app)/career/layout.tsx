@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils/cn';
@@ -131,7 +131,7 @@ function TabIcon({ type, className }: { type: TabIconType; className?: string })
   }
 }
 
-export default function CareerLayout({ children }: { children: React.ReactNode }) {
+function CareerLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentFull = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
@@ -263,5 +263,13 @@ export default function CareerLayout({ children }: { children: React.ReactNode }
         {children}
       </div>
     </div>
+  );
+}
+
+export default function CareerLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<div className="flex h-full" />}>
+      <CareerLayoutInner>{children}</CareerLayoutInner>
+    </Suspense>
   );
 }

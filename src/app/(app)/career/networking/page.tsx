@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   SAMPLE_CONTACTS,
@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils/cn';
 
-export default function CareerNetworkingPage() {
+function CareerNetworkingPageInner() {
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') as 'swipe' | 'network' | 'analytics') || 'swipe';
 
@@ -273,5 +273,13 @@ function OutreachAnalyticsTab() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function CareerNetworkingPage() {
+  return (
+    <Suspense fallback={<div className="flex h-full" />}>
+      <CareerNetworkingPageInner />
+    </Suspense>
   );
 }
