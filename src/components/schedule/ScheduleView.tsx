@@ -179,7 +179,7 @@ export function ScheduleView({
   return (
     <div className="flex h-full flex-col bg-[var(--color-bg-base)]">
       {/* ── Header — Title only ── */}
-      <header className="shrink-0 border-b border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-base)] px-6 py-[6.1px]">
+      <header className="shrink-0 border-b border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-base)] px-6 py-[17.5px]">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold text-[var(--color-text-primary)]">
             Schedule Builder
