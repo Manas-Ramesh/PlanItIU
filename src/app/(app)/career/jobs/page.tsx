@@ -13,7 +13,7 @@ export default function CareerJobsPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <header className="shrink-0 border-b border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-base)] px-6 py-[15.4px]">
+      <header className="shrink-0 border-b border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-base)] px-6 py-[15.5px]">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-3">
             <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--color-feature-orange)]/10 border border-[var(--color-feature-orange)]/20 shrink-0">
