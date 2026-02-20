@@ -78,7 +78,7 @@ function NavLink({
         'group relative flex items-center rounded-xl transition-all duration-200',
         collapsed ? 'justify-center h-10 w-10 mx-auto' : 'gap-3 px-3 h-10',
         isActive
-          ? 'bg-[var(--color-brand-primary)]/10 text-[var(--color-text-primary)]'
+          ? 'bg-[grey]/10 text-[var(--color-text-primary)]'
           : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface)]/40'
       )}
       aria-current={isActive ? 'page' : undefined}
@@ -227,6 +227,7 @@ export function AppSidebar({
 
   // Close mobile sidebar on navigation
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isMobile) setMobileOpen(false);
   }, [pathname, isMobile]);
 
@@ -292,7 +293,8 @@ export function AppSidebar({
             </svg>
           </div>
           {!collapsed && (
-            <span className="font-display text-lg text-[var(--color-text-primary)] truncate">
+            // wide letter spacing only on brand to avoid truncation issues on nav links
+            <span className="font-serif text-lg text-[var(--color-text-primary)]  truncate">
               {brandLabel}
             </span>
           )}

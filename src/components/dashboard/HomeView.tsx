@@ -106,6 +106,7 @@ const SUGGESTIONS: ReadonlyArray<{ readonly label: string; readonly prompt: stri
   { label: 'Degree requirements', prompt: 'What courses do I still need to complete my degree?' },
   { label: 'Study strategies', prompt: 'What are effective study strategies for my upcoming exams?' },
   { label: 'Career advice', prompt: 'What internship opportunities match my major and interests?' },
+  { label: 'Generate test exam', prompt: 'Generate a test exam for my upcoming course' }
 ];
 
 /* ── Main Component ── */
@@ -142,18 +143,33 @@ export function HomeView({
       <div className="flex-1 overflow-y-auto">
         {!hasMessages ? (
           /* ── Empty state: Welcome + Quick Actions ── */
-          <div className="flex flex-col items-center justify-center min-h-full px-6 py-12">
-            <div className="w-full max-w-3xl space-y-8">
-              {/* Welcome header */}
-              <div className="text-center space-y-3">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--color-brand-primary)]/10 border border-[var(--color-brand-primary)]/20 mb-2">
-                  <SparkleIcon className="w-7 h-7 text-[var(--color-brand-primary)]" />
+          <div className="relative flex flex-col items-center justify-center min-h-full px-6 py-12 overflow-hidden">
+            {/* Ambient background glow */}
+            <div className="pointer-events-none absolute inset-0" aria-hidden>
+              <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full bg-[var(--color-brand-primary)]/6 blur-[120px]" />
+            </div>
+
+            <div className="relative w-full max-w-2xl space-y-8">
+              {/* Hero */}
+              <div className="text-center space-y-4">
+                {/* Icon */}
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--color-brand-primary)]/10 border border-[var(--color-brand-primary)]/20 shadow-[0_0_48px_var(--color-brand-glow)] mb-1">
+                  <SparkleIcon className="w-8 h-8 text-[var(--color-brand-primary)]" />
                 </div>
-                <h1 className="text-2xl font-semibold text-[var(--color-text-primary)]">
-                  Hoosier AI Advisor
+
+                {/* Brand pill */}
+                <div>
+                  <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold bg-[var(--color-brand-primary)]/10 border border-[var(--color-brand-primary)]/20 text-[var(--color-brand-primary)]">
+                    <span className="size-1.5 rounded-full bg-[var(--color-brand-primary)]" aria-hidden />
+                    PlanIt AI · Academic Advisor
+                  </span>
+                </div>
+
+                <h1 className="text-[28px] font-bold text-[var(--color-text-primary)] tracking-tight leading-tight">
+                  What can I help you<br />with today?
                 </h1>
-                <p className="text-[var(--color-text-muted)] text-sm max-w-md mx-auto leading-relaxed">
-                  Your personal academic assistant. Ask about courses, degree planning, study tips, or career guidance.
+                <p className="text-[var(--color-text-muted)] text-[13px] max-w-sm mx-auto leading-relaxed">
+                  Ask about courses, degree planning, study strategies, or career guidance.
                 </p>
               </div>
 
@@ -166,10 +182,9 @@ export function HomeView({
                     onClick={() => onSendMessage(s.prompt)}
                     className={cn(
                       'rounded-full px-4 py-2 text-[13px] font-medium transition-all duration-200',
-                      'border border-[var(--color-border-subtle)]/40 bg-[var(--color-bg-surface)]/60',
+                      'border border-[var(--color-border-subtle)]/50 bg-[var(--color-bg-surface)]/60',
                       'text-[var(--color-text-secondary)]',
                       'hover:border-[var(--color-brand-primary)]/30 hover:bg-[var(--color-brand-primary)]/8 hover:text-[var(--color-text-primary)]',
-                      'hover:shadow-[0_0_12px_var(--color-brand-glow)]'
                     )}
                   >
                     {s.label}
@@ -177,37 +192,41 @@ export function HomeView({
                 ))}
               </div>
 
-              {/* Quick action cards */}
-              <div className="pt-4 px-4">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]/50 text-center mb-3">
-                  Quick Actions
+              {/* Quick action cards
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]/40 text-center mb-3">
+                  Quick Access
                 </p>
-                <div className="flex flex-row flex-wrap gap-2">
+                <div className="grid grid-cols-5 gap-2.5">
                   {QUICK_ACTIONS.map((action) => (
                     <Link
                       key={action.href}
                       href={action.href}
                       className={cn(
-                        'group flex flex-col items-center gap-2 rounded-xl p-3 transition-all duration-200 flex-1 min-w-[100px]',
-                        'border border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-surface)]/40',
-                        'hover:border-[var(--color-border-subtle)]/60 hover:bg-[var(--color-bg-surface)]/80',
-                        'focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-base)]'
+                        'group flex flex-col items-center gap-3 rounded-xl p-4 transition-all duration-200',
+                        'border border-[var(--color-border-subtle)]/40 bg-[var(--color-bg-surface)]/50',
+                        'hover:border-[var(--color-border-subtle)]/70 hover:bg-[var(--color-bg-surface)] hover:shadow-md',
+                        'focus:outline-none'
                       )}
                     >
                       <span
-                        className="flex items-center justify-center w-9 h-9 rounded-lg transition-colors duration-200"
-                        style={{ color: action.accent, backgroundColor: `color-mix(in srgb, ${action.accent} 10%, transparent)` }}
+                        className="flex items-center justify-center w-10 h-10 rounded-xl transition-colors duration-200"
+                        style={{
+                          color: action.accent,
+                          backgroundColor: `color-mix(in srgb, ${action.accent} 12%, transparent)`,
+                          border: `1px solid color-mix(in srgb, ${action.accent} 22%, transparent)`,
+                        }}
                       >
-                        <QuickActionIcon type={action.icon} className="w-[18px] h-[18px]" />
+                        <QuickActionIcon type={action.icon} className="w-5 h-5" />
                       </span>
-                      <div className="text-center min-w-0">
-                        <p className="text-[12px] font-medium text-[var(--color-text-primary)] truncate">{action.label}</p>
-                        <p className="text-[10px] text-[var(--color-text-muted)]/60 truncate">{action.description}</p>
+                      <div className="text-center min-w-0 w-full">
+                        <p className="text-[11px] font-semibold text-[var(--color-text-primary)] truncate leading-snug">{action.label}</p>
+                        <p className="text-[10px] text-[var(--color-text-muted)]/60 truncate mt-0.5">{action.description}</p>
                       </div>
                     </Link>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         ) : (
@@ -260,12 +279,13 @@ export function HomeView({
       </div>
 
       {/* ── Chat Input ── */}
-      <div className="shrink-0 border-t border-[var(--color-border-subtle)]/30 bg-[var(--color-bg-base)] px-6 py-4">
-        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+      <div className="shrink-0 border-t border-[var(--color-border-subtle)]/20 bg-[var(--color-bg-base)] px-6 pb-5 pt-4">
+        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
           <div
             className={cn(
-              'flex items-end gap-3 rounded-2xl border border-[var(--color-border-subtle)]/40 bg-[var(--color-bg-surface)]/60 px-4 py-3',
-              'focus-within:border-[var(--color-brand-primary)]/30 focus-within:shadow-[0_0_16px_var(--color-brand-glow)]',
+              'flex items-end gap-3 rounded-2xl border bg-[var(--color-bg-surface)]/70 px-4 py-3',
+              'border-[var(--color-border-subtle)]/40',
+              'focus-within:border-[var(--color-brand-primary)]/40 focus-within:shadow-[0_0_20px_var(--color-brand-glow)]',
               'transition-all duration-200'
             )}
           >
@@ -279,11 +299,11 @@ export function HomeView({
                   if (trimmed) onSendMessage(trimmed);
                 }
               }}
-              placeholder="Ask your AI academic advisor anything..."
+              placeholder="Ask your AI academic advisor anything…"
               rows={1}
               className={cn(
-                'flex-1 resize-none bg-transparent text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]/50',
-                'focus:outline-none',
+                'flex-1 resize-none bg-transparent text-[13px] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]/40',
+                'focus:outline-none leading-relaxed',
                 'max-h-32'
               )}
               aria-label="Message the advisor"
@@ -294,16 +314,16 @@ export function HomeView({
               className={cn(
                 'shrink-0 flex items-center justify-center w-8 h-8 rounded-xl transition-all duration-200',
                 queryValue.trim() && !isTyping
-                  ? 'bg-[var(--color-brand-primary)] text-white hover:bg-[var(--color-brand-strong)] shadow-[0_0_12px_var(--color-brand-glow)]'
-                  : 'bg-[var(--color-bg-elevated)] text-[var(--color-text-muted)]/40 cursor-not-allowed'
+                  ? 'bg-[var(--color-brand-primary)] text-white hover:opacity-90 shadow-[0_0_14px_var(--color-brand-glow)]'
+                  : 'bg-[var(--color-bg-elevated)] text-[var(--color-text-muted)]/30 cursor-not-allowed'
               )}
               aria-label="Send message"
             >
               <SendIcon className="w-4 h-4" />
             </button>
           </div>
-          <p className="mt-2 text-center text-[10px] text-[var(--color-text-muted)]/40">
-            Planituni can make mistakes. Check important info.
+          <p className="mt-2 text-center text-[10px] text-[var(--color-text-muted)]/30">
+            PlanIt AI can make mistakes. Always verify important academic decisions.
           </p>
         </form>
       </div>

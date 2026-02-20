@@ -31,25 +31,25 @@
   --color-border-light: #e5e7eb;
   --color-border-light-hover: #d1d5db;
 
-  /* Sidebar active / premium purple */
-  --color-nav-active: #9A53F4;
+  /* Sidebar active */
+  --color-nav-active: #6BA4E7;
 
   /* Schedule tags */
   --color-tag-open: #A0C4FF;
   --color-tag-credits: #AEE2FF;
 
-  /* Feature icon gradients */
-  --color-feature-teal: #14b8a6;
-  --color-feature-cyan: #06b6d4;
+  /* Feature colors — all blue-family variations */
+  --color-feature-teal: #4AADC5;
+  --color-feature-cyan: #6BB9E8;
   --color-feature-blue: #6BA4E7;
-  --color-feature-green: #22c55e;
-  --color-feature-emerald: #50C878;
-  --color-feature-purple: #8B5CF6;
-  --color-feature-indigo: #6366f1;
-  --color-feature-orange: #f97316;
-  --color-feature-amber: #FBBF24;
-  --color-feature-pink: #ec4899;
-  --color-feature-rose: #f43f5e;
+  --color-feature-green: #52AEAD;
+  --color-feature-emerald: #5ABDB4;
+  --color-feature-purple: #8B9BE8;
+  --color-feature-indigo: #6B80E4;
+  --color-feature-orange: #7AABEC;
+  --color-feature-amber: #8CBEF0;
+  --color-feature-pink: #9B8AE8;
+  --color-feature-rose: #C05070;
   --color-canvas-red: #E13F2B;
 
   /* Overlay */
@@ -67,6 +67,15 @@
   /* ===== SHADOWS ===== */
 
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme="dark"] {
+  --color-brand-primary: #6d9bc4;
+  --color-brand-accent: #89B8ED;
+  --color-brand-strong: #5494E0;
+  --color-brand-glow: rgba(25, 60, 100, 0.25);
+  --color-brand-glow-strong: rgba(107, 164, 231, 0.4);
+
 }
 
 /* ===== LIGHT THEME ===== */

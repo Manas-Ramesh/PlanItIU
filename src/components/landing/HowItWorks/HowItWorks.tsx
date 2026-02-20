@@ -18,56 +18,64 @@ export function HowItWorks({
   return (
     <section
       id={id}
-      className={cn('py-28 px-6 lg:px-8 relative', className)}
+      className={cn('py-20 px-6 lg:px-8 relative', className)}
       aria-labelledby={headingId}
     >
-      {/* Subtle background accent */}
+      {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-bg-surface)]/20 to-transparent pointer-events-none" aria-hidden />
 
       <div className="relative z-10 max-w-5xl mx-auto">
-        <div className="text-center mb-20">
+        {/* Header */}
+        <div className="text-center mb-14">
+          <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-primary)] mb-4">
+            How it works
+          </span>
           <h2
             id={headingId}
-            className="font-display text-3xl md:text-4xl lg:text-5xl text-[var(--color-text-primary)] mb-5"
+            className="font-display text-3xl md:text-4xl lg:text-[44px] text-[var(--color-text-primary)] mb-4 leading-tight"
           >
             {title}
           </h2>
           {subtitle ? (
-            <p className="text-[var(--color-text-muted)] text-lg max-w-xl mx-auto leading-relaxed">
+            <p className="text-[var(--color-text-muted)] text-base max-w-lg mx-auto leading-relaxed">
               {subtitle}
             </p>
           ) : null}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-8 relative">
-          {/* Connecting line */}
-          {/* <div
-            className="hidden md:block absolute top-10 left-[16%] right-[16%] h-px"
+        {/* Step cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 relative">
+
+          {/* Connecting line between cards */}
+          <div
+            className="hidden md:block absolute top-[52px] left-[calc(33.33%-24px)] right-[calc(33.33%-24px)] h-px pointer-events-none"
             aria-hidden
           >
-            <div className="w-full h-full bg-gradient-to-r from-brand/0 via-brand/30 to-brand/0" />
-          </div> */}
+            <div className="w-full h-full bg-gradient-to-r from-[var(--color-brand-primary)]/0 via-[var(--color-brand-primary)]/30 to-[var(--color-brand-primary)]/0" />
+          </div>
 
-          {steps.map((step) => (
-            <div key={step.number} className="relative text-center flex flex-col items-center">
-              {/* Number circle */}
-              <div className="relative mb-8">
-                <div className="w-20 h-20 rounded-2xl bg-[var(--color-brand-primary)]/10 border border-[var(--color-brand-primary)]/20 flex items-center justify-center">
-                  <span className="font-display text-3xl text-[var(--color-brand-primary)]">
-                    {step.number}
-                  </span>
+          {steps.map((step, i) => (
+            <div
+              key={step.number}
+              className="relative flex flex-col rounded-2xl border border-[var(--color-border-subtle)]/50 bg-[var(--color-bg-surface)]/50 p-6 overflow-hidden"
+            >
+              {/* Top accent */}
+              <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-[var(--color-brand-primary)]/0 via-[var(--color-brand-primary)] to-[var(--color-brand-primary)]/0" aria-hidden />
+
+              {/* Icon row */}
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center justify-center w-[52px] h-[52px] rounded-xl bg-[var(--color-brand-primary)]/10 border border-[var(--color-brand-primary)]/15 text-[var(--color-brand-primary)] [&>svg]:w-6 [&>svg]:h-6 shrink-0">
+                  {step.icon}
                 </div>
+                <span className="text-[11px] font-bold tabular-nums text-[var(--color-text-muted)]/30 tracking-widest mt-1">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
               </div>
 
-              {/* Icon */}
-              <div className="w-10 h-10 mb-5 text-[var(--color-text-muted)]/60 [&>svg]:w-full [&>svg]:h-full">
-                {step.icon}
-              </div>
-
-              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">
+              <h3 className="text-[16px] font-bold text-[var(--color-text-primary)] mb-2 leading-snug">
                 {step.title}
               </h3>
-              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-[280px]">
+              <p className="text-[13px] text-[var(--color-text-muted)] leading-relaxed">
                 {step.description}
               </p>
             </div>

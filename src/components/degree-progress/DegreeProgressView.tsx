@@ -295,7 +295,7 @@ function SemesterCard({
   return (
     <div
       className={cn(
-        'rounded-xl bg-[var(--color-bg-base)] p-4 transition-all duration-200 overflow-hidden',
+        'rounded-xl bg-[var(--color-bg-surface)] p-4 transition-all duration-200 overflow-hidden',
         isPlanned
           ? 'border border-dashed border-[var(--color-border-subtle)]/40'
           : 'border border-[var(--color-border-subtle)]/30 hover:border-[var(--color-border-subtle)]/60',

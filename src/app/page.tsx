@@ -146,7 +146,7 @@ export default function MarketingLandingPage() {
           <HeroSection
             headline="Plan Your"
             highlight="Academic Success"
-            subtitle="Your AI-powered companion for course planning, degree tracking, assignment grading, and career opportunities. Everything college students need to maximize their GPA and career prospects — in one platform."
+            subtitle="Your AI-powered companion for course planning, degree tracking, assignment grading, and career opportunities. Everything college students need to maximize their GPA and career  in one platform."
             ctaLabel="Get Started Free"
             ctaHref="/login"
           />
