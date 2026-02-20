@@ -168,8 +168,8 @@ const FOOTER_LINKS: ReadonlyArray<FooterLinkGroup> = [
     title: "Company",
     links: [
       { label: "About", href: "#" },
-      { label: "Privacy Policy", href: "/pages/privacy-policy" },
-      { label: "Terms of Service", href: "/pages/terms-service" },
+      { label: "Privacy Policy", href: "/legal/privacy-policy" },
+      { label: "Terms of Service", href: "/legal/terms-of-service" },
     ],
   },
 ];
